@@ -4,7 +4,7 @@
 #include "Log.h"
 
 #ifdef Q_OS_WIN
-#include "../libs/libuv/win32/include/uv.h"
+#include "../libuv/win32/include/uv.h"
 #else
 #include <uv.h>
 #endif

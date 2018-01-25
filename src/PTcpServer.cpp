@@ -1,10 +1,12 @@
 #include "PTcpServer.h"
 
-uv_tcp_t* PTcpServer::uv_tcp_server;
-uv_loop_t* PTcpServer::uv_loop;
+using namespace Parsley;
+
+uv_tcp_t* TcpServer::uv_tcp_server;
+uv_loop_t* TcpServer::uv_loop;
 
 
-PTcpServer::PTcpServer(const char *ipAddr, const int &port, const int &backLog, uv_loop_t *loop)
+TcpServer::TcpServer(const char *ipAddr, const int &port, const int &backLog, uv_loop_t *loop)
 {
   uv_loop = loop;
   struct sockaddr_in *socketAddr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
@@ -23,12 +25,12 @@ PTcpServer::PTcpServer(const char *ipAddr, const int &port, const int &backLog, 
 
 }
 
-bool PTcpServer::accept(uv_stream_t *handle, PTcpSocket *client)
+bool TcpServer::accept(uv_stream_t *handle, TcpSocket *client)
 {
   return uv_accept(handle, (uv_stream_t*)client->getSocket()) == 0;
 }
 
-void PTcpServer::tcpNewConnectionCb(uv_stream_t *handle, int status)
+void TcpServer::tcpNewConnectionCb(uv_stream_t *handle, int status)
 {
   if(status < 0)
     {
@@ -36,7 +38,7 @@ void PTcpServer::tcpNewConnectionCb(uv_stream_t *handle, int status)
       return;
     }
 
-  PTcpSocket *client = new PTcpSocket(uv_loop);
+  TcpSocket *client = new TcpSocket(uv_loop);
   if(accept(handle, client))
     {
       client->start();

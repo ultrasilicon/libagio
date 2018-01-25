@@ -9,9 +9,9 @@
 #include <uv.h>
 #endif
 
-class PAbstractSocket;
+class AbstractSocket;
 
-class PAbstractSocket
+class AbstractSocket
 {
 public:
   enum Callback {

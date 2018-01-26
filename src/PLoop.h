@@ -1,5 +1,5 @@
-#ifndef ABSTRACTSOCKET_H
-#define ABSTRACTSOCKET_H
+#ifndef LOOP_H
+#define LOOP_H
 
 #include "Log.h"
 
@@ -11,11 +11,21 @@
 
 
 namespace Parsley {
+  class LoopUtils;
   class Loop;
 
-  class Loop
+  class LoopUtils
   {
   public:
+    static uv_loop_t* defaultLoop();
+    static int close(uv_loop_t* loop);
+    static int run(uv_loop_t*handle, uv_run_mode mode);
+
+  };
+
+  class Loop : public LoopUtils
+  {
+
 
   };
 
@@ -26,4 +36,4 @@ namespace Parsley {
 
 
 
-#endif // ABSTRACTSOCKET_H
+#endif // LOOP_H

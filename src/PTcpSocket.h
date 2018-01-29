@@ -2,8 +2,6 @@
 #define TCPSOCKET_H
 
 #include "PAbstractSocket.h"
-#include <functional>
-#include <stdlib.h>
 
 namespace Parsley {
   class TcpSocketUtils;

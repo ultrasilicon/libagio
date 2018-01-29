@@ -1,5 +1,8 @@
 #include "PAbstractSocket.h"
 
+#include <functional>
+#include <stdlib.h>
+
 void AbstractSocket::bindCb(const AbstractSocket::SockDestroyedCb &cb)
 {
   destroyed_cb = cb;

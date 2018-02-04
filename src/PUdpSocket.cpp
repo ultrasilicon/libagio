@@ -1,20 +1,23 @@
 #include "PUdpSocket.h"
 
+#include <map>
+
 using namespace Parsley;
 
-QHash<int, UdpSocket*> UdpSocketUtils::instance_hash;
+std::map<int, UdpSocket*> UdpSocketUtils::instance_hash;
 
 bool UdpSocketUtils::registerInstance(UdpSocket *sock)
 {
-  instance_hash.insert(AbstractSocket::getSocketDescriptor((uv_handle_t*)sock->getSocket()), sock);
+  instance_hash.insert({AbstractSocket::getSocketDescriptor((uv_handle_t*)sock->getSocket()), sock});
 }
 
 void
 UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags)
 {
-  /// DOC: libuv 1.18.1-dev
-  ///  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,
-  ///  - and with nread == 0 and addr != NULL when an empty UDP packet is received.
+  /*! DOC: libuv 1.18.1-dev
+   *  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,
+   *  - and with nread == 0 and addr != NULL when an empty UDP packet is received.
+   */
   if(nread != 0)
     {
       if(addr != NULL)
@@ -24,9 +27,9 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
           Log::net(Log::Normal, "UvUdpSockUtils::read()", QString("UDP Packet Received From %1").arg(senderAddr));
 
           uv_buf_t buffer = uv_buf_init(buf->base, nread);
-          qDebug()<<buffer.base;
+//          qDebug()<<buffer.base;
 
-          instance_hash.value(AbstractSocket::getSocketDescriptor((uv_handle_t*) handle))->callReadyRead(buffer.base, senderAddr);
+          instance_hash[AbstractSocket::getSocketDescriptor((uv_handle_t*) handle)]->callReadyRead(buffer.base, senderAddr);
           /// Do callback or what ever
         }
     }
@@ -45,7 +48,10 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 void
 UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 {
+  int socketDescriptor = AbstractSocket::getSocketDescriptor((uv_handle_t*) req->handle);
   free(req);
+
+  instance_hash[socketDescriptor]->callDestroyed(socketDescriptor);
 }
 
 

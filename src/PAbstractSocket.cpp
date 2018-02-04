@@ -1,9 +1,8 @@
 #include "PAbstractSocket.h"
 
 #include <functional>
-#include <stdlib.h>
 
-void AbstractSocket::bindCb(const AbstractSocket::SockDestroyedCb &cb)
+void AbstractSocket::bindCb(const SockDestroyedCb &cb)
 {
   destroyed_cb = cb;
 }
@@ -15,13 +14,26 @@ void AbstractSocket::bindCb(const SockReadyReadCb &cb)
 
 void AbstractSocket::callDestroyed(const int &sockDescriptor)
 {
-  destroyed_cb(sockDescriptor);
+  if(destroyed_cb)
+    {
+      destroyed_cb(sockDescriptor);
+    }
 }
 
 void AbstractSocket::callReadyRead(char *data, char *ip)
 {
-  ready_read_cb(data, ip);
+  if(ready_read_cb)
+    {
+      ready_read_cb(data, ip);
+    }
+}
 
+void AbstractSocket::callWritten(const AbstractSocket::SocketDescriptor &sd)
+{
+  if(written_cb)
+    {
+      written_cb(sd);
+    }
 }
 
 void AbstractSocket::write(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)

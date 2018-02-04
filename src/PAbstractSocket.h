@@ -21,15 +21,16 @@ public:
   };
 
   typedef int SocketDescriptor;
-  typedef std::function<void (int)> SockDestroyedCb;
+  typedef std::function<void (const int&)> SockDestroyedCb;
   typedef std::function<void (char*, char*)> SockReadyReadCb;
-  typedef std::function<void (int)> SockWrittenCb;
+  typedef std::function<void (const SocketDescriptor&)> SockWrittenCb;
 
   void bindCb(const SockDestroyedCb &cb);
   void bindCb(const SockReadyReadCb &cb);
 
   void callDestroyed(const int &sockDescriptor);
   void callReadyRead(char* data, char* ip);
+  void callWritten(const SocketDescriptor &sd);
 
 
   virtual void bind(const char* ipAddr, const int &port);

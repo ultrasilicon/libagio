@@ -12,7 +12,9 @@ namespace Parsley {
   class UdpSocketUtils
   {
   protected:
-    static QHash<int, UdpSocket*> instance_hash;
+    static std::map<int, UdpSocket*> instance_hash;
+
+//    static QHash<int, UdpSocket*> instance_hash;
     static bool registerInstance(UdpSocket *sock);
 
     static void receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags);

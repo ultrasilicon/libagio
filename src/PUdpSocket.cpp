@@ -49,9 +49,9 @@ void
 UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 {
   int socketDescriptor = AbstractSocket::getSocketDescriptor((uv_handle_t*) req->handle);
+  instance_hash[socketDescriptor]->callDestroyed(socketDescriptor);
   free(req);
 
-  instance_hash[socketDescriptor]->callDestroyed(socketDescriptor);
 }
 
 

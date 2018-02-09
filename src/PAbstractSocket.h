@@ -3,12 +3,11 @@
 
 #include "Log.h"
 
-#ifdef Q_OS_WIN
-#include "../libuv/win32/include/uv.h"
-#else
-#include <uv.h>
-#endif
+#include "Parsley.h"
 
+
+
+PARSLEY_NAMESPACE_BEGIN
 class AbstractSocket;
 
 class AbstractSocket
@@ -28,7 +27,7 @@ public:
   void bindCb(const SockDestroyedCb &cb);
   void bindCb(const SockReadyReadCb &cb);
 
-  bool callDestroyed(const int &sockDescriptor);
+  bool callDestroyed(const SocketDescriptor &sd);
   bool callReadyRead(char* data, char* ip);
   bool callWritten(const SocketDescriptor &sd);
 
@@ -55,5 +54,5 @@ protected:
 
 
 
-
+PARSLEY_NAMESPACE_END
 #endif // ABSTRACTSOCKET_H

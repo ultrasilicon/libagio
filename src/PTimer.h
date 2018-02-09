@@ -3,40 +3,41 @@
 
 #include <functional>
 
+#include "Parsley.h"
 #include "Log.h"
 
-#ifdef Q_OS_WIN
-#include "../libuv/win32/include/uv.h"
-#else
-#include <uv.h>
-#endif
+
+PARSLEY_NAMESPACE_BEGIN
+class TimerUtils;
+class Timer;
+
+class TimerUtils
+    : public InstanceMap<uv_timer_t, Timer>
+{
+public:
+  static void timeoutCb(uv_timer_t *handle);
+
+};
+
+class Timer
+    : public TimerUtils
+{
+public:
+  typedef std::function<void (Timer*)> TimeoutCb;
+
+  Timer(uv_loop_t *loop);
+
+  void bindCb(const TimeoutCb &cb);
+  bool callTimeout();
+  void start(const uint64_t &timeout, const uint64_t &repeat);
+
+private:
+  uv_timer_t *timer;
+
+  TimeoutCb timeout_cb;
 
 
-namespace Parsley {
-  class TimerUtils;
-  class Timer;
-
-  class TimerUtils
-  {
-  public:
-
-  };
-
-  class Timer : public TimerUtils
-  {
-  public:
-    typedef std::function<void (Timer*)> TimeOutCb;
-
-    Timer(uv_loop_t *loop);
-
-    void bindCb(const TimeOutCb &cb);
-    void start(const uint64_t &timeout, const uint64_t &repeat);
-
-  private:
-    uv_timer_t *timer;
-
-
-  };
+};
 
 //  uv_timer_t *heart_beat_timer2 = (uv_timer_t*)malloc(sizeof(uv_timer_t));
 //  uv_timer_init(loop, heart_beat_timer2);
@@ -46,11 +47,6 @@ namespace Parsley {
 //  }, 10, 1000);
 
 
-}
 
-
-
-
-
-
+PARSLEY_NAMESPACE_END
 #endif // TIMER_H

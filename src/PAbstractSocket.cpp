@@ -2,6 +2,8 @@
 
 #include <functional>
 
+using namespace Parsley;
+
 void AbstractSocket::bindCb(const SockDestroyedCb &cb)
 {
   destroyed_cb = cb;
@@ -12,11 +14,11 @@ void AbstractSocket::bindCb(const SockReadyReadCb &cb)
   ready_read_cb = cb;
 }
 
-bool AbstractSocket::callDestroyed(const int &sockDescriptor)
+bool AbstractSocket::callDestroyed(const SocketDescriptor &sd)
 {
   if(destroyed_cb)
     {
-      destroyed_cb(sockDescriptor);
+      destroyed_cb(sd);
       return true;
     }
   return false;

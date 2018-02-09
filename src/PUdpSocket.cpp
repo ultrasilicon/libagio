@@ -4,12 +4,6 @@
 
 using namespace Parsley;
 
-std::map<int, UdpSocket*> UdpSocketUtils::instance_map;
-
-bool UdpSocketUtils::registerInstance(UdpSocket *sock)
-{
-  instance_map.insert({ AbstractSocket::getFd((uv_handle_t*)sock->getSocket()), sock });
-}
 
 void
 UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags)
@@ -27,10 +21,7 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
           Log::net(Log::Normal, "UvUdpSockUtils::read()", QString("UDP Packet Received From %1").arg(senderAddr));
 
           uv_buf_t buffer = uv_buf_init(buf->base, nread);
-//          qDebug()<<buffer.base;
-
-          instance_map[AbstractSocket::getFd((uv_handle_t*) handle)]->callReadyRead(buffer.base, senderAddr);
-          /// Do callback or what ever
+          getInstance(handle)->callReadyRead(buffer.base, senderAddr);
         }
     }
   else
@@ -49,7 +40,8 @@ void
 UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 {
   int socketDescriptor = AbstractSocket::getFd((uv_handle_t*) req->handle);
-  instance_map[socketDescriptor]->callDestroyed(socketDescriptor);
+  getInstance(req->handle)->callWritten(socketDescriptor);
+
   free(req);
 
 }
@@ -62,6 +54,7 @@ UdpSocket::UdpSocket(uv_loop_t *loop)
   uv_loop = loop;
   udp_socket = (uv_udp_t*) malloc(sizeof(uv_udp_t));
   uv_udp_init(uv_loop, udp_socket);
+  regInstance(udp_socket, this);
 }
 
 UdpSocket::UdpSocket(const char *ipAddr, const int &port, uv_loop_t *loop)
@@ -70,9 +63,10 @@ UdpSocket::UdpSocket(const char *ipAddr, const int &port, uv_loop_t *loop)
   udp_socket = (uv_udp_t*) malloc(sizeof(uv_udp_t));
   uv_udp_init(uv_loop, udp_socket);
 
-  this->bind(ipAddr, port);
-  this->start();
-  this->setBroadcatEnabled(true);
+  bind(ipAddr, port);
+  start();
+  setBroadcatEnabled(true);
+  regInstance(udp_socket, this);
 }
 
 void
@@ -82,7 +76,6 @@ UdpSocket::bind(const char *ipAddr, const int &port)
   uv_ip4_addr(ipAddr, port, udpAddr);
   uv_udp_bind(udp_socket, (const struct sockaddr*) udpAddr, UV_UDP_REUSEADDR);
 
-  UdpSocketUtils::registerInstance(this);
 }
 
 void

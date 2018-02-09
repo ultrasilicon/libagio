@@ -1,28 +1,13 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#if defined(_WIN32)
-#include "../libuv/win32/include/uv.h"
-#else
-#include <uv.h>
-#endif
+#include "Parsley.h"
 
-#include <functional>
 
-#include "Log.h"
+PARSLEY_NAMESPACE_BEGIN
 
 
 
 
-
-namespace Parsley {
-  //! TODO: Add Instance Manager refering to the source code of Telegram and Node.JS
-
-}
-
-
-
-
-
-
+PARSLEY_NAMESPACE_END
 #endif // UTILS_H

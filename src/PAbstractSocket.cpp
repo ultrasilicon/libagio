@@ -12,28 +12,34 @@ void AbstractSocket::bindCb(const SockReadyReadCb &cb)
   ready_read_cb = cb;
 }
 
-void AbstractSocket::callDestroyed(const int &sockDescriptor)
+bool AbstractSocket::callDestroyed(const int &sockDescriptor)
 {
   if(destroyed_cb)
     {
       destroyed_cb(sockDescriptor);
+      return true;
     }
+  return false;
 }
 
-void AbstractSocket::callReadyRead(char *data, char *ip)
+bool AbstractSocket::callReadyRead(char *data, char *ip)
 {
   if(ready_read_cb)
     {
       ready_read_cb(data, ip);
+      return true;
     }
+  return false;
 }
 
-void AbstractSocket::callWritten(const AbstractSocket::SocketDescriptor &sd)
+bool AbstractSocket::callWritten(const AbstractSocket::SocketDescriptor &sd)
 {
   if(written_cb)
     {
       written_cb(sd);
+      return true;
     }
+  return false;
 }
 
 void AbstractSocket::write(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
@@ -62,7 +68,7 @@ void AbstractSocket::allocBuffer(uv_handle_t *handle, size_t suggestedSize, uv_b
   buf->len = suggestedSize;
 }
 
-int AbstractSocket::getSocketDescriptor(uv_handle_t* handle)
+int AbstractSocket::getFd(uv_handle_t* handle)
 {
   int fd;
 #ifdef Q_OS_WIN

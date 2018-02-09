@@ -28,9 +28,9 @@ public:
   void bindCb(const SockDestroyedCb &cb);
   void bindCb(const SockReadyReadCb &cb);
 
-  void callDestroyed(const int &sockDescriptor);
-  void callReadyRead(char* data, char* ip);
-  void callWritten(const SocketDescriptor &sd);
+  bool callDestroyed(const int &sockDescriptor);
+  bool callReadyRead(char* data, char* ip);
+  bool callWritten(const SocketDescriptor &sd);
 
 
   virtual void bind(const char* ipAddr, const int &port);
@@ -38,7 +38,7 @@ public:
   virtual void stop();
   virtual void write(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
 
-  static int getSocketDescriptor(uv_handle_t *handle);
+  static int getFd(uv_handle_t *handle);
 
 protected:
   int port;

@@ -37,7 +37,7 @@ void TcpSocket::connect(const char *addr, const int &port)
 void
 TcpSocket::read(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
 {
-  SocketDescriptor socketDiscriptor = getSocketDescriptor((uv_handle_t*) handle);
+  SocketDescriptor socketDiscriptor = getFd((uv_handle_t*) handle);
 
   if(nread > 0)
     {

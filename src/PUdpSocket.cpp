@@ -4,11 +4,11 @@
 
 using namespace Parsley;
 
-std::map<int, UdpSocket*> UdpSocketUtils::instance_hash;
+std::map<int, UdpSocket*> UdpSocketUtils::instance_map;
 
 bool UdpSocketUtils::registerInstance(UdpSocket *sock)
 {
-  instance_hash.insert({AbstractSocket::getSocketDescriptor((uv_handle_t*)sock->getSocket()), sock});
+  instance_map.insert({ AbstractSocket::getFd((uv_handle_t*)sock->getSocket()), sock });
 }
 
 void
@@ -29,7 +29,7 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
           uv_buf_t buffer = uv_buf_init(buf->base, nread);
 //          qDebug()<<buffer.base;
 
-          instance_hash[AbstractSocket::getSocketDescriptor((uv_handle_t*) handle)]->callReadyRead(buffer.base, senderAddr);
+          instance_map[AbstractSocket::getFd((uv_handle_t*) handle)]->callReadyRead(buffer.base, senderAddr);
           /// Do callback or what ever
         }
     }
@@ -48,13 +48,11 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 void
 UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 {
-  int socketDescriptor = AbstractSocket::getSocketDescriptor((uv_handle_t*) req->handle);
-  instance_hash[socketDescriptor]->callDestroyed(socketDescriptor);
+  int socketDescriptor = AbstractSocket::getFd((uv_handle_t*) req->handle);
+  instance_map[socketDescriptor]->callDestroyed(socketDescriptor);
   free(req);
 
 }
-
-
 
 
 

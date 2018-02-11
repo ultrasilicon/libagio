@@ -18,6 +18,16 @@ Timer::Timer(uv_loop_t *loop)
   regInstance(timer, this);
 }
 
+Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, uv_loop_t *loop)
+  : delay(timeout)
+  , interval(repeat)
+{
+  timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
+  uv_timer_init(loop, timer);
+
+  regInstance(timer, this);
+}
+
 void Timer::bindCb(const TimeoutCb &cb)
 {
   timeout_cb = cb;
@@ -33,10 +43,25 @@ bool Timer::callTimeout()
   return false;
 }
 
+bool Timer::start()
+{
+  if(delay && interval)
+    {
+      uv_timer_start(timer, timeoutCb, delay, interval);
+      return true;
+    }
+  return false;
+}
+
 void Timer::start(const uint64_t &timeout, const uint64_t &repeat)
 {
-    uv_timer_start(timer, timeoutCb, timeout, repeat);
+  delay = timeout;
+  interval = repeat;
+  uv_timer_start(timer, timeoutCb, timeout, repeat);
+}
 
-    //! TODO: add instance reg
+void Timer::stop()
+{
+  uv_timer_stop(timer);
 }
 

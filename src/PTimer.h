@@ -4,6 +4,8 @@
 #include <functional>
 
 #include "Parsley.h"
+#include "PLoop.h"
+
 #include "Log.h"
 
 
@@ -25,8 +27,8 @@ class Timer
 public:
   typedef std::function<void (Timer*)> TimeoutCb;
 
-  Timer(uv_loop_t *loop);
-  Timer(const uint64_t &timeout, const uint64_t &repeat, uv_loop_t *loop);
+  Timer(Loop *l);
+  Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
 
   void bindCb(const TimeoutCb &cb);
   bool callTimeout();

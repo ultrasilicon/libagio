@@ -2,11 +2,11 @@
 
 using namespace Parsley;
 
-TcpSocket::TcpSocket(uv_loop_t *loop)
+TcpSocket::TcpSocket(Loop *l)
 {
-  uv_loop = loop;
+  loop = l;
   tcp_socket = (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
-  uv_tcp_init(uv_loop, tcp_socket);
+  uv_tcp_init(loop->uvHandle(), tcp_socket);
 }
 
 uv_tcp_t*

@@ -12,16 +12,28 @@ class Loop;
 class LoopUtils
 {
 public:
-  static uv_loop_t* defaultLoop();
+  static Loop *defaultLoop();
   static int close(uv_loop_t* loop);
   static int run(uv_loop_t*handle, uv_run_mode mode);
 
+private:
+  static Loop default_loop;
+
 };
 
-class Loop : public LoopUtils
+class Loop
+    : public LoopUtils
 {
+public:
+  Loop(uv_loop_t* l);
+
+  int run(const uv_run_mode &mode);
+  int close();
+  uv_loop_t* uvHandle();
 
 
+private:
+  uv_loop_t* loop;
 };
 
 

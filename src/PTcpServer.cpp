@@ -3,17 +3,17 @@
 using namespace Parsley;
 
 uv_tcp_t* TcpServer::uv_tcp_server;
-uv_loop_t* TcpServer::uv_loop;
+Loop* TcpServer::loop;
 
 
-TcpServer::TcpServer(const char *ipAddr, const int &port, const int &backLog, uv_loop_t *loop)
+TcpServer::TcpServer(const char *ipAddr, const int &port, const int &backLog, Loop *l)
 {
-  uv_loop = loop;
+  loop = l;
   struct sockaddr_in *socketAddr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
   uv_ip4_addr(ipAddr, port, socketAddr);
 
   uv_tcp_server = (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
-  uv_tcp_init(uv_loop, uv_tcp_server);
+  uv_tcp_init(loop->uvHandle(), uv_tcp_server);
   uv_tcp_bind(uv_tcp_server, (const struct sockaddr*) socketAddr, 0);
   int r = uv_listen((uv_stream_t*) uv_tcp_server, backLog, tcpNewConnectionCb);
   if(r)
@@ -38,7 +38,7 @@ void TcpServer::tcpNewConnectionCb(uv_stream_t *handle, int status)
       return;
     }
 
-  TcpSocket *client = new TcpSocket(uv_loop);
+  TcpSocket *client = new TcpSocket(loop);
   if(accept(handle, client))
     {
       client->start();

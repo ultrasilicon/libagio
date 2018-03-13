@@ -17,6 +17,8 @@
 
 PARSLEY_NAMESPACE_BEGIN
 
+using Buffer = uv_buf_t;
+
 template <typename UvHandle, typename PHandle>
 class InstanceMap
 {

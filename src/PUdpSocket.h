@@ -2,6 +2,7 @@
 #define UDPSOCKET_H
 
 #include "PAbstractSocket.h"
+#include "PLoop.h"
 
 
 PARSLEY_NAMESPACE_BEGIN
@@ -13,7 +14,7 @@ class UdpSocketUtils
     : public InstanceMap<uv_udp_t, UdpSocket>
 {
 protected:
-  static void receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags);
+  static void receiveCb(uv_udp_t* handle, ssize_t nread, const Buffer *buf, const sockaddr *addr, unsigned flags);
   static void writeCb(uv_udp_send_t* req, int status);
 
 };
@@ -26,13 +27,13 @@ class UdpSocket
 public:
   SockReadyReadCb read_cb;
 
-  UdpSocket(uv_loop_t *loop);
-  UdpSocket(const char *ipAddr, const int &port, uv_loop_t *loop);
+  UdpSocket(Loop *l);
+  UdpSocket(const char *ipAddr, const int &port, Loop *loop);
 
   void bind(const char *ipAddr, const int &port);
   void start();
   void stop();
-  void write(const char *ipAddr, const int &port, const uv_buf_t *buf);
+  void write(const char *ipAddr, const int &port, const Buffer *buf);
   void setBroadcatEnabled(const bool &enabled = true);
 
   uv_udp_t* getSocket() {return udp_socket;}

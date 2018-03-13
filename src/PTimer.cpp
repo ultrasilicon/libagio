@@ -10,20 +10,20 @@ void TimerUtils::timeoutCb(uv_timer_t *handle)
 
 
 
-Timer::Timer(uv_loop_t *loop)
+Timer::Timer(Loop *l)
 {
   timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
-  uv_timer_init(loop, timer);
+  uv_timer_init(l->uvHandle(), timer);
 
   regInstance(timer, this);
 }
 
-Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, uv_loop_t *loop)
+Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   : delay(timeout)
   , interval(repeat)
 {
   timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
-  uv_timer_init(loop, timer);
+  uv_timer_init(l->uvHandle(), timer);
 
   regInstance(timer, this);
 }

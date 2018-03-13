@@ -6,7 +6,7 @@ using namespace Parsley;
 
 
 void
-UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags)
+UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, const sockaddr *addr, unsigned flags)
 {
   /*! DOC: libuv 1.18.1-dev
    *  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,
@@ -18,17 +18,19 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
         {
           char senderAddr[17] = { 0 };
           uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
-          Log::net(Log::Normal, "UvUdpSockUtils::read()", QString("UDP Packet Received From %1").arg(senderAddr));
+          Log::net(Log::Normal, "Parsley::UdpSocketUtils::read()", QString("UDP Packet Received From %1").arg(senderAddr));
+          Buffer buffer = uv_buf_init(buf->base, nread);
 
-          uv_buf_t buffer = uv_buf_init(buf->base, nread);
-          getInstance(handle)->callReadyRead(buffer.base, senderAddr);
+//          QByteArray a = QByteArray(buffer.base, buffer.len);
+//          qDebug()<<a;
+          getInstance(handle)->callReadyRead(buffer, senderAddr);
         }
     }
   else
     {
       if(addr != NULL)
         {
-          Log::net(Log::Normal, "UvUdpSockUtils::read()", "Empty UDP Packet Received...");
+          Log::net(Log::Normal, "Parsley::UdpSocketUtils::read()", "Empty UDP Packet Received...");
         }
     }
 
@@ -49,19 +51,19 @@ UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 
 
 
-UdpSocket::UdpSocket(uv_loop_t *loop)
+UdpSocket::UdpSocket(Loop *l)
 {
-  uv_loop = loop;
+  loop = l;
   udp_socket = (uv_udp_t*) malloc(sizeof(uv_udp_t));
-  uv_udp_init(uv_loop, udp_socket);
+  uv_udp_init(l->uvHandle(), udp_socket);
   regInstance(udp_socket, this);
 }
 
-UdpSocket::UdpSocket(const char *ipAddr, const int &port, uv_loop_t *loop)
+UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *loop)
 {
-  uv_loop = loop;
+  loop = loop;
   udp_socket = (uv_udp_t*) malloc(sizeof(uv_udp_t));
-  uv_udp_init(uv_loop, udp_socket);
+  uv_udp_init(loop->uvHandle(), udp_socket);
 
   bind(ipAddr, port);
   start();
@@ -91,14 +93,14 @@ UdpSocket::stop()
 }
 
 void
-UdpSocket::write(const char *ipAddr, const int &port, const uv_buf_t *buf)
+UdpSocket::write(const char *ipAddr, const int &port, const Buffer *buf)
 {
   uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
   struct sockaddr_in addr;
   uv_ip4_addr(ipAddr, port, &addr);
   uv_udp_send(req, udp_socket, buf, 1, (const struct sockaddr *)&addr, writeCb);
 
-  Log::net(Log::Normal, "UvServer::sendTextMessage()", "message sent");
+  Log::net(Log::Normal, "Parsley::UdpSocket::sendTextMessage()", "message sent");
 }
 
 void

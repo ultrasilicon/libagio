@@ -4,7 +4,7 @@
 #include "Log.h"
 
 #include "Parsley.h"
-
+#include "PLoop.h"
 
 
 PARSLEY_NAMESPACE_BEGIN
@@ -21,14 +21,14 @@ public:
 
   typedef int SocketDescriptor;
   typedef std::function<void (const int&)> SockDestroyedCb;
-  typedef std::function<void (char*, char*)> SockReadyReadCb;
+  typedef std::function<void (Buffer, char*)> SockReadyReadCb;
   typedef std::function<void (const SocketDescriptor&)> SockWrittenCb;
 
   void bindCb(const SockDestroyedCb &cb);
   void bindCb(const SockReadyReadCb &cb);
 
   bool callDestroyed(const SocketDescriptor &sd);
-  bool callReadyRead(char* data, char* ip);
+  bool callReadyRead(const Buffer &data, char* ip);
   bool callWritten(const SocketDescriptor &sd);
 
 
@@ -41,7 +41,7 @@ public:
 
 protected:
   int port;
-  uv_loop_t* uv_loop;
+  Loop* loop;
 
   SockDestroyedCb destroyed_cb;
   SockReadyReadCb ready_read_cb;

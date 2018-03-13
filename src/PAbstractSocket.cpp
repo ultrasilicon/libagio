@@ -24,7 +24,7 @@ bool AbstractSocket::callDestroyed(const SocketDescriptor &sd)
   return false;
 }
 
-bool AbstractSocket::callReadyRead(char *data, char *ip)
+bool AbstractSocket::callReadyRead(const Buffer &data, char *ip)
 {
   if(ready_read_cb)
     {

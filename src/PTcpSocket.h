@@ -27,7 +27,7 @@ class TcpSocket
 
 
 public:
-  TcpSocket(uv_loop_t *loop);
+  TcpSocket(Loop *l);
 
   void start();
   void close();

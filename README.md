@@ -5,10 +5,23 @@
 * **This library is currently under primary development**
 * Platform: Linux, MacOS, Windows, Android and embedded unix.
 * Naming convention follows libqt.
-* libParsley is created to serve for Project Hive, the lovely chat app against censorship.
+* libParsley is created to serve for Project Hive, the lovely p2p chat app.
+### Progress
+
+libuv | libParsley | Progress | Comments
+------- | ------- | ------- | ------- 
+uv_loop_t | Parsley::Loop | 10% | Default loop basic operation
+uv_timer_t | Parsley::Timer | 90% | Good to use
+\- | Parsley::AbstractSocket | 100% |
+uv_udp_t | Parsley::UdpSocket | 50% | Good to use, multicast not yet implemented
+uv_tcp_t | Parsley::TcpSocket | 30% |
+uv_tcp_t | Parsley::TcpServer | 10% |
+
 
 ## Documents
 * Coming soon!
 
 ## Build
 * Coming soon!
+
+

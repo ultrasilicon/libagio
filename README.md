@@ -10,7 +10,7 @@
 
 libuv | libParsley | Progress | Comments
 ------- | ------- | ------- | ------- 
-uv_loop_t | Parsley::Loop | 10% | Default loop basic operation
+uv_loop_t | Parsley::Loop | 30% | Default loop basic operation
 uv_timer_t | Parsley::Timer | 90% | Good to use
 \- | Parsley::AbstractSocket | 100% |
 uv_udp_t | Parsley::UdpSocket | 50% | Good to use, multicast not yet implemented

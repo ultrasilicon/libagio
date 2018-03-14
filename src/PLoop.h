@@ -25,6 +25,7 @@ class Loop
     : public LoopUtils
 {
 public:
+  Loop();
   Loop(uv_loop_t* l);
 
   int run(const uv_run_mode &mode);

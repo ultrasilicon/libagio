@@ -20,6 +20,11 @@ int LoopUtils::run(uv_loop_t *handle, uv_run_mode mode)
 }
 
 
+Loop::Loop()
+{
+  loop = (uv_loop_t*) malloc(sizeof(uv_loop_t));
+  uv_loop_init(loop);
+}
 
 Loop::Loop(uv_loop_t *l)
   : loop(l)

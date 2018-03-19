@@ -10,15 +10,13 @@ class LoopUtils;
 class Loop;
 
 class LoopUtils
+    : InstanceMap<uv_loop_t, Loop>
 {
 public:
   static Loop *defaultLoop();
-  static int close(uv_loop_t* loop);
-  static int run(uv_loop_t*handle, uv_run_mode mode);
 
 private:
   static Loop default_loop;
-
 };
 
 class Loop
@@ -29,7 +27,8 @@ public:
   Loop(uv_loop_t* l);
 
   int run(const uv_run_mode &mode);
-  int close();
+  void close();
+  int tryClose();
   uv_loop_t* uvHandle();
 
 

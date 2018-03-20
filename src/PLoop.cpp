@@ -25,17 +25,19 @@ int Loop::run(const uv_run_mode &mode)
   return uv_run(loop, mode);
 }
 
+/*!
+ * \brief Loop::close
+ * WARNING: This is a synchronous function, which blocks to wait for uv_walk function to free all the handles in the loop.
+ */
 void Loop::close()
 {
   if(this->tryClose() == UV_EBUSY)
     {
       uv_walk_cb uvWalkCb = [](uv_handle_t* handle, void* arg) {
         uv_close_cb uvCloseCb = [](uv_handle_t* handle) {
-          qDebug()<<"closed"<<handle;
           if (handle != NULL)
             {
               free(handle);
-              qDebug()<<"Freed"<<handle;
             }
         };
         uv_close(handle, uvCloseCb);

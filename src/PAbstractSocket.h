@@ -1,7 +1,6 @@
 #ifndef ABSTRACTSOCKET_H
 #define ABSTRACTSOCKET_H
 
-#include "Log.h"
 
 #include "Parsley.h"
 #include "PLoop.h"

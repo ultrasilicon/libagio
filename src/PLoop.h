@@ -1,7 +1,6 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#include "Log.h"
 #include "Parsley.h"
 
 

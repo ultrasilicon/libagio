@@ -1,5 +1,7 @@
 #include "PLoop.h"
 
+#include <stdlib.h>
+
 using namespace Parsley;
 
 Loop LoopUtils::default_loop = Loop(uv_default_loop());
@@ -56,16 +58,16 @@ void Loop::close()
       int result = this->tryClose();
       if (result)
         {
-          qDebug() << "failed to close libuv loop: " << uv_err_name(result);
+//          qDebug() << "failed to close libuv loop: " << uv_err_name(result);
         }
       else
         {
-          qDebug() << "libuv loop is closed successfully!\n";
+//          qDebug() << "libuv loop is closed successfully!\n";
         }
     }
   else
     {
-      qDebug() << "libuv loop is closed successfully!\n";
+//      qDebug() << "libuv loop is closed successfully!\n";
     }
 }
 

@@ -1,5 +1,7 @@
 #include "PTcpServer.h"
 
+#include <stdlib.h>
+
 using namespace Parsley;
 
 uv_tcp_t* TcpServer::uv_tcp_server;
@@ -18,7 +20,7 @@ TcpServer::TcpServer(const char *ipAddr, const int &port, const int &backLog, Lo
   int r = uv_listen((uv_stream_t*) uv_tcp_server, backLog, tcpNewConnectionCb);
   if(r)
     {
-      Log::net(Log::Error, "UvServer::run()", QString("Listen error: " + QString(uv_strerror(r))));
+//      Log::net(Log::Error, "UvServer::run()", QString("Listen error: " + QString(uv_strerror(r))));
       fprintf(stderr, "Listen error %s\n", uv_strerror(r));
     }
 
@@ -34,7 +36,7 @@ void TcpServer::tcpNewConnectionCb(uv_stream_t *handle, int status)
 {
   if(status < 0)
     {
-      Log::net(Log::Critical, "TcpServer::tcpNewConnectionCb()", uv_strerror(status));
+//      Log::net(Log::Critical, "TcpServer::tcpNewConnectionCb()", uv_strerror(status));
       return;
     }
 

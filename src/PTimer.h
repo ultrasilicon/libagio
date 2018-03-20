@@ -6,7 +6,7 @@
 #include "Parsley.h"
 #include "PLoop.h"
 
-#include "Log.h"
+//#include "Log.h"
 
 
 PARSLEY_NAMESPACE_BEGIN

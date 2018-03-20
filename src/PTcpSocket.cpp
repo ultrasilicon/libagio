@@ -1,5 +1,6 @@
 #include "PTcpSocket.h"
 
+
 using namespace Parsley;
 
 TcpSocket::TcpSocket(Loop *l)
@@ -50,9 +51,9 @@ TcpSocket::read(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
     {
       if (nread != UV_EOF)
         {
-          Log::net(Log::Critical, "TcpSocket::tcpRead()", "TCP Read error: " + QString(uv_err_name(nread)));
+//          Log::net(Log::Critical, "TcpSocket::tcpRead()", "TCP Read error: " + QString(uv_err_name(nread)));
         }
-      Log::net(Log::Normal, "TcpSocket::tcpRead()", "Disconnected from discriptor: " + QString::number(socketDiscriptor));
+//      Log::net(Log::Normal, "TcpSocket::tcpRead()", "Disconnected from discriptor: " + QString::number(socketDiscriptor));
       uv_close((uv_handle_t*) handle, NULL);
     }
 

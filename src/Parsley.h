@@ -7,9 +7,10 @@
 #include <uv.h>
 #endif
 
+#include <stdlib.h>
 #include <functional>
+#include <map>
 
-#include "Log.h"
 
 #define PARSLEY_NAMESPACE_BEGIN namespace Parsley {
 #define PARSLEY_NAMESPACE_END }

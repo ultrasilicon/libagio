@@ -30,7 +30,6 @@ public:
   int tryClose();
   uv_loop_t* uvHandle();
 
-
 private:
   uv_loop_t* loop;
 };

@@ -8,7 +8,7 @@ QT       -= core gui
 
 TARGET = Parsley
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += dylib
 
 SOURCES += \
 	PAbstractSocket.cpp \
@@ -19,7 +19,8 @@ SOURCES += \
 	PTimer.cpp \
 	PUdpSocket.cpp \
 	PUtils.cpp \
-	Parsley.cpp
+	Parsley.cpp \
+    PFile.cpp
 
 HEADERS += \
 	PAbstractSocket.h \
@@ -30,7 +31,8 @@ HEADERS += \
 	PTimer.h \
 	PUdpSocket.h \
 	PUtils.h \
-	Parsley.h
+	Parsley.h \
+    PFile.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

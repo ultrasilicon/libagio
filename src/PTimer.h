@@ -14,7 +14,7 @@ class TimerUtils;
 class Timer;
 
 class TimerUtils
-    : public InstanceMap<uv_timer_t, Timer>
+    : public PObject<uv_timer_t, Timer>
 {
 public:
   static void timeoutCb(uv_timer_t *handle);

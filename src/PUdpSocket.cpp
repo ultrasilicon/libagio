@@ -54,21 +54,21 @@ UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 UdpSocket::UdpSocket(Loop *l)
 {
   loop = l;
-  udp_socket = (uv_udp_t*) malloc(sizeof(uv_udp_t));
-  uv_udp_init(l->uvHandle(), udp_socket);
-  regInstance(udp_socket, this);
+  uv_handle = (uv_udp_t*) malloc(sizeof(uv_udp_t));
+  uv_udp_init(l->uvHandle(), uv_handle);
+  regInstance(uv_handle, this);
 }
 
-UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *loop)
+UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *l)
 {
-  loop = loop;
-  udp_socket = (uv_udp_t*) malloc(sizeof(uv_udp_t));
-  uv_udp_init(loop->uvHandle(), udp_socket);
+  loop = l;
+  uv_handle = (uv_udp_t*) malloc(sizeof(uv_udp_t));
+  uv_udp_init(l->uvHandle(), uv_handle);
 
   bind(ipAddr, port);
   start();
   setBroadcatEnabled(true);
-  regInstance(udp_socket, this);
+  regInstance(uv_handle, this);
 }
 
 void
@@ -76,20 +76,20 @@ UdpSocket::bind(const char *ipAddr, const int &port)
 {
   struct sockaddr_in *udpAddr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
   uv_ip4_addr(ipAddr, port, udpAddr);
-  uv_udp_bind(udp_socket, (const struct sockaddr*) udpAddr, UV_UDP_REUSEADDR);
+  uv_udp_bind(uv_handle, (const struct sockaddr*) udpAddr, UV_UDP_REUSEADDR);
 
 }
 
 void
 UdpSocket::start()
 {
-  uv_udp_recv_start(udp_socket, allocBuffer, receiveCb);
+  uv_udp_recv_start(uv_handle, allocBuffer, receiveCb);
 }
 
 void
 UdpSocket::stop()
 {
-  uv_udp_recv_stop(udp_socket);
+  uv_udp_recv_stop(uv_handle);
 }
 
 void
@@ -98,7 +98,7 @@ UdpSocket::write(const char *ipAddr, const int &port, const Buffer *buf)
   uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
   struct sockaddr_in addr;
   uv_ip4_addr(ipAddr, port, &addr);
-  uv_udp_send(req, udp_socket, buf, 1, (const struct sockaddr *)&addr, writeCb);
+  uv_udp_send(req, uv_handle, buf, 1, (const struct sockaddr *)&addr, writeCb);
 
 //  Log::net(Log::Normal, "Parsley::UdpSocket::sendTextMessage()", "message sent");
 }
@@ -106,6 +106,6 @@ UdpSocket::write(const char *ipAddr, const int &port, const Buffer *buf)
 void
 UdpSocket::setBroadcatEnabled(const bool &enabled)
 {
-  uv_udp_set_broadcast(udp_socket, enabled ? 1 : 0);
+  uv_udp_set_broadcast(uv_handle, enabled ? 1 : 0);
 }
 

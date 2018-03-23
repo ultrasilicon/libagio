@@ -11,7 +11,7 @@ class UdpSocket;
 
 
 class UdpSocketUtils
-    : public InstanceMap<uv_udp_t, UdpSocket>
+    : public PObject<uv_udp_t, UdpSocket>
 {
 protected:
   static void receiveCb(uv_udp_t* handle, ssize_t nread, const Buffer *buf, const sockaddr *addr, unsigned flags);
@@ -28,19 +28,13 @@ public:
   SockReadyReadCb read_cb;
 
   UdpSocket(Loop *l);
-  UdpSocket(const char *ipAddr, const int &port, Loop *loop);
+  UdpSocket(const char *ipAddr, const int &port, Loop *l);
 
   void bind(const char *ipAddr, const int &port);
   void start();
   void stop();
   void write(const char *ipAddr, const int &port, const Buffer *buf);
   void setBroadcatEnabled(const bool &enabled = true);
-
-  uv_udp_t* getSocket() {return udp_socket;}
-
-
-protected:
-  uv_udp_t* udp_socket;
 
 };
 

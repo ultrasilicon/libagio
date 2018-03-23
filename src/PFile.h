@@ -46,8 +46,9 @@ class File;
 
 
 class FileUtils
-    : public InstanceMap<uv_fs_t, File>
+    : public PObject<uv_fs_t, File>
 {
+public:
   typedef std::function<void (const int&)> FileOpenCb;
 
 protected:
@@ -72,6 +73,8 @@ private:
   Loop *loop;
   uv_fs_t *file_handle;
   char *path;
+
+  FileOpenCb file_open_cb;
 };
 
 PARSLEY_NAMESPACE_END

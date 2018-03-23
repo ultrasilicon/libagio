@@ -21,33 +21,50 @@ PARSLEY_NAMESPACE_BEGIN
 using Buffer = uv_buf_t;
 
 template <typename UvHandle, typename PHandle>
-class InstanceMap
+class PObject;
+
+
+template <typename UvHandle, typename PHandle>
+class PObject
 {
 public:
-  void regInstance(UvHandle *uvHandle, PHandle *pHandle);
+  static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
+
+  UvHandle *getUvHandle();
+
+protected:
+  UvHandle *uv_handle;
 
 private:
   static std::map<UvHandle*, PHandle*> instance_map;
 
-
-
 };
 
 template <typename UvHandle, typename PHandle>
-std::map<UvHandle*, PHandle*> InstanceMap<UvHandle, PHandle>::instance_map;
+std::map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map;
 
 template<typename UvHandle, typename PHandle>
-void InstanceMap<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
+void PObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
 {
   instance_map.insert({ uvHandle, pHandle });
 }
 
 template<typename UvHandle, typename PHandle>
-PHandle *InstanceMap<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
+PHandle *PObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
 {
   return instance_map[uvHandle];
 }
+
+template<typename UvHandle, typename PHandle>
+UvHandle *PObject<UvHandle, PHandle>::getUvHandle()
+{
+
+}
+
+
+
+
 
 
 

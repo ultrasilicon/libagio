@@ -5,11 +5,14 @@
 
 
 PARSLEY_NAMESPACE_BEGIN
+
+
+
 class LoopUtils;
 class Loop;
 
 class LoopUtils
-    : InstanceMap<uv_loop_t, Loop>
+    : public PObject<uv_loop_t, Loop>
 {
 public:
   static Loop *defaultLoop();
@@ -30,10 +33,10 @@ public:
   int tryClose();
   uv_loop_t* uvHandle();
 
+
 private:
   uv_loop_t* loop;
 };
-
 
 
 

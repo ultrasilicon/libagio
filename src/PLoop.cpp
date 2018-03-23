@@ -4,6 +4,7 @@
 
 using namespace Parsley;
 
+
 Loop LoopUtils::default_loop = Loop(uv_default_loop());
 
 Loop *LoopUtils::defaultLoop()
@@ -18,8 +19,8 @@ Loop::Loop()
 }
 
 Loop::Loop(uv_loop_t *l)
-  : loop(l)
 {
+  loop = l;
 }
 
 int Loop::run(const uv_run_mode &mode)
@@ -45,10 +46,10 @@ void Loop::close()
         uv_close(handle, uvCloseCb);
       };
 
-      uv_walk(loop, uvWalkCb, NULL);
+      uv_walk(uvHandle(), uvWalkCb, NULL);
       while(1)
         {
-          if(uv_loop_alive(loop))
+          if(uv_loop_alive(uvHandle()))
             continue;
           else
             break;
@@ -73,8 +74,9 @@ void Loop::close()
 
 int Loop::tryClose()
 {
-  return uv_loop_close(loop);
+  return uv_loop_close(getUvHandle());
 }
+
 
 uv_loop_t *Loop::uvHandle()
 {

@@ -18,6 +18,10 @@
 
 PARSLEY_NAMESPACE_BEGIN
 
+enum Mode {
+  Async = 0,
+  Sync = 1
+};
 using Buffer = uv_buf_t;
 
 template <typename UvHandle, typename PHandle>

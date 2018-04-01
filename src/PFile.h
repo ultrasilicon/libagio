@@ -49,10 +49,14 @@ class FileUtils
     : public PObject<uv_fs_t, File>
 {
 public:
-  typedef std::function<void (const int&)> FileOpenCb;
+  typedef std::function<void (void)> FileOpenedCb;
+  typedef std::function<void (Buffer *buf, const ssize_t &len)> FileReadyReadCb; //! see if const Buffer *buf works better
+  typedef std::function<void (void)> FileClosedCb;
 
 protected:
-  static void openCb(uv_fs_t* r);
+  static void openedCb(uv_fs_t* r);
+  static void closedCb(uv_fs_t* r);
+  static void readCb(uv_fs_t* r);
 
 };
 
@@ -63,18 +67,30 @@ class File
 public:
   File(Loop *l);
   File(char *path, Loop *l);
+  ~File();
 
-  int open(const int &flags, const int &mode);
-  int open(char *path, const int &flags, const int &mode);
+  int open(const int &flags, const int &mode, const Mode &syncMode = Mode::Async);
+  int open(char *path, const int &flags, const int &mode, const Mode &syncMode = Mode::Async);
+  int close(const Mode &syncMode = Mode::Async);
+  int read(Buffer *buf, const Mode &syncMode = Mode::Async);
 
   Loop *getLoop();
+  Buffer *getBuffer();
+
+  bool callFileOpened();
+  bool callFileClosed();
+  bool callFileReadyRead(const ssize_t &len);
+
+
 
 private:
   Loop *loop;
-  uv_fs_t *file_handle;
-  char *path;
+  char *path; 
+  Buffer *buffer;
 
-  FileOpenCb file_open_cb;
+  FileOpenedCb file_opened_cb;
+  FileReadyReadCb file_ready_read_cb;
+  FileClosedCb file_closed_cb;
 };
 
 PARSLEY_NAMESPACE_END

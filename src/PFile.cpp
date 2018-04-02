@@ -46,17 +46,17 @@ void FileUtils::readCb(uv_fs_t *r)
 }
 
 File::File(Loop *l)
-  : loop(l)
+  : FileUtils(l)
+  , loop(l)
 {
-  uv_handle = (uv_fs_t*) malloc(sizeof(uv_fs_t));
   regInstance(uv_handle, this);
 }
 
 File::File(char *path, Loop *l)
-  : loop(l)
+  : FileUtils(l)
+  , loop(l)
   , path(path)
 {
-  uv_handle = (uv_fs_t*) malloc(sizeof(uv_fs_t));
   regInstance(uv_handle, this);
 }
 

@@ -13,7 +13,6 @@ CONFIG += dylib
 SOURCES += \
 	PAbstractSocket.cpp \
 	PAddress.cpp \
-	PLoop.cpp \
 	PTcpServer.cpp \
 	PTcpSocket.cpp \
 	PTimer.cpp \
@@ -26,7 +25,6 @@ SOURCES += \
 HEADERS += \
 	PAbstractSocket.h \
 	PAddress.h \
-	PLoop.h \
 	PTcpServer.h \
 	PTcpSocket.h \
 	PTimer.h \

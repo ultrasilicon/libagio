@@ -31,7 +31,6 @@ class PObject;
 
 
 class LoopUtils
-//    : public PObject<uv_loop_t, Loop>
 {
 public:
   static Loop *defaultLoop();
@@ -62,7 +61,10 @@ template <typename UvHandle, typename PHandle>
 class PObject
 {
 public:
+  PObject(Loop *l);
+  ~PObject();
   static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
+  static void removeInstance(UvHandle *uvHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
 
   UvHandle *getUvHandle();
@@ -81,9 +83,29 @@ template <typename UvHandle, typename PHandle>
 std::map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map;
 
 template<typename UvHandle, typename PHandle>
+PObject<UvHandle, PHandle>::PObject(Loop *l)
+  : loop(l)
+{
+  uv_handle = (UvHandle*) malloc(sizeof(UvHandle));
+}
+
+template<typename UvHandle, typename PHandle>
+PObject<UvHandle, PHandle>::~PObject()
+{
+  removeInstance(uv_handle);
+//  free(uv_handle); //! Do or Don't?
+}
+
+template<typename UvHandle, typename PHandle>
 void PObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
 {
   instance_map.insert({ uvHandle, pHandle });
+}
+
+template<typename UvHandle, typename PHandle>
+void PObject<UvHandle, PHandle>::removeInstance(UvHandle *uvHandle)
+{
+  instance_map.erase(instance_map.find(uvHandle));
 }
 
 template<typename UvHandle, typename PHandle>

@@ -2,10 +2,33 @@
 
 using namespace Parsley;
 
-Check::Check(Loop *l)
+void CheckUtils::checkCb(uv_check_t *r)
 {
-  uv_handle = (uv_check_t*) malloc(sizeof(uv_check_t));
-  uv_check_init(l->uvHandle(), uv_handle);
 
+}
+
+
+Check::Check(Loop *l)
+  : CheckUtils(l)
+{
+  uv_check_init(l->uvHandle(), uv_handle);
   regInstance(uv_handle, this);
 }
+
+Check::~Check()
+{
+
+}
+
+int Check::start()
+{
+  return uv_check_start(uv_handle
+                        , checkCb);
+}
+
+int Check::stop()
+{
+  return uv_check_stop(uv_handle);
+}
+
+

@@ -2,44 +2,9 @@
 #define PFILESYSTEM_H
 
 #include "Parsley.h"
-#include "PLoop.h"
-
+#include "Parsley.h"
 
 PARSLEY_NAMESPACE_BEGIN
-
-//class UdpSocketUtils
-//    : public InstanceMap<uv_udp_t, UdpSocket>
-//{
-//protected:
-//  static void receiveCb(uv_udp_t* handle, ssize_t nread, const Buffer *buf, const sockaddr *addr, unsigned flags);
-//  static void writeCb(uv_udp_send_t* req, int status);
-
-//};
-
-
-//class UdpSocket
-//    : public AbstractSocket
-//    , protected UdpSocketUtils
-//{
-//public:
-//  SockReadyReadCb read_cb;
-
-//  UdpSocket(Loop *l);
-//  UdpSocket(const char *ipAddr, const int &port, Loop *loop);
-
-//  void bind(const char *ipAddr, const int &port);
-//  void start();
-//  void stop();
-//  void write(const char *ipAddr, const int &port, const Buffer *buf);
-//  void setBroadcatEnabled(const bool &enabled = true);
-
-//  uv_udp_t* getSocket() {return udp_socket;}
-
-
-//protected:
-//  uv_udp_t* udp_socket;
-
-//};
 
 class FileUtils;
 class File;
@@ -49,6 +14,7 @@ class FileUtils
     : public PObject<uv_fs_t, File>
 {
 public:
+  FileUtils(Loop *l) : PObject(l){}
   typedef std::function<void (void)> FileOpenedCb;
   typedef std::function<void (Buffer *buf, const ssize_t &len)> FileReadyReadCb; //! see if const Buffer *buf works better
   typedef std::function<void (void)> FileClosedCb;

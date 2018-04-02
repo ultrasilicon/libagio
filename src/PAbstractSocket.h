@@ -3,7 +3,6 @@
 
 
 #include "Parsley.h"
-#include "PLoop.h"
 
 
 PARSLEY_NAMESPACE_BEGIN
@@ -40,7 +39,6 @@ public:
 
 protected:
   int port;
-//  Loop* loop;
 
   SockDestroyedCb destroyed_cb;
   SockReadyReadCb ready_read_cb;

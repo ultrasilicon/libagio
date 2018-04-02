@@ -12,6 +12,7 @@ class TcpSocketUtils
     : public PObject<uv_tcp_t, TcpSocket>
 {
 public:
+  TcpSocketUtils(Loop *l) : PObject(l){}
 
   //protected:
 

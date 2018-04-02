@@ -4,10 +4,11 @@
 using namespace Parsley;
 
 TcpSocket::TcpSocket(Loop *l)
+  : TcpSocketUtils(l)
 {
   loop = l;
-  tcp_socket = (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
   uv_tcp_init(loop->uvHandle(), tcp_socket);
+  regInstance(uv_handle, this);
 }
 
 uv_tcp_t*
@@ -97,4 +98,5 @@ TcpSocket::freeWriteReq(uv_write_t *handle)
   free(req->buf.base);
   free(req);
 }
+
 

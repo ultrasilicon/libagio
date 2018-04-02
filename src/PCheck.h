@@ -2,23 +2,34 @@
 #define PCHECK_H
 
 #include "Parsley.h"
-#include "PLoop.h"
 
 PARSLEY_NAMESPACE_BEGIN
 class CheckUtils;
 class Check;
 
-class TimerUtils
+class CheckUtils
     : public PObject<uv_check_t, Check>
 {
+public:
+  CheckUtils(Loop *l) : PObject(l){}
+//  typedef std::function<void (const SocketDescriptor&)> SockWrittenCb;
+
+protected:
+  static void checkCb(uv_check_t *r);
 
 };
 
 class Check
-    : TimerUtils
+    : CheckUtils
 {
 public:
   Check(Loop *l);
+  ~Check();
+  int start();
+  int stop();
+
+private:
+
 };
 
 

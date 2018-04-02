@@ -4,7 +4,6 @@
 #include <functional>
 
 #include "Parsley.h"
-#include "PLoop.h"
 
 //#include "Log.h"
 
@@ -17,6 +16,8 @@ class TimerUtils
     : public PObject<uv_timer_t, Timer>
 {
 public:
+  TimerUtils(Loop *l) : PObject(l){}
+protected:
   static void timeoutCb(uv_timer_t *handle);
 
 };

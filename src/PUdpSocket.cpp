@@ -52,23 +52,23 @@ UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 
 
 UdpSocket::UdpSocket(Loop *l)
+  : UdpSocketUtils(l)
 {
   loop = l;
-  uv_handle = (uv_udp_t*) malloc(sizeof(uv_udp_t));
   uv_udp_init(l->uvHandle(), uv_handle);
   regInstance(uv_handle, this);
 }
 
 UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *l)
+  : UdpSocketUtils(l)
 {
   loop = l;
-  uv_handle = (uv_udp_t*) malloc(sizeof(uv_udp_t));
   uv_udp_init(l->uvHandle(), uv_handle);
+  regInstance(uv_handle, this);
 
   bind(ipAddr, port);
   start();
   setBroadcatEnabled(true);
-  regInstance(uv_handle, this);
 }
 
 void

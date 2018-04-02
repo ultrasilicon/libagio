@@ -20,7 +20,8 @@ SOURCES += \
 	PUdpSocket.cpp \
 	PUtils.cpp \
 	Parsley.cpp \
-    PFile.cpp
+    PFile.cpp \
+    PCheck.cpp
 
 HEADERS += \
 	PAbstractSocket.h \
@@ -32,7 +33,8 @@ HEADERS += \
 	PUdpSocket.h \
 	PUtils.h \
 	Parsley.h \
-    PFile.h
+    PFile.h \
+    PCheck.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

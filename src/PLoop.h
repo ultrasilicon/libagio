@@ -8,35 +8,7 @@ PARSLEY_NAMESPACE_BEGIN
 
 
 
-class LoopUtils;
-class Loop;
 
-class LoopUtils
-    : public PObject<uv_loop_t, Loop>
-{
-public:
-  static Loop *defaultLoop();
-
-private:
-  static Loop default_loop;
-};
-
-class Loop
-    : public LoopUtils
-{
-public:
-  Loop();
-  Loop(uv_loop_t* l);
-
-  int run(const uv_run_mode &mode);
-  void close();
-  int tryClose();
-  uv_loop_t* uvHandle();
-
-
-private:
-  uv_loop_t* loop;
-};
 
 
 

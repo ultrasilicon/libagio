@@ -46,9 +46,8 @@ void FileUtils::readCb(uv_fs_t *r)
 }
 
 File::File(Loop *l)
+  : loop(l)
 {
-  loop = l;
-
   uv_handle = (uv_fs_t*) malloc(sizeof(uv_fs_t));
   regInstance(uv_handle, this);
 }
@@ -57,6 +56,8 @@ File::File(char *path, Loop *l)
   : loop(l)
   , path(path)
 {
+  uv_handle = (uv_fs_t*) malloc(sizeof(uv_fs_t));
+  regInstance(uv_handle, this);
 }
 
 File::~File()
@@ -106,6 +107,18 @@ int File::read(Buffer *buf, const Mode &syncMode)
                     , buffer->len
                     , -1
                     , syncMode == Mode::Async ? readCb : NULL);
+}
+
+int File::mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode)
+{
+  uv_fs_t r;
+  int ret = uv_fs_mkdir(l->uvHandle()
+              , &r
+              , dir
+              , mode
+              , /*syncMode == Mode::Async ? NULL : NULL*/NULL); //! Add Aync Callback!
+  uv_fs_req_cleanup(&r);
+  return ret;
 }
 
 Loop *File::getLoop()

@@ -73,6 +73,7 @@ public:
   int open(char *path, const int &flags, const int &mode, const Mode &syncMode = Mode::Async);
   int close(const Mode &syncMode = Mode::Async);
   int read(Buffer *buf, const Mode &syncMode = Mode::Async);
+  static int mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode = Mode::Async);
 
   Loop *getLoop();
   Buffer *getBuffer();

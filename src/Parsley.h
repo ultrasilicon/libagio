@@ -24,8 +24,38 @@ enum Mode {
 };
 using Buffer = uv_buf_t;
 
+class LoopUtils;
+class Loop;
 template <typename UvHandle, typename PHandle>
 class PObject;
+
+
+class LoopUtils
+//    : public PObject<uv_loop_t, Loop>
+{
+public:
+  static Loop *defaultLoop();
+
+private:
+  static Loop default_loop;
+};
+
+class Loop
+    : public LoopUtils
+{
+public:
+  Loop();
+  Loop(uv_loop_t* l);
+
+  int run(const uv_run_mode &mode);
+  void close();
+  int tryClose();
+  uv_loop_t* uvHandle();
+
+
+private:
+  uv_loop_t* loop;
+};
 
 
 template <typename UvHandle, typename PHandle>
@@ -36,9 +66,11 @@ public:
   static PHandle *getInstance(UvHandle *uvHandle);
 
   UvHandle *getUvHandle();
+  UvHandle *getLoop();
 
 protected:
   UvHandle *uv_handle;
+  Loop *loop;
 
 private:
   static std::map<UvHandle*, PHandle*> instance_map;
@@ -63,7 +95,13 @@ PHandle *PObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
 template<typename UvHandle, typename PHandle>
 UvHandle *PObject<UvHandle, PHandle>::getUvHandle()
 {
+  return uv_handle;
+}
 
+template<typename UvHandle, typename PHandle>
+UvHandle *PObject<UvHandle, PHandle>::getLoop()
+{
+  return loop;
 }
 
 

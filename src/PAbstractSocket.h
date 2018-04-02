@@ -40,7 +40,7 @@ public:
 
 protected:
   int port;
-  Loop* loop;
+//  Loop* loop;
 
   SockDestroyedCb destroyed_cb;
   SockReadyReadCb ready_read_cb;

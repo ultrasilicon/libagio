@@ -49,7 +49,7 @@ File::File(Loop *l)
   : FileUtils(l)
   , loop(l)
 {
-  regInstance(uv_handle, this);
+  addInstance(uv_handle, this);
 }
 
 File::File(char *path, Loop *l)
@@ -57,7 +57,7 @@ File::File(char *path, Loop *l)
   , loop(l)
   , path(path)
 {
-  regInstance(uv_handle, this);
+  addInstance(uv_handle, this);
 }
 
 File::~File()
@@ -67,7 +67,7 @@ File::~File()
 
 int File::open(const int &flags, const int &mode, const Mode &syncMode)
 {
-  return uv_fs_open(loop->uvHandle()
+  return file_descriptor = uv_fs_open(syncMode == Mode::Async ? loop->uvHandle() : NULL
                     , uv_handle
                     , path
                     , flags
@@ -107,6 +107,31 @@ int File::read(Buffer *buf, const Mode &syncMode)
                     , buffer->len
                     , -1
                     , syncMode == Mode::Async ? readCb : NULL);
+}
+
+std::string File::readAll() {
+  std::string contents;
+  uv_fs_t req;
+  char buffer_memory[4096];
+  uv_buf_t buf = uv_buf_init(buffer_memory, sizeof(buffer_memory));
+  int r;
+
+  while (true)
+    {
+      r = uv_fs_read(loop->uvHandle(),
+                     &req,
+                     file_descriptor,
+                     &buf,
+                     1,
+                     contents.length(),  // offset
+                     nullptr);
+      uv_fs_req_cleanup(&req);
+
+      if (r <= 0)
+        break;
+      contents.append(buf.base, r);
+    }
+  return contents;
 }
 
 int File::mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode)

@@ -2,7 +2,7 @@
 #define PFILESYSTEM_H
 
 #include "Parsley.h"
-#include "Parsley.h"
+#include <string>
 
 PARSLEY_NAMESPACE_BEGIN
 
@@ -39,6 +39,7 @@ public:
   int open(char *path, const int &flags, const int &mode, const Mode &syncMode = Mode::Async);
   int close(const Mode &syncMode = Mode::Async);
   int read(Buffer *buf, const Mode &syncMode = Mode::Async);
+  std::string readAll();
   static int mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode = Mode::Async);
 
   Loop *getLoop();
@@ -51,6 +52,7 @@ public:
 
 
 private:
+  int file_descriptor;
   Loop *loop;
   char *path; 
   Buffer *buffer;

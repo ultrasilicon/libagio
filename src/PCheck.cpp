@@ -4,6 +4,9 @@ using namespace Parsley;
 
 void CheckUtils::checkCb(uv_check_t *r)
 {
+  printf("vv2");
+
+  getInstance(r)->callCheck();
 
 }
 
@@ -12,7 +15,7 @@ Check::Check(Loop *l)
   : CheckUtils(l)
 {
   uv_check_init(l->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
+  addInstance(uv_handle, this);
 }
 
 Check::~Check()
@@ -29,6 +32,21 @@ int Check::start()
 int Check::stop()
 {
   return uv_check_stop(uv_handle);
+}
+
+void Check::bindCb(const CheckUtils::CheckCb &cb)
+{
+  check_cb = cb;
+}
+
+bool Check::callCheck()
+{
+  if(check_cb)
+    {
+      check_cb();
+      return true;
+    }
+  return false;
 }
 
 

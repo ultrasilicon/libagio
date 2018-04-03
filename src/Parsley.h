@@ -63,7 +63,7 @@ class PObject
 public:
   PObject(Loop *l);
   ~PObject();
-  static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
+  static void addInstance(UvHandle *uvHandle, PHandle *pHandle);
   static void removeInstance(UvHandle *uvHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
 
@@ -97,7 +97,7 @@ PObject<UvHandle, PHandle>::~PObject()
 }
 
 template<typename UvHandle, typename PHandle>
-void PObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
+void PObject<UvHandle, PHandle>::addInstance(UvHandle *uvHandle, PHandle *pHandle)
 {
   instance_map.insert({ uvHandle, pHandle });
 }

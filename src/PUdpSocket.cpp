@@ -56,7 +56,7 @@ UdpSocket::UdpSocket(Loop *l)
 {
   loop = l;
   uv_udp_init(l->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
+  addInstance(uv_handle, this);
 }
 
 UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *l)
@@ -64,7 +64,7 @@ UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *l)
 {
   loop = l;
   uv_udp_init(l->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
+  addInstance(uv_handle, this);
 
   bind(ipAddr, port);
   start();

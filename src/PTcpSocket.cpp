@@ -8,7 +8,7 @@ TcpSocket::TcpSocket(Loop *l)
 {
   loop = l;
   uv_tcp_init(loop->uvHandle(), tcp_socket);
-  regInstance(uv_handle, this);
+  addInstance(uv_handle, this);
 }
 
 uv_tcp_t*

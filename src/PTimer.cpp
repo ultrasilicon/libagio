@@ -16,7 +16,7 @@ Timer::Timer(Loop *l)
   timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
   uv_timer_init(l->uvHandle(), timer);
 
-  regInstance(timer, this);
+  addInstance(timer, this);
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
@@ -27,7 +27,7 @@ Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
   uv_timer_init(l->uvHandle(), timer);
 
-  regInstance(timer, this);
+  addInstance(timer, this);
 }
 
 void Timer::bindCb(const TimeoutCb &cb)

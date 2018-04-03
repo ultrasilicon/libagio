@@ -12,7 +12,7 @@ class CheckUtils
 {
 public:
   CheckUtils(Loop *l) : PObject(l){}
-//  typedef std::function<void (const SocketDescriptor&)> SockWrittenCb;
+  typedef std::function<void (void)> CheckCb;
 
 protected:
   static void checkCb(uv_check_t *r);
@@ -27,8 +27,13 @@ public:
   ~Check();
   int start();
   int stop();
+  void bindCb(const CheckCb &cb);
+
+  bool callCheck();
+
 
 private:
+  CheckCb check_cb;
 
 };
 

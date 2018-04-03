@@ -10,12 +10,14 @@
 
 libuv | libParsley | Progress | Comments
 ------- | ------- | ------- | ------- 
-uv_loop_t | Parsley::Loop | 30% | Default loop basic operation
+uv_loop_t | Parsley::Loop | 40% | Default loop basic operation
 uv_timer_t | Parsley::Timer | 90% | Good to use
 \- | Parsley::AbstractSocket | 100% |
 uv_udp_t | Parsley::UdpSocket | 50% | Good to use, multicast not yet implemented
 uv_tcp_t | Parsley::TcpSocket | 30% |
 uv_tcp_t | Parsley::TcpServer | 10% |
+uv_fs_t | Parsley::File | 60% | File read and open works, but I'm confused with other functions
+uv_check_t | Parsley::Check | 100% | 
 
 
 ## Documents

@@ -4,10 +4,7 @@ using namespace Parsley;
 
 void CheckUtils::checkCb(uv_check_t *r)
 {
-  printf("vv2");
-
   getInstance(r)->callCheck();
-
 }
 
 

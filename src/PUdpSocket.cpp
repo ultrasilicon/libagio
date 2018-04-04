@@ -18,11 +18,8 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, co
         {
           char senderAddr[17] = { 0 };
           uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
-//          Log::net(Log::Normal, "Parsley::UdpSocketUtils::read()", QString("UDP Packet Received From %1").arg(senderAddr));
           Buffer buffer = uv_buf_init(buf->base, nread);
 
-//          QByteArray a = QByteArray(buffer.base, buffer.len);
-//          qDebug()<<a;
           getInstance(handle)->callReadyRead(buffer, senderAddr);
         }
     }
@@ -77,13 +74,12 @@ UdpSocket::bind(const char *ipAddr, const int &port)
   struct sockaddr_in *udpAddr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
   uv_ip4_addr(ipAddr, port, udpAddr);
   uv_udp_bind(uv_handle, (const struct sockaddr*) udpAddr, UV_UDP_REUSEADDR);
-
 }
 
 void
 UdpSocket::start()
 {
-  uv_udp_recv_start(uv_handle, allocBuffer, receiveCb);
+  uv_udp_recv_start(uv_handle, allocCb, receiveCb);
 }
 
 void
@@ -99,8 +95,6 @@ UdpSocket::write(const char *ipAddr, const int &port, const Buffer *buf)
   struct sockaddr_in addr;
   uv_ip4_addr(ipAddr, port, &addr);
   uv_udp_send(req, uv_handle, buf, 1, (const struct sockaddr *)&addr, writeCb);
-
-//  Log::net(Log::Normal, "Parsley::UdpSocket::sendTextMessage()", "message sent");
 }
 
 void

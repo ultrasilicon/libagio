@@ -20,7 +20,7 @@ TcpSocket::getSocket()
 void
 TcpSocket::start()
 {
-  uv_read_start((uv_stream_t*) tcp_socket, allocBuffer, read);
+  uv_read_start((uv_stream_t*) tcp_socket, allocCb, read);
 }
 
 void

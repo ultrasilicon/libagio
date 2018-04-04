@@ -1,4 +1,5 @@
 #include "PFile.h"
+#include <QDebug>
 
 using namespace Parsley;
 
@@ -17,11 +18,14 @@ void FileUtils::openedCb(uv_fs_t *r)
 
 void FileUtils::closedCb(uv_fs_t *r)
 {
-  if (r->result == -1)
+  if (r->result != -1)
+    {
+      getInstance(r)->callFileClosed();
+    }
+  else
     {
       fprintf(stderr, "Error at closing file: %s.\n", uv_strerror((int)r->result));
     }
-  uv_fs_req_cleanup(r);
 }
 
 void FileUtils::readCb(uv_fs_t *r)
@@ -47,14 +51,12 @@ void FileUtils::readCb(uv_fs_t *r)
 
 File::File(Loop *l)
   : FileUtils(l)
-  , loop(l)
 {
   addInstance(uv_handle, this);
 }
 
 File::File(char *path, Loop *l)
   : FileUtils(l)
-  , loop(l)
   , path(path)
 {
   addInstance(uv_handle, this);
@@ -144,11 +146,6 @@ int File::mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode)
               , /*syncMode == Mode::Async ? NULL : NULL*/NULL); //! Add Aync Callback!
   uv_fs_req_cleanup(&r);
   return ret;
-}
-
-Loop *File::getLoop()
-{
-  return loop;
 }
 
 Buffer *File::getBuffer()

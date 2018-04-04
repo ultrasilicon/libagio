@@ -45,7 +45,7 @@ protected:
   SockWrittenCb written_cb;
 
 
-  static void allocBuffer(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf);
+  static void allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf);
 };
 
 

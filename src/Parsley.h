@@ -68,7 +68,7 @@ public:
   static PHandle *getInstance(UvHandle *uvHandle);
 
   UvHandle *getUvHandle();
-  UvHandle *getLoop();
+  Loop *getLoop();
 
 protected:
   UvHandle *uv_handle;
@@ -121,7 +121,7 @@ UvHandle *PObject<UvHandle, PHandle>::getUvHandle()
 }
 
 template<typename UvHandle, typename PHandle>
-UvHandle *PObject<UvHandle, PHandle>::getLoop()
+Loop *PObject<UvHandle, PHandle>::getLoop()
 {
   return loop;
 }

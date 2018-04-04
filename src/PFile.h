@@ -42,7 +42,6 @@ public:
   std::string readAll();
   static int mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode = Mode::Async);
 
-  Loop *getLoop();
   Buffer *getBuffer();
 
   bool callFileOpened();
@@ -53,8 +52,8 @@ public:
 
 private:
   int file_descriptor;
-  Loop *loop;
   char *path; 
+  char buffer_memory[4096];
   Buffer *buffer;
 
   FileOpenedCb file_opened_cb;

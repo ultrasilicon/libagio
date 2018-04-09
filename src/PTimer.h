@@ -34,11 +34,10 @@ public:
   void bindCb(const TimeoutCb &cb);
   bool callTimeout();
   bool start();
-  void start(const uint64_t &timeout, const uint64_t &repeat);
+  int start(const uint64_t &timeout, const uint64_t &repeat);
   void stop();
 
 private:
-  uv_timer_t *timer;
   uint64_t delay = 0;
   uint64_t interval = 0;
 

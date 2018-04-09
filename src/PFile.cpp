@@ -1,5 +1,4 @@
 #include "PFile.h"
-#include <QDebug>
 
 using namespace Parsley;
 
@@ -69,12 +68,12 @@ File::~File()
 
 int File::open(const int &flags, const int &mode, const Mode &syncMode)
 {
-  return file_descriptor = uv_fs_open(syncMode == Mode::Async ? loop->uvHandle() : NULL
+  return file_descriptor = uv_fs_open(syncMode == Mode::AsyncMode ? loop->uvHandle() : NULL
                     , uv_handle
                     , path
                     , flags
                     , mode
-                    , syncMode == Mode::Async ? openedCb : NULL);
+                    , syncMode == Mode::AsyncMode ? openedCb : NULL);
 }
 
 int File::open(char *path, const int &flags, const int &mode, const Mode &syncMode)
@@ -88,7 +87,7 @@ int File::close(const Mode &syncMode)
   return uv_fs_close(loop->uvHandle()
                      , uv_handle
                      , uv_handle->result
-                     , syncMode == Mode::Async ? closedCb : NULL);
+                     , syncMode == Mode::AsyncMode ? closedCb : NULL);
 }
 
 int File::read(Buffer *buf, const Mode &syncMode)
@@ -108,7 +107,7 @@ int File::read(Buffer *buf, const Mode &syncMode)
                     , buffer
                     , buffer->len
                     , -1
-                    , syncMode == Mode::Async ? readCb : NULL);
+                    , syncMode == Mode::AsyncMode ? readCb : NULL);
 }
 
 std::string File::readAll() {

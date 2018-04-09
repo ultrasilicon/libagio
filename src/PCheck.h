@@ -11,8 +11,9 @@ class CheckUtils
     : public PObject<uv_check_t, Check>
 {
 public:
+  using CheckCb = std::function<void (void)>;
+
   CheckUtils(Loop *l) : PObject(l){}
-  typedef std::function<void (void)> CheckCb;
 
 protected:
   static void checkCb(uv_check_t *r);

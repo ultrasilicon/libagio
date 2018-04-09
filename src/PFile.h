@@ -35,12 +35,12 @@ public:
   File(char *path, Loop *l);
   ~File();
 
-  int open(const int &flags, const int &mode, const Mode &syncMode = Mode::Async);
-  int open(char *path, const int &flags, const int &mode, const Mode &syncMode = Mode::Async);
-  int close(const Mode &syncMode = Mode::Async);
-  int read(Buffer *buf, const Mode &syncMode = Mode::Async);
+  int open(const int &flags, const int &mode, const Mode &syncMode = Mode::AsyncMode);
+  int open(char *path, const int &flags, const int &mode, const Mode &syncMode = Mode::AsyncMode);
+  int close(const Mode &syncMode = Mode::AsyncMode);
+  int read(Buffer *buf, const Mode &syncMode = Mode::AsyncMode);
   std::string readAll();
-  static int mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode = Mode::Async);
+  static int mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode = Mode::AsyncMode);
 
   Buffer *getBuffer();
 

@@ -26,7 +26,7 @@ TcpSocket::start()
 void
 TcpSocket::close()
 {
-  uv_close((uv_handle_t*) tcp_socket, NULL);
+  uv_close((uv_handle_t*) tcp_socket, nullptr);
 }
 
 void TcpSocket::connect(const char *addr, const int &port)
@@ -55,7 +55,7 @@ TcpSocket::read(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
 //          Log::net(Log::Critical, "TcpSocket::tcpRead()", "TCP Read error: " + QString(uv_err_name(nread)));
         }
 //      Log::net(Log::Normal, "TcpSocket::tcpRead()", "Disconnected from discriptor: " + QString::number(socketDiscriptor));
-      uv_close((uv_handle_t*) handle, NULL);
+      uv_close((uv_handle_t*) handle, nullptr);
     }
 
   free(buf->base);

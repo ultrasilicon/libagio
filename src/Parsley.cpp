@@ -36,7 +36,7 @@ void Loop::close()
     {
       uv_walk_cb uvWalkCb = [](uv_handle_t* handle, void* arg) {
         uv_close_cb uvCloseCb = [](uv_handle_t* handle) {
-          if (handle != NULL)
+          if (handle)
             {
               free(handle);
             }
@@ -44,7 +44,7 @@ void Loop::close()
         uv_close(handle, uvCloseCb);
       };
 
-      uv_walk(uvHandle(), uvWalkCb, NULL);
+      uv_walk(uvHandle(), uvWalkCb, nullptr);
       while(1)
         {
           if(uv_loop_alive(uvHandle()))

@@ -29,7 +29,6 @@ class Loop;
 template <typename UvHandle, typename PHandle>
 class PObject;
 
-
 class LoopUtils
 {
 public:

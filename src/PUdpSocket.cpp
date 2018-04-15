@@ -14,7 +14,7 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, co
    */
   if(nread != 0)
     {
-      if(addr != NULL)
+      if(addr)
         {
           char senderAddr[17] = { 0 };
           uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
@@ -25,7 +25,7 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, co
     }
   else
     {
-      if(addr != NULL)
+      if(addr)
         {
 //          Log::net(Log::Normal, "Parsley::UdpSocketUtils::read()", "Empty UDP Packet Received...");
         }

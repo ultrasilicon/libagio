@@ -15,10 +15,17 @@ class FileUtils
     : public PObject<uv_fs_t, File>
 {
 public:
+  enum CallbackType {
+    FileOpened = 1,
+    FileClosed = 2,
+    FileReadyRead = 3,
+    FileWritten = 4
+  };
   FileUtils(Loop *l) : PObject(l){}
   typedef std::function<void (void)> FileOpenedCb;
   typedef std::function<void (Buffer *buf, const ssize_t &len)> FileReadyReadCb; //! see if const Buffer *buf works better
   typedef std::function<void (void)> FileClosedCb;
+  typedef std::function<void (void)> FileWrittenCb;
 
 protected:
   static void openedCb(uv_fs_t* r);
@@ -31,18 +38,21 @@ protected:
 class File // TODO: callback binds
     : protected FileUtils
 {
-
 public:
   File(Loop *l);
   File(char *path, Loop *l);
   ~File();
 
+  template<typename T>
+  void bindCb(CallbackType &t, T &cb);
+
   int open(const int &flags, const int &mode, const Mode &syncMode = Mode::AsyncMode);
   int open(char *path, const int &flags, const int &mode, const Mode &syncMode = Mode::AsyncMode);
   int close(const Mode &syncMode = Mode::AsyncMode);
-  std::string readAll();
   int read(Buffer *buf, const Mode &syncMode = Mode::AsyncMode);
+  std::string readAll();
   int write(Buffer *buf, const Mode &syncMode = Mode::AsyncMode); // TODO: not finished
+  int writeAll(std::string &data, const Mode &syncMode);
   static int mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode = Mode::AsyncMode);
 
   Buffer *getBuffer();
@@ -61,7 +71,10 @@ private:
   FileOpenedCb file_opened_cb;
   FileReadyReadCb file_ready_read_cb;
   FileClosedCb file_closed_cb;
+  FileWrittenCb file_written_cb;
 };
+
+
 
 PARSLEY_NAMESPACE_END
 #endif // PFILESYSTEM_H

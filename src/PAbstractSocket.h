@@ -11,7 +11,7 @@ class AbstractSocket;
 class AbstractSocket
 {
 public:
-  enum Callback {
+  enum CallbackType {
     Destryed = 0,
     Read = 1,
     Written = 2
@@ -21,6 +21,9 @@ public:
   typedef std::function<void (const int&)> SockDestroyedCb;
   typedef std::function<void (Buffer, char*)> SockReadyReadCb;
   typedef std::function<void (const SocketDescriptor&)> SockWrittenCb;
+
+//  template<typename T>
+//  void bindCb(CallbackType &t, T &cb);
 
   void bindCb(const SockDestroyedCb &cb);
   void bindCb(const SockReadyReadCb &cb);

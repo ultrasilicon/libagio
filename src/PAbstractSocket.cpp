@@ -97,11 +97,8 @@ int AbstractSocket::getFd(uv_handle_t* handle)
 //}
 
 
+//template<typename T>
+//void AbstractSocket::bindCb(AbstractSocket::CallbackType &t, T &cb)
+//{
 
-
-
-
-
-
-
-
+//}

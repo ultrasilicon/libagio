@@ -80,6 +80,27 @@ File::~File()
   uv_fs_req_cleanup(uv_handle);
 }
 
+template<typename T>
+void File::bindCb(CallbackType &t, T &cb)
+{
+  switch (t) {
+    case FileOpened:
+      file_opened_cb = (FileOpenedCb) cb;
+      break;
+    case FileClosed:
+      file_closed_cb = (FileClosedCb) cb;
+      break;
+    case FileReadyRead:
+      file_ready_read_cb = (FileReadyReadCb) cb;
+      break;
+    case FileWritten:
+      file_written_cb = (FileWrittenCb) cb;
+      break;
+    default:
+      break;
+    }
+}
+
 int File::open(const int &flags, const int &mode, const Mode &syncMode)
 {
   int r = file_descriptor = uv_fs_open(syncMode == Mode::AsyncMode ? loop->uvHandle() : nullptr
@@ -165,6 +186,28 @@ int File::write(Buffer *buf, const Mode &syncMode)
                      , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
 }
 
+int File::writeAll(std::string &data, const Mode &syncMode)
+{
+  int nBuf = data.length() / 2048 + 1;
+  int len = data.length() + nBuf;
+  uv_buf_t bufs[nBuf];
+  for(int i = 0; i < nBuf; i ++)
+    {
+      std::cout<<data<<std::endl;
+      char *base = (char *)malloc(sizeof(char[2048 + 1]));
+      strcpy(base, data.substr(0, 2048).c_str());
+      bufs[i] = uv_buf_init(base, sizeof(base));
+      data.erase(0, 2048);
+    }
+  return uv_fs_write(loop->uvHandle()
+                     , uv_handle
+                     , file_descriptor
+                     , bufs
+                     , len //! Be careful with the buffer length in bufs.
+                     , -1
+                     , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
+}
+
 int File::mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode)
 {
   uv_fs_t r;
@@ -198,7 +241,6 @@ bool File::callFileClosed()
 {
   file_descriptor = 0;
   uv_fs_req_cleanup(uv_handle);
-
   if (file_closed_cb)
     {
       file_closed_cb();

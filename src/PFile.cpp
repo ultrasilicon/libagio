@@ -49,6 +49,7 @@ void FileUtils::writtenCb(uv_fs_t *r)
   if (r->result == -1) {
       fprintf(stderr, "Error writting data to file: s.\n");
     }
+  std::cout<<"written";
 
   uv_fs_t closeReq;
   uv_fs_close(r->loop
@@ -68,7 +69,7 @@ File::File(Loop *l)
   addInstance(uv_handle, this);
 }
 
-File::File(char *path, Loop *l)
+File::File(const std::string &path, Loop *l)
   : FileUtils(l)
   , path(path)
 {
@@ -105,14 +106,14 @@ int File::open(const int &flags, const int &mode, const Mode &syncMode)
 {
   int r = file_descriptor = uv_fs_open(syncMode == Mode::AsyncMode ? loop->uvHandle() : nullptr
                     , uv_handle
-                    , path
+                    , path.data()
                     , flags
                     , mode
                     , syncMode == Mode::AsyncMode ? openedCb : nullptr);
 
   if(syncMode == Mode::SyncMode)
     {
-      callFileOpened();
+//      callFileOpened();
     }
 
   return r;
@@ -133,13 +134,15 @@ int File::close(const Mode &syncMode)
 
   if(syncMode == Mode::SyncMode)
     {
-      callFileClosed();
+//      callFileClosed();
     }
 
   return r;
 }
 
-std::string File::readAll() {
+std::string File::readAll()
+{
+  //! This is the way Node.js source code does.
   std::string contents;
   buffer = (Buffer *)malloc(sizeof(Buffer));
   *buffer = uv_buf_init(buffer_memory, sizeof(buffer_memory));
@@ -186,34 +189,25 @@ int File::write(Buffer *buf, const Mode &syncMode)
                      , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
 }
 
-int File::writeAll(std::string &data, const Mode &syncMode)
+int File::write(std::string &data, const Mode &syncMode)
 {
-  int nBuf = data.length() / 2048 + 1;
-  int len = data.length() + nBuf;
-  uv_buf_t bufs[nBuf];
-  for(int i = 0; i < nBuf; i ++)
-    {
-      std::cout<<data<<std::endl;
-      char *base = (char *)malloc(sizeof(char[2048 + 1]));
-      strcpy(base, data.substr(0, 2048).c_str());
-      bufs[i] = uv_buf_init(base, sizeof(base));
-      data.erase(0, 2048);
-    }
+  //! This is the way Node.js source code does.
+  uv_buf_t buf = uv_buf_init(const_cast<char*>(data.c_str()), data.length());
   return uv_fs_write(loop->uvHandle()
                      , uv_handle
                      , file_descriptor
-                     , bufs
-                     , len //! Be careful with the buffer length in bufs.
+                     , &buf
+                     , 1
                      , -1
                      , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
 }
 
-int File::mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode)
+int File::mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &syncMode)
 {
   uv_fs_t r;
   int ret = uv_fs_mkdir(l->uvHandle()
               , &r
-              , dir
+              , dir.data()
               , mode
               , /*syncMode == Mode::Async ? nullptr : nullptr*/nullptr); //! Add Aync Callback!
   uv_fs_req_cleanup(&r);

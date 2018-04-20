@@ -40,20 +40,20 @@ class File // TODO: callback binds
 {
 public:
   File(Loop *l);
-  File(char *path, Loop *l);
+  File(const std::string &path, Loop *l);
   ~File();
 
   template<typename T>
   void bindCb(CallbackType &t, T &cb);
 
-  int open(const int &flags, const int &mode, const Mode &syncMode = Mode::AsyncMode);
-  int open(char *path, const int &flags, const int &mode, const Mode &syncMode = Mode::AsyncMode);
-  int close(const Mode &syncMode = Mode::AsyncMode);
-  int read(Buffer *buf, const Mode &syncMode = Mode::AsyncMode);
+  int open(const int &flags, const int &mode, const Mode &syncMode);
+  int open(char *path, const int &flags, const int &mode, const Mode &syncMode);
+  int close(const Mode &syncMode);
+  int read(Buffer *buf, const Mode &syncMode);
   std::string readAll();
-  int write(Buffer *buf, const Mode &syncMode = Mode::AsyncMode); // TODO: not finished
-  int writeAll(std::string &data, const Mode &syncMode);
-  static int mkdir(char *dir, const int &mode, Loop *l, const Mode &syncMode = Mode::AsyncMode);
+  int write(Buffer *buf, const Mode &syncMode); // TODO: not finished
+  int write(std::string &data, const Mode &syncMode);
+  static int mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &syncMode);
 
   Buffer *getBuffer();
 
@@ -64,7 +64,7 @@ public:
 
 private:
   int file_descriptor = 0;
-  char *path; 
+  std::string path;
   char buffer_memory[4096];
   Buffer *buffer;
 

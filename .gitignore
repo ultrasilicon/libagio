@@ -1,8 +1,12 @@
+#Build File
+build*/
+.qmake.stash
 
-*.user
 
-*.user
+#System File
+.DS_Store 
+Icon
 
+#User File
 *.user
-
-*.user
+*.pro.user.*

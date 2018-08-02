@@ -1,7 +1,11 @@
 # Personal files
 build/
+build*/
+.qmake.stash
 *.usr
 *.user
+*.pro.user.*
+
 
 # OS generated files
 .DS_Store

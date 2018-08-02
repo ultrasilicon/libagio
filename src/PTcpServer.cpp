@@ -4,20 +4,19 @@
 
 using namespace Parsley;
 
-uv_tcp_t* TcpServer::uv_tcp_server;
+uv_tcp_t* TcpServer::uv_tcp_socket;
 Loop* TcpServer::loop;
 
 
 TcpServer::TcpServer(const char *ipAddr, const int &port, const int &backLog, Loop *l)
 {
-  loop = l;
-  struct sockaddr_in *socketAddr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
+  struct sockaddr_in *socketAddr = (sockaddr_in*) malloc(sizeof(sockaddr_in));
   uv_ip4_addr(ipAddr, port, socketAddr);
 
-  uv_tcp_server = (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
-  uv_tcp_init(loop->uvHandle(), uv_tcp_server);
-  uv_tcp_bind(uv_tcp_server, (const struct sockaddr*) socketAddr, 0);
-  int r = uv_listen((uv_stream_t*) uv_tcp_server, backLog, tcpNewConnectionCb);
+  uv_tcp_socket = (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
+  uv_tcp_init(loop->uvHandle(), uv_tcp_socket);
+  uv_tcp_bind(uv_tcp_socket, (const struct sockaddr*) socketAddr, 0);
+  int r = uv_listen((uv_stream_t*) uv_tcp_socket, backLog, tcpNewConnectionCb);
   if(r)
     {
 //      Log::net(Log::Error, "UvServer::run()", QString("Listen error: " + QString(uv_strerror(r))));

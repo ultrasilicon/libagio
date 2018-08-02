@@ -26,7 +26,7 @@ class Timer
     : public TimerUtils
 {
 public:
-  typedef std::function<void (Timer*)> TimeoutCb;
+  using TimeoutCb = std::function<void (Timer*)>;
 
   Timer(Loop *l);
   Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
@@ -45,14 +45,6 @@ private:
 
 
 };
-
-//  uv_timer_t *heart_beat_timer2 = (uv_timer_t*)malloc(sizeof(uv_timer_t));
-//  uv_timer_init(loop, heart_beat_timer2);
-//  uv_timer_start(heart_beat_timer2, [](uv_timer_t *handle){
-//    qDebug()<<counter << "p/s";
-//    counter = 0;
-//  }, 10, 1000);
-
 
 
 PARSLEY_NAMESPACE_END

@@ -5,6 +5,22 @@
 
 using namespace Parsley;
 
+//template<typename T>
+//void AbstractSocket::bindCb(CallbackType &t, T &cb)
+//{
+//  switch (t) {
+//    case Destryed:
+//      destroyed_cb = (SockDestroyedCb) cb;
+//      break;
+//    case ReadyRead:
+//      ready_read_cb = (SockReadyReadCb) cb;
+//      break;
+//    case Written:
+//      written_cb = (SockWrittenCb) cb;
+//      break;
+//    }
+//}
+
 void AbstractSocket::bindCb(const SockDestroyedCb &cb)
 {
   destroyed_cb = cb;
@@ -102,3 +118,5 @@ int AbstractSocket::getFd(uv_handle_t* handle)
 //{
 
 //}
+
+

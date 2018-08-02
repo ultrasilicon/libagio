@@ -51,7 +51,6 @@ UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
 UdpSocket::UdpSocket(Loop *l)
   : UdpSocketUtils(l)
 {
-  loop = l;
   uv_udp_init(l->uvHandle(), uv_handle);
   addInstance(uv_handle, this);
 }
@@ -59,7 +58,6 @@ UdpSocket::UdpSocket(Loop *l)
 UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *l)
   : UdpSocketUtils(l)
 {
-  loop = l;
   uv_udp_init(l->uvHandle(), uv_handle);
   addInstance(uv_handle, this);
 

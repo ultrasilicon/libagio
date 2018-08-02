@@ -82,7 +82,7 @@ File::~File()
 }
 
 template<typename T>
-void File::bindCb(CallbackType &t, T &cb)
+void File::bindCb(CallbackType t, T &cb)
 {
   switch (t) {
     case FileOpened:

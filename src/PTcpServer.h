@@ -9,7 +9,14 @@
 
 
 PARSLEY_NAMESPACE_BEGIN
+class TcpServerUtils;
 class TcpServer;
+
+class TcpServerUtils
+    : public PObject<uv_tcp_t, TcpServer>
+{
+
+};
 
 class TcpServer
 {
@@ -17,7 +24,7 @@ public:
   TcpServer(const char* ipAddr, const int &port, const int &backLog, Loop *l);
 
 private:
-  static uv_tcp_t* uv_tcp_server;
+  static uv_tcp_t* uv_tcp_socket;
   static Loop* loop;
 
   static bool accept(uv_stream_t *handle, TcpSocket *client);

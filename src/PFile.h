@@ -21,11 +21,13 @@ public:
     FileReadyRead = 3,
     FileWritten = 4
   };
+
+  using FileOpenedCb = std::function<void (void)>;
+  using FileReadyReadCb = std::function<void (Buffer *buf, const ssize_t &len)>; //! see if const Buffer *buf works better
+  using FileClosedCb = std::function<void (void)>;
+  using FileWrittenCb = std::function<void (void)>;
+
   FileUtils(Loop *l) : PObject(l){}
-  typedef std::function<void (void)> FileOpenedCb;
-  typedef std::function<void (Buffer *buf, const ssize_t &len)> FileReadyReadCb; //! see if const Buffer *buf works better
-  typedef std::function<void (void)> FileClosedCb;
-  typedef std::function<void (void)> FileWrittenCb;
 
 protected:
   static void openedCb(uv_fs_t* r);
@@ -44,7 +46,7 @@ public:
   ~File();
 
   template<typename T>
-  void bindCb(CallbackType &t, T &cb);
+  void bindCb(CallbackType t, T &cb);
 
   int open(const int &flags, const int &mode, const Mode &syncMode);
   int open(char *path, const int &flags, const int &mode, const Mode &syncMode);

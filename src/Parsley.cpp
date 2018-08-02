@@ -27,8 +27,8 @@ int Loop::run(const uv_run_mode &mode)
 }
 
 /*!
- * \brief Loop::close
- * WARNING: This is a synchronous function, which blocks to wait for uv_walk function to free all the handles in the loop.
+ * @brief Loop::close
+ * @note WARNING: This is a synchronous function, which blocks to wait for uv_walk function to free all the handles in the loop.
  */
 void Loop::close()
 {

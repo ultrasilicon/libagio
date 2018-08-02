@@ -16,15 +16,14 @@ public:
     Read = 1,
     Written = 2
   };
+  using SocketDescriptor = int;
 
-  typedef int SocketDescriptor;
-  typedef std::function<void (const int&)> SockDestroyedCb;
-  typedef std::function<void (Buffer, char*)> SockReadyReadCb;
-  typedef std::function<void (const SocketDescriptor&)> SockWrittenCb;
+  using SockDestroyedCb = std::function<void (const int&)>;
+  using SockReadyReadCb = std::function<void (Buffer, char*)>;
+  using SockWrittenCb = std::function<void (const SocketDescriptor&)>;
 
 //  template<typename T>
 //  void bindCb(CallbackType &t, T &cb);
-
   void bindCb(const SockDestroyedCb &cb);
   void bindCb(const SockReadyReadCb &cb);
 

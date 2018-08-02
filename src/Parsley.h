@@ -29,6 +29,27 @@ class Loop;
 template <typename UvHandle, typename PHandle>
 class PObject;
 
+template<class T, typename Ret, typename... Args>
+struct FunctionPointer {
+  typedef Ret(T::*F)(Args...);
+  FunctionPointer(T* t, F f) {
+    obj = t;
+    fp = f;
+  }
+  T* obj;
+  F fp;
+  int call(Args... args) {
+      return (obj->*fp)(args...);
+  }
+};
+
+template<class T, typename Ret, typename... Args>
+static FunctionPointer<T, Ret, Args...> bind(T *t, Ret(T::*f)(Args...))
+{
+  FunctionPointer<T, Ret, Args...> fp(t, f);
+  return fp;
+}
+
 class LoopUtils
 {
 public:
@@ -50,7 +71,6 @@ public:
   int tryClose();
   uv_loop_t* uvHandle();
 
-
 private:
   uv_loop_t* loop;
 };
@@ -66,6 +86,8 @@ public:
   static void removeInstance(UvHandle *uvHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
 
+  template <typename T>
+  bool tryCall(T funct);
   UvHandle *getUvHandle();
   Loop *getLoop();
 
@@ -111,6 +133,17 @@ template<typename UvHandle, typename PHandle>
 PHandle *PObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
 {
   return instance_map[uvHandle];
+}
+
+template<typename UvHandle, typename PHandle>
+template <typename T>
+bool PObject<UvHandle, PHandle>::tryCall(T funct)
+{
+  if (!funct) {
+      return false;
+    }
+  funct();
+  return true;
 }
 
 template<typename UvHandle, typename PHandle>

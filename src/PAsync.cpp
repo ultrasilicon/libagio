@@ -25,12 +25,8 @@ void Async::bindCb(const AsyncUtils::AsyncCb &cb)
   uv_async_init(loop->uvHandle(), uv_handle, executeCb);
 }
 
-bool Async::callAsyncCb()
+void Async::callAsyncCb()
 {
   if(async_cb)
-    {
-      async_cb();
-      return true;
-    }
-  return false;
+    async_cb();
 }

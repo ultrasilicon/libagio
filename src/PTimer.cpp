@@ -14,7 +14,6 @@ Timer::Timer(Loop *l)
   : TimerUtils(l)
 {
   uv_timer_init(l->uvHandle(), uv_handle);
-
   addInstance(uv_handle, this);
 }
 
@@ -24,23 +23,14 @@ Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   , interval(repeat)
 {
   uv_timer_init(l->uvHandle(), uv_handle);
-
   addInstance(uv_handle, this);
 }
 
-void Timer::bindCb(const TimeoutCb &cb)
-{
-  timeout_cb = cb;
-}
 
-bool Timer::callTimeout()
+void Timer::callTimeout()
 {
   if(timeout_cb)
-    {
-      timeout_cb(this);
-      return true;
-    }
-  return false;
+    timeout_cb(this);
 }
 
 bool Timer::start()

@@ -13,7 +13,7 @@ class AbstractSocket
 public:
   enum CallbackType {
     Destryed = 0,
-    Read = 1,
+    ReadyRead = 1,
     Written = 2
   };
   using SocketDescriptor = int;
@@ -22,8 +22,8 @@ public:
   using SockReadyReadCb = std::function<void (Buffer, char*)>;
   using SockWrittenCb = std::function<void (const SocketDescriptor&)>;
 
-//  template<typename T>
-//  void bindCb(CallbackType &t, T &cb);
+  template<typename T>
+  void bindCb(const CallbackType &t, const T &cb);
   void bindCb(const SockDestroyedCb &cb);
   void bindCb(const SockReadyReadCb &cb);
 
@@ -50,6 +50,21 @@ protected:
   static void allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf);
 };
 
+template<typename T>
+void AbstractSocket::bindCb(const CallbackType &t, const T &cb)
+{
+  switch (t) {
+    case Destryed:
+      destroyed_cb = (SockDestroyedCb)cb;
+      break;
+    case ReadyRead:
+      ready_read_cb = (SockReadyReadCb)cb;
+      break;
+    case Written:
+      written_cb = (SockWrittenCb)cb;
+      break;
+    }
+}
 
 
 

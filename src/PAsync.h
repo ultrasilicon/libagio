@@ -27,7 +27,7 @@ public:
   int send();
   void bindCb(const AsyncCb &cb);
 
-  bool callAsyncCb();
+  void callAsyncCb();
 
 private:
   AsyncCb async_cb;

@@ -15,29 +15,36 @@
 #define PARSLEY_NAMESPACE_BEGIN namespace Parsley {
 #define PARSLEY_NAMESPACE_END }
 
-
 PARSLEY_NAMESPACE_BEGIN
 
 enum Mode {
   AsyncMode = 0,
   SyncMode = 1
 };
+
 using Buffer = uv_buf_t;
 
 class LoopUtils;
 class Loop;
+
 template <typename UvHandle, typename PHandle>
 class PObject;
+template<class T, typename Ret, typename... Args>
+struct FunctionPointer;
+
+
+
 
 template<class T, typename Ret, typename... Args>
 struct FunctionPointer {
   typedef Ret(T::*F)(Args...);
+  T* obj;
+  F fp;
+
   FunctionPointer(T* t, F f) {
     obj = t;
     fp = f;
   }
-  T* obj;
-  F fp;
   int call(Args... args) {
       return (obj->*fp)(args...);
   }
@@ -86,10 +93,11 @@ public:
   static void removeInstance(UvHandle *uvHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
 
-  template <typename T>
-  bool tryCall(T funct);
   UvHandle *getUvHandle();
   Loop *getLoop();
+
+//  template <typename T>
+//  bool tryCall(PHandle *pObj, const T &funct);
 
 protected:
   UvHandle *uv_handle;
@@ -136,17 +144,6 @@ PHandle *PObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
 }
 
 template<typename UvHandle, typename PHandle>
-template <typename T>
-bool PObject<UvHandle, PHandle>::tryCall(T funct)
-{
-  if (!funct) {
-      return false;
-    }
-  funct();
-  return true;
-}
-
-template<typename UvHandle, typename PHandle>
 UvHandle *PObject<UvHandle, PHandle>::getUvHandle()
 {
   return uv_handle;
@@ -158,6 +155,16 @@ Loop *PObject<UvHandle, PHandle>::getLoop()
   return loop;
 }
 
+//template<typename UvHandle, typename PHandle>
+//template <typename T>
+//bool PObject<UvHandle, PHandle>::tryCall(PHandle *pObj, const T &funct)
+//{
+//  if (pObj->funct) {
+//      return false;
+//    }
+//  pObj->funct();
+//  return true;
+//}
 
 
 

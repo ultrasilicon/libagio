@@ -81,27 +81,6 @@ File::~File()
   uv_fs_req_cleanup(uv_handle);
 }
 
-template<typename T>
-void File::bindCb(CallbackType t, T &cb)
-{
-  switch (t) {
-    case FileOpened:
-      file_opened_cb = (FileOpenedCb) cb;
-      break;
-    case FileClosed:
-      file_closed_cb = (FileClosedCb) cb;
-      break;
-    case FileReadyRead:
-      file_ready_read_cb = (FileReadyReadCb) cb;
-      break;
-    case FileWritten:
-      file_written_cb = (FileWrittenCb) cb;
-      break;
-    default:
-      break;
-    }
-}
-
 int File::open(const int &flags, const int &mode, const Mode &syncMode)
 {
   int r = file_descriptor = uv_fs_open(syncMode == Mode::AsyncMode ? loop->uvHandle() : nullptr

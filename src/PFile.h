@@ -55,7 +55,9 @@ public:
   std::string readAll();
   int write(Buffer *buf, const Mode &syncMode); // TODO: not finished
   int write(std::string &data, const Mode &syncMode);
+  int truncate(const int &size, const Mode &syncMode);
   static int mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &syncMode);
+  static int remove(const std::string &file, Loop *l);
 
   Buffer *getBuffer();
 

@@ -181,6 +181,15 @@ int File::write(std::string &data, const Mode &syncMode)
                      , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
 }
 
+int File::truncate(const int &size, const Mode &syncMode)
+{
+  return uv_fs_ftruncate(loop->uvHandle()
+                     , uv_handle
+                     , uv_handle->result
+                     , size
+                     , nullptr); //! Add Aync Callback!
+}
+
 int File::mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &syncMode)
 {
   uv_fs_t r;
@@ -189,6 +198,17 @@ int File::mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &sy
               , dir.data()
               , mode
               , /*syncMode == Mode::Async ? nullptr : nullptr*/nullptr); //! Add Aync Callback!
+  uv_fs_req_cleanup(&r);
+  return ret;
+}
+
+int File::remove(const std::string &file, Loop *l)
+{
+  uv_fs_t r;
+  int ret = uv_fs_unlink(l->uvHandle()
+              , &r
+              , file.c_str()
+              , nullptr); //! Add Aync Callback!
   uv_fs_req_cleanup(&r);
   return ret;
 }

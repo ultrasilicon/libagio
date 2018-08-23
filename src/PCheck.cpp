@@ -12,7 +12,7 @@ Check::Check(Loop *l)
   : CheckUtils(l)
 {
   uv_check_init(l->uvHandle(), uv_handle);
-  addInstance(uv_handle, this);
+  regInstance(uv_handle, this);
 }
 
 Check::~Check()

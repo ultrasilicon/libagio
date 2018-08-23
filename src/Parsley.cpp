@@ -11,14 +11,14 @@ Loop *LoopUtils::defaultLoop()
 }
 
 Loop::Loop()
+  : loop((uv_loop_t*) malloc(sizeof(uv_loop_t)))
 {
-  loop = (uv_loop_t*) malloc(sizeof(uv_loop_t));
   uv_loop_init(loop);
 }
 
 Loop::Loop(uv_loop_t *l)
+  : loop(l)
 {
-  loop = l;
 }
 
 int Loop::run(const uv_run_mode &mode)

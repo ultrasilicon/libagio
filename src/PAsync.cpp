@@ -11,7 +11,7 @@ void AsyncUtils::executeCb(uv_async_t *r)
 Async::Async(Loop *l)
   : AsyncUtils(l)
 {
-  addInstance(uv_handle, this);
+  regInstance(uv_handle, this);
 }
 
 int Async::send()

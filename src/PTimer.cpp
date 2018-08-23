@@ -4,7 +4,8 @@ using namespace Parsley;
 
 void TimerUtils::timeoutCb(uv_timer_t *handle)
 {
-  getInstance(handle)->callTimeout();
+  Timer *t = getInstance(handle);
+  t->onTimedOut.call(t);
 }
 
 
@@ -14,7 +15,7 @@ Timer::Timer(Loop *l)
   : TimerUtils(l)
 {
   uv_timer_init(l->uvHandle(), uv_handle);
-  addInstance(uv_handle, this);
+  regInstance(uv_handle, this);
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
@@ -23,21 +24,17 @@ Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   , interval(repeat)
 {
   uv_timer_init(l->uvHandle(), uv_handle);
-  addInstance(uv_handle, this);
-}
-
-
-void Timer::callTimeout()
-{
-  if(timeout_cb)
-    timeout_cb(this);
+  regInstance(uv_handle, this);
 }
 
 bool Timer::start()
 {
   if(delay && interval)
     {
-      uv_timer_start(uv_handle, timeoutCb, delay, interval);
+      uv_timer_start(uv_handle
+                     , timeoutCb
+                     , delay
+                     , interval);
       return true;
     }
   return false;
@@ -47,7 +44,10 @@ int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
 {
   delay = timeout;
   interval = repeat;
-  return uv_timer_start(uv_handle, timeoutCb, timeout, repeat);
+  return uv_timer_start(uv_handle
+                        , timeoutCb
+                        , timeout
+                        , repeat);
 }
 
 void Timer::stop()

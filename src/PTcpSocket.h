@@ -40,7 +40,6 @@ public:
 
   uv_tcp_t* getSocket();
 
-  SockReadyReadCb read_cb;
 
 
 protected:

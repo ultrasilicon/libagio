@@ -11,20 +11,17 @@ TcpSocket::TcpSocket(Loop *l)
   addInstance(uv_handle, this);
 }
 
-uv_tcp_t*
-TcpSocket::getSocket()
+uv_tcp_t* TcpSocket::getSocket()
 {
   return tcp_socket;
 }
 
-void
-TcpSocket::start()
+void TcpSocket::start()
 {
   uv_read_start((uv_stream_t*) tcp_socket, allocCb, read);
 }
 
-void
-TcpSocket::close()
+void TcpSocket::close()
 {
   uv_close((uv_handle_t*) tcp_socket, nullptr);
 }

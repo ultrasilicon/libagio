@@ -45,9 +45,6 @@ public:
   File(const std::string &path, Loop *l);
   ~File();
 
-//  template<class T, typename Ret, typename... Args>
-//  void bindCb(CallbackType t, T *obj, Ret(T::*f)(Args...));
-
   int open(const int &flags, const int &mode, const Mode &syncMode);
   int open(char *path, const int &flags, const int &mode, const Mode &syncMode);
   int close(const Mode &syncMode);

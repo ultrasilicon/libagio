@@ -12,23 +12,13 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, co
    *  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,
    *  - and with nread == 0 and addr != NULL when an empty UDP packet is received.
    */
-  if(nread != 0)
+  if(nread != 0 && addr)
     {
-      if(addr)
-        {
-          char senderAddr[17] = { 0 };
-          uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
-          Buffer buffer = uv_buf_init(buf->base, nread);
+      char senderAddr[17] = { 0 };
+      uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
+      Buffer buffer = uv_buf_init(buf->base, nread);
 
-          getInstance(handle)->callReadyRead(buffer, senderAddr);
-        }
-    }
-  else
-    {
-      if(addr)
-        {
-//          Log::net(Log::Normal, "Parsley::UdpSocketUtils::read()", "Empty UDP Packet Received...");
-        }
+      getInstance(handle)->onReadyRead.call(buffer, senderAddr);
     }
 
   free(buf->base);
@@ -36,13 +26,12 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, co
 }
 
 void
-UdpSocketUtils::writeCb(uv_udp_send_t *req, int status)
+UdpSocketUtils::writtenCb(uv_udp_send_t *req, int status)
 {
   int socketDescriptor = AbstractSocket::getFd((uv_handle_t*) req->handle);
-  getInstance(req->handle)->callWritten(socketDescriptor);
+  getInstance(req->handle)->onWritten.call(socketDescriptor);
 
   free(req);
-
 }
 
 
@@ -52,14 +41,14 @@ UdpSocket::UdpSocket(Loop *l)
   : UdpSocketUtils(l)
 {
   uv_udp_init(l->uvHandle(), uv_handle);
-  addInstance(uv_handle, this);
+  regInstance(uv_handle, this);
 }
 
 UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *l)
   : UdpSocketUtils(l)
 {
   uv_udp_init(l->uvHandle(), uv_handle);
-  addInstance(uv_handle, this);
+  regInstance(uv_handle, this);
 
   bind(ipAddr, port);
   start();
@@ -92,7 +81,7 @@ UdpSocket::write(const char *ipAddr, const int &port, const Buffer *buf)
   uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
   struct sockaddr_in addr;
   uv_ip4_addr(ipAddr, port, &addr);
-  uv_udp_send(req, uv_handle, buf, 1, (const struct sockaddr *)&addr, writeCb);
+  uv_udp_send(req, uv_handle, buf, 1, (const struct sockaddr *)&addr, writtenCb);
 }
 
 void

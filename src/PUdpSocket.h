@@ -16,7 +16,7 @@ public:
   UdpSocketUtils(Loop *l) : PObject(l){}
 protected:
   static void receiveCb(uv_udp_t* handle, ssize_t nread, const Buffer *buf, const sockaddr *addr, unsigned flags);
-  static void writeCb(uv_udp_send_t* req, int status);
+  static void writtenCb(uv_udp_send_t* req, int status);
 
 };
 
@@ -26,8 +26,6 @@ class UdpSocket
     , protected UdpSocketUtils
 {
 public:
-  SockReadyReadCb read_cb;
-
   UdpSocket(Loop *l);
   UdpSocket(const char *ipAddr, const int &port, Loop *l);
 

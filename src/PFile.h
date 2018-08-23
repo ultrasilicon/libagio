@@ -75,26 +75,6 @@ private:
   FileWrittenCb file_written_cb;
 };
 
-//template<class T, typename Ret, typename... Args>
-//void File::bindCb(CallbackType t, T *obj, Ret(T::*f)(Args...))
-//{
-//  switch (t) {
-//    case FileOpened:
-//      file_opened_cb = std::bind(,);
-//      break;
-//    case FileClosed:
-//      file_closed_cb = (FileClosedCb) t;
-//      break;
-//    case FileReadyRead:
-//      file_ready_read_cb = (FileReadyReadCb) t;
-//      break;
-//    case FileWritten:
-//      file_written_cb = (FileWrittenCb) t;
-//      break;
-//    default:
-//      break;
-//    }
-//}
 
 
 

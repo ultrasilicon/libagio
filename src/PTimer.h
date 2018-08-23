@@ -32,50 +32,22 @@ protected:
 class Timer
     : public TimerUtils
 {
-  friend class TimerUtils;
 public:
-  enum CallbackType {
-    Started = 1,
-    Stopped = 2,
-    Timeout = 3
-  };
-  using StartedCb = std::function<void (Timer*)>;
-  using StoppedCb = std::function<void (Timer*)>;
-  using TimeoutCb = std::function<void (Timer*)>;
-
-  Timer(Loop *l);
   Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
+  Timer(Loop *l);
 
-  template<typename T>
-  void bindCb(const CallbackType &t, const T &cb);
   void callTimeout();
+  Callback<void, Timer*> onTimedOut;
 
-  bool start();
   int start(const uint64_t &timeout, const uint64_t &repeat);
+  bool start();
   void stop();
+
 
 private:
   uint64_t delay = 0;
   uint64_t interval = 0;
-
-  TimeoutCb timeout_cb;
 };
-
-template<typename T>
-void Timer::bindCb(const CallbackType &t, const T &cb)
-{
-  switch (t) {
-    case Started:
-      timeout_cb = (StartedCb)cb;
-      break;
-    case Stopped:
-      timeout_cb = (StoppedCb)cb;
-      break;
-    case Timeout:
-      timeout_cb = (TimeoutCb)cb;
-      break;
-    }
-}
 
 
 PARSLEY_NAMESPACE_END

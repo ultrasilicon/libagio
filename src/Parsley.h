@@ -30,32 +30,80 @@ class Loop;
 template <typename UvHandle, typename PHandle>
 class PObject;
 template<class T, typename Ret, typename... Args>
-struct FunctionPointer;
-
-
+struct Function;
+template<class T, typename Ret, typename... Args>
+struct Functor;
 
 
 template<class T, typename Ret, typename... Args>
-struct FunctionPointer {
-  typedef Ret(T::*F)(Args...);
-  T* obj;
-  F fp;
+struct Function {
+  using F = Ret(T::*)(Args...);
+  T* o;
+  F f;
 
-  FunctionPointer(T* t, F f) {
-    obj = t;
-    fp = f;
-  }
-  int call(Args... args) {
-      return (obj->*fp)(args...);
+  Function(T* obj, F func)
+    : o(obj)
+    , f(func)
+  {}
+
+  Ret call(Args... args)
+  {
+    return (o->*f)(args...);
   }
 };
 
 template<class T, typename Ret, typename... Args>
-static FunctionPointer<T, Ret, Args...> bind(T *t, Ret(T::*f)(Args...))
+static Function<T, Ret, Args...> function_wrap(T *t, Ret(T::*f)(Args...))
 {
-  FunctionPointer<T, Ret, Args...> fp(t, f);
-  return fp;
+    Function<T, Ret, Args...> fp(t, f);
+    return fp;
 }
+
+
+template<class T, typename Ret, typename... Args>
+struct Functor {
+    using F = Ret (T::*)(Args...);
+    T *o;
+    F f;
+
+    Functor(T *obj, F func)
+        : o(obj)
+        , f(func)
+    {}
+
+    Ret operator()(Args... args)
+    {
+        return (o->*f)(args...);
+    }
+};
+
+template<class T, typename Ret, typename... Args>
+Functor<T, Ret, Args...> functor_wrap(T *obj , Ret (T::*func)(Args...))
+{
+    return Functor<T, Ret, Args...>(obj , func);
+}
+
+
+template<typename Ret, typename... Args>
+struct Callback {
+  using Func = std::function<Ret(Args...)>;
+  Func f;
+
+  template<class T>
+  void connect(T *obj , Ret (T::*func)(Args...))
+  {
+    f = Functor<T, Ret, Args...>(obj, func);
+  }
+
+  Ret call(Args... args) noexcept
+  {
+    if(f)
+      {
+          return f(args ...);
+      }
+    return Ret();
+  }
+};
 
 class LoopUtils
 {
@@ -89,15 +137,12 @@ class PObject
 public:
   PObject(Loop *l);
   ~PObject();
-  static void addInstance(UvHandle *uvHandle, PHandle *pHandle);
+  static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
   static void removeInstance(UvHandle *uvHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
 
   UvHandle *getUvHandle();
   Loop *getLoop();
-
-//  template <typename T>
-//  bool tryCall(PHandle *pObj, const T &funct);
 
 protected:
   UvHandle *uv_handle;
@@ -114,8 +159,8 @@ std::map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map;
 template<typename UvHandle, typename PHandle>
 PObject<UvHandle, PHandle>::PObject(Loop *l)
   : loop(l)
+  , uv_handle((UvHandle*) malloc(sizeof(UvHandle)))
 {
-  uv_handle = (UvHandle*) malloc(sizeof(UvHandle));
 }
 
 template<typename UvHandle, typename PHandle>
@@ -126,7 +171,7 @@ PObject<UvHandle, PHandle>::~PObject()
 }
 
 template<typename UvHandle, typename PHandle>
-void PObject<UvHandle, PHandle>::addInstance(UvHandle *uvHandle, PHandle *pHandle)
+void PObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
 {
   instance_map.insert({ uvHandle, pHandle });
 }

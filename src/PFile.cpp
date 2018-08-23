@@ -66,14 +66,14 @@ void FileUtils::writtenCb(uv_fs_t *r)
 File::File(Loop *l)
   : FileUtils(l)
 {
-  addInstance(uv_handle, this);
+  regInstance(uv_handle, this);
 }
 
 File::File(const std::string &path, Loop *l)
   : FileUtils(l)
   , path(path)
 {
-  addInstance(uv_handle, this);
+  regInstance(uv_handle, this);
 }
 
 File::~File()

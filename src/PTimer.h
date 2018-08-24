@@ -36,7 +36,6 @@ public:
   Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
   Timer(Loop *l);
 
-  void callTimeout();
   Callback<void, Timer*> onTimedOut;
 
   int start(const uint64_t &timeout, const uint64_t &repeat);

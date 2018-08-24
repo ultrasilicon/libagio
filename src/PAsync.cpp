@@ -4,29 +4,18 @@ using namespace Parsley;
 
 void AsyncUtils::executeCb(uv_async_t *r)
 {
-  getInstance(r)->callAsyncCb();
+  getInstance(r)->onCalled.call();
 }
 
 
 Async::Async(Loop *l)
   : AsyncUtils(l)
 {
+  uv_async_init(loop->uvHandle(), uv_handle, executeCb);
   regInstance(uv_handle, this);
 }
 
 int Async::send()
 {
   return uv_async_send(uv_handle);
-}
-
-void Async::bindCb(const AsyncUtils::AsyncCb &cb)
-{
-  async_cb = cb;
-  uv_async_init(loop->uvHandle(), uv_handle, executeCb);
-}
-
-void Async::callAsyncCb()
-{
-  if(async_cb)
-    async_cb();
 }

@@ -15,18 +15,6 @@ class FileUtils
     : public PObject<uv_fs_t, File>
 {
 public:
-  enum CallbackType {
-    FileOpened = 1,
-    FileClosed = 2,
-    FileReadyRead = 3,
-    FileWritten = 4
-  };
-
-  using FileOpenedCb = std::function<void (void)>;
-  using FileReadyReadCb = std::function<void (Buffer *buf, const ssize_t &len)>; //! see if const Buffer *buf works better
-  using FileClosedCb = std::function<void (void)>;
-  using FileWrittenCb = std::function<void (void)>;
-
   FileUtils(Loop *l) : PObject(l){}
 
 protected:
@@ -37,13 +25,19 @@ protected:
 
 };
 
-class File // TODO: callback binds
+class File
     : protected FileUtils
 {
+  friend FileUtils;
 public:
   File(Loop *l);
   File(const std::string &path, Loop *l);
   ~File();
+
+  Callback<void, Buffer*, const ssize_t&> onReadyRead;
+  Callback<void> onOpened;
+  Callback<void> onClosed;
+  Callback<void> onWritten;
 
   int open(const int &flags, const int &mode, const Mode &syncMode);
   int open(char *path, const int &flags, const int &mode, const Mode &syncMode);
@@ -58,21 +52,13 @@ public:
 
   Buffer *getBuffer();
 
-  bool callFileOpened();
-  bool callFileClosed();
-  bool callFileReadyRead(const ssize_t &len); // TODO: not finished
-  bool callFileEnd(const ssize_t &len); // TODO: not finished
-
 private:
-  int file_descriptor = 0;
+  void setFileDescriptor(const ssize_t& fd);
+
+  ssize_t file_descriptor = 0;
   std::string path;
   char buffer_memory[4096];
   Buffer *buffer;
-
-  FileOpenedCb file_opened_cb;
-  FileReadyReadCb file_ready_read_cb;
-  FileClosedCb file_closed_cb;
-  FileWrittenCb file_written_cb;
 };
 
 

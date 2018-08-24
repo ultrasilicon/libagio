@@ -11,8 +11,6 @@ class CheckUtils
     : public PObject<uv_check_t, Check>
 {
 public:
-  using CheckCb = std::function<void (void)>;
-
   CheckUtils(Loop *l) : PObject(l){}
 
 protected:
@@ -26,16 +24,11 @@ class Check
 public:
   Check(Loop *l);
   ~Check();
+
+  Callback<void> onCalled;
+
   int start();
   int stop();
-  void bindCb(const CheckCb &cb);
-
-  bool callCheck();
-
-
-private:
-  CheckCb check_cb;
-
 };
 
 

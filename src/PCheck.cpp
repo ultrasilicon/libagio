@@ -4,7 +4,7 @@ using namespace Parsley;
 
 void CheckUtils::checkCb(uv_check_t *r)
 {
-  getInstance(r)->callCheck();
+  getInstance(r)->onCalled.call();
 }
 
 
@@ -17,7 +17,6 @@ Check::Check(Loop *l)
 
 Check::~Check()
 {
-
 }
 
 int Check::start()
@@ -30,20 +29,3 @@ int Check::stop()
 {
   return uv_check_stop(uv_handle);
 }
-
-void Check::bindCb(const CheckUtils::CheckCb &cb)
-{
-  check_cb = cb;
-}
-
-bool Check::callCheck()
-{
-  if(check_cb)
-    {
-      check_cb();
-      return true;
-    }
-  return false;
-}
-
-

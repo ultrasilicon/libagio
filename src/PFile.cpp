@@ -7,7 +7,10 @@ void FileUtils::openedCb(uv_fs_t *r)
   File *f = getInstance(r);
   if (r->result >= 0)
     {
-      f->callFileOpened();
+      f->setFileDescriptor(r->result);
+      uv_fs_req_cleanup(r);
+
+      f->onOpened.call();
     }
   else
     {
@@ -17,9 +20,12 @@ void FileUtils::openedCb(uv_fs_t *r)
 
 void FileUtils::closedCb(uv_fs_t *r)
 {
+  File *f = getInstance(r);
   if (r->result != -1)
     {
-      getInstance(r)->callFileClosed();
+      f->setFileDescriptor(0);
+      uv_fs_req_cleanup(r);
+      f->onClosed.call();
     }
   else
     {
@@ -29,6 +35,8 @@ void FileUtils::closedCb(uv_fs_t *r)
 
 void FileUtils::readCb(uv_fs_t *r)
 {
+  File *f = getInstance(r);
+
   if (r->result < 0)
     {
       fprintf(stderr, "Read error!");
@@ -39,7 +47,7 @@ void FileUtils::readCb(uv_fs_t *r)
     }
   else
     {
-      getInstance(r)->callFileReadyRead(r->result);
+      getInstance(r)->onReadyRead.call(f->getBuffer(), r->result);
     }
   uv_fs_req_cleanup(r);
 }
@@ -218,43 +226,7 @@ Buffer *File::getBuffer()
   return buffer;
 }
 
-bool File::callFileOpened()
+void File::setFileDescriptor(const ssize_t &fd)
 {
-  file_descriptor = uv_handle->result;
-  uv_fs_req_cleanup(uv_handle);
-  if (file_opened_cb)
-    {
-      file_opened_cb();
-      return true;
-    }
-  return false;
+  file_descriptor = fd;
 }
-
-bool File::callFileClosed()
-{
-  file_descriptor = 0;
-  uv_fs_req_cleanup(uv_handle);
-  if (file_closed_cb)
-    {
-      file_closed_cb();
-      return true;
-    }
-  return false;
-}
-
-bool File::callFileReadyRead(const ssize_t &len)
-{
-  if (file_ready_read_cb)
-    {
-      file_ready_read_cb(buffer, len);
-      return true;
-    }
-  return false;
-}
-
-bool File::callFileEnd(const ssize_t &len)
-{
-
-}
-
-

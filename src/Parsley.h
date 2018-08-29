@@ -90,7 +90,7 @@ struct Callback {
   Func f;
 
   template<class T>
-  void connect(T *obj , Ret (T::*func)(Args...))
+  void bind(T *obj , Ret (T::*func)(Args...))
   {
     f = Functor<T, Ret, Args...>(obj, func);
   }
@@ -145,13 +145,20 @@ public:
   Loop *getLoop();
 
 protected:
-  UvHandle *uv_handle;
   Loop *loop;
+  UvHandle *uv_handle;
 
 private:
   static std::map<UvHandle*, PHandle*> instance_map;
 
 };
+
+//template<typename UvHandle, typename PHandle>
+template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
+void bind(Callback<Ret1, Args1...> *cb, T *obj , Ret2 (T::*func)(Args2...))
+{
+  cb->bind(obj, func);
+}
 
 template <typename UvHandle, typename PHandle>
 std::map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map;

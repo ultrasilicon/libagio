@@ -90,7 +90,7 @@ struct Callback {
   Func f;
 
   template<class T>
-  void bind(T *obj , Ret (T::*func)(Args...))
+  void connect(T *obj , Ret (T::*func)(Args...))
   {
     f = Functor<T, Ret, Args...>(obj, func);
   }
@@ -155,9 +155,9 @@ private:
 
 //template<typename UvHandle, typename PHandle>
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
-void bind(Callback<Ret1, Args1...> *cb, T *obj , Ret2 (T::*func)(Args2...))
+void connect(Callback<Ret1, Args1...> *cb, T *obj , Ret2 (T::*func)(Args2...))
 {
-  cb->bind(obj, func);
+  cb->connect(obj, func);
 }
 
 template <typename UvHandle, typename PHandle>

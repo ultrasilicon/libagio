@@ -4,50 +4,56 @@
 
 using namespace Parsley;
 
-uv_tcp_t* TcpServer::uv_tcp_socket;
-Loop* TcpServer::loop;
 
-
-TcpServer::TcpServer(const char *ipAddr, const int &port, const int &backLog, Loop *l)
-{
-  struct sockaddr_in *socketAddr = (sockaddr_in*) malloc(sizeof(sockaddr_in));
-  uv_ip4_addr(ipAddr, port, socketAddr);
-
-  uv_tcp_socket = (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
-  uv_tcp_init(loop->uvHandle(), uv_tcp_socket);
-  uv_tcp_bind(uv_tcp_socket, (const struct sockaddr*) socketAddr, 0);
-  int r = uv_listen((uv_stream_t*) uv_tcp_socket, backLog, tcpNewConnectionCb);
-  if(r)
-    {
-//      Log::net(Log::Error, "UvServer::run()", QString("Listen error: " + QString(uv_strerror(r))));
-      fprintf(stderr, "Listen error %s\n", uv_strerror(r));
-    }
-
-
-}
-
-bool TcpServer::accept(uv_stream_t *handle, TcpSocket *client)
-{
-  return uv_accept(handle, (uv_stream_t*)client->getSocket()) == 0;
-}
-
-void TcpServer::tcpNewConnectionCb(uv_stream_t *handle, int status)
+void TcpServerUtils::tcpNewConnectionCb(uv_stream_t *handle, int status)
 {
   if(status < 0)
     {
-//      Log::net(Log::Critical, "TcpServer::tcpNewConnectionCb()", uv_strerror(status));
+      fprintf(stderr, "Listen error %s\n", uv_strerror(status));
       return;
     }
+  getInstance((uv_tcp_t*)handle)->accept();
+}
 
+
+
+TcpServer::TcpServer(Loop *l)
+  : TcpServerUtils (l)
+{
+
+}
+
+TcpServer::TcpServer(const char *ip, const int &port, const int &backLog, Loop *l)
+  : TcpServerUtils (l)
+{
+  uv_tcp_init(loop->uvHandle(), uv_handle);
+
+  int r = uv_listen((uv_stream_t*) uv_handle, backLog, tcpNewConnectionCb);
+  if(r)
+    {
+      fprintf(stderr, "Listen error %s\n", uv_strerror(r));
+    }
+
+}
+
+int TcpServer::bind(const char *ip, const int &port)
+{
+  struct sockaddr_in *addr = (sockaddr_in*) malloc(sizeof(sockaddr_in));
+  uv_ip4_addr(ip, port, addr);
+  return uv_tcp_bind(uv_handle, (const struct sockaddr*) addr, 0);
+}
+
+bool TcpServer::accept()
+{
   TcpSocket *client = new TcpSocket(loop);
-  if(accept(handle, client))
-    {
-      client->start();
-    }
-  else
-    {
-      client->close();
-    }
+  connect(&client->onReadyRead, this, &TcpServer::onReadyRead); //< Make id and record.
+  client_set.insert(client);
+  return uv_accept((uv_stream_t*)uv_handle, (uv_stream_t*)client->getUvHandle()) == 0;
+}
+
+void TcpServer::onReadyRead(Buffer buf, char* ip)
+{
+
 }
 
 

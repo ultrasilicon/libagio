@@ -7,23 +7,24 @@ TcpSocket::TcpSocket(Loop *l)
   : TcpSocketUtils(l)
 {
   loop = l;
-  uv_tcp_init(loop->uvHandle(), tcp_socket);
+  uv_tcp_init(loop->uvHandle(), uv_handle);
   regInstance(uv_handle, this);
 }
 
-uv_tcp_t* TcpSocket::getSocket()
+TcpSocket::~TcpSocket()
 {
-  return tcp_socket;
+  //! This might cause delay on quit, be careful!
+  close();
 }
 
 void TcpSocket::start()
 {
-  uv_read_start((uv_stream_t*) tcp_socket, allocCb, read);
+  uv_read_start((uv_stream_t*) uv_handle, allocCb, read);
 }
 
 void TcpSocket::close()
 {
-  uv_close((uv_handle_t*) tcp_socket, nullptr);
+  uv_close((uv_handle_t*) uv_handle, nullptr);
 }
 
 void TcpSocket::connect(const char *addr, const int &port)
@@ -64,7 +65,7 @@ TcpSocket::write(const uv_buf_t *data)
   write_req_t *req = (write_req_t*) malloc(sizeof(write_req_t));
   req->buf = uv_buf_init(data->base, data->len);
   uv_write((uv_write_t*) req
-           , (uv_stream_t*)tcp_socket
+           , (uv_stream_t*)uv_handle
            , &req->buf
            , 1
            , writeCb);
@@ -72,7 +73,7 @@ TcpSocket::write(const uv_buf_t *data)
 
 void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
 {
-  uv_tcp_keepalive(tcp_socket
+  uv_tcp_keepalive(uv_handle
                    , enabled ? 1 : 0
                    , delay);
 }

@@ -153,7 +153,6 @@ private:
 
 };
 
-//template<typename UvHandle, typename PHandle>
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
 void connect(Callback<Ret1, Args1...> *cb, T *obj , Ret2 (T::*func)(Args2...))
 {
@@ -174,7 +173,8 @@ template<typename UvHandle, typename PHandle>
 PObject<UvHandle, PHandle>::~PObject()
 {
   removeInstance(uv_handle);
-//  free(uv_handle); //! Do or Don't?
+  if(uv_handle)
+    free(uv_handle);
 }
 
 template<typename UvHandle, typename PHandle>
@@ -206,23 +206,6 @@ Loop *PObject<UvHandle, PHandle>::getLoop()
 {
   return loop;
 }
-
-//template<typename UvHandle, typename PHandle>
-//template <typename T>
-//bool PObject<UvHandle, PHandle>::tryCall(PHandle *pObj, const T &funct)
-//{
-//  if (pObj->funct) {
-//      return false;
-//    }
-//  pObj->funct();
-//  return true;
-//}
-
-
-
-
-
-
 
 
 PARSLEY_NAMESPACE_END

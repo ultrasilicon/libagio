@@ -6,6 +6,8 @@
 
 #include "PTcpSocket.h"
 
+#include <unordered_set>
+
 
 
 PARSLEY_NAMESPACE_BEGIN
@@ -15,21 +17,28 @@ class TcpServer;
 class TcpServerUtils
     : public PObject<uv_tcp_t, TcpServer>
 {
+public:
+  explicit TcpServerUtils(Loop *l) : PObject(l) {}
 
+protected:
+  static void tcpNewConnectionCb(uv_stream_t *handle, int status);
 };
 
 class TcpServer
+    : protected TcpServerUtils
 {
+  friend TcpServerUtils;
 public:
-  TcpServer(const char* ipAddr, const int &port, const int &backLog, Loop *l);
+  TcpServer(Loop *l);
+  TcpServer(const char* ip, const int &port, const int &backLog, Loop *l);
+
+  int bind(const char *ip, const int &port);
 
 private:
-  static uv_tcp_t* uv_tcp_socket;
-  static Loop* loop;
+  std::unordered_set<TcpSocket*> client_set;
 
-  static bool accept(uv_stream_t *handle, TcpSocket *client);
-  static void tcpNewConnectionCb(uv_stream_t *handle, int status);
-  static void allocBuffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf);
+  bool accept();
+  void onReadyRead(Buffer buf, char* ip);
 };
 
 PARSLEY_NAMESPACE_END

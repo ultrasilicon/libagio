@@ -27,12 +27,12 @@ class UdpSocket
 {
 public:
   UdpSocket(Loop *l);
-  UdpSocket(const char *ipAddr, const int &port, Loop *l);
+  UdpSocket(const char *ip, const int &port, Loop *l);
 
-  void bind(const char *ipAddr, const int &port);
+  void bind(const char *ip, const int &port);
   void start();
   void stop();
-  void write(const char *ipAddr, const int &port, const Buffer *buf);
+  void write(const char *ip, const int &port, const Buffer *buf);
   void setBroadcatEnabled(const bool &enabled = true);
 
 };

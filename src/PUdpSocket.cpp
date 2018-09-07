@@ -44,23 +44,23 @@ UdpSocket::UdpSocket(Loop *l)
   regInstance(uv_handle, this);
 }
 
-UdpSocket::UdpSocket(const char *ipAddr, const int &port, Loop *l)
+UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
   : UdpSocketUtils(l)
 {
   uv_udp_init(l->uvHandle(), uv_handle);
   regInstance(uv_handle, this);
 
-  bind(ipAddr, port);
+  bind(ip, port);
   start();
   setBroadcatEnabled(true);
 }
 
 void
-UdpSocket::bind(const char *ipAddr, const int &port)
+UdpSocket::bind(const char *ip, const int &port)
 {
-  struct sockaddr_in *udpAddr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
-  uv_ip4_addr(ipAddr, port, udpAddr);
-  uv_udp_bind(uv_handle, (const struct sockaddr*) udpAddr, UV_UDP_REUSEADDR);
+  struct sockaddr_in *addr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
+  uv_ip4_addr(ip, port, addr);
+  uv_udp_bind(uv_handle, (const struct sockaddr*) addr, UV_UDP_REUSEADDR);
 }
 
 void
@@ -76,11 +76,11 @@ UdpSocket::stop()
 }
 
 void
-UdpSocket::write(const char *ipAddr, const int &port, const Buffer *buf)
+UdpSocket::write(const char *ip, const int &port, const Buffer *buf)
 {
   uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
   struct sockaddr_in addr;
-  uv_ip4_addr(ipAddr, port, &addr);
+  uv_ip4_addr(ip, port, &addr);
   uv_udp_send(req, uv_handle, buf, 1, (const struct sockaddr *)&addr, writtenCb);
 }
 

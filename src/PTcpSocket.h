@@ -14,13 +14,11 @@ class TcpSocketUtils
 public:
   TcpSocketUtils(Loop *l) : PObject(l){}
 
-  //protected:
-
 };
 
 class TcpSocket
-    : protected AbstractSocket
-    , protected TcpSocketUtils
+    : public AbstractSocket
+    , public TcpSocketUtils
 {
   typedef struct {
     uv_write_t req;
@@ -30,6 +28,7 @@ class TcpSocket
 
 public:
   TcpSocket(Loop *l);
+  ~TcpSocket();
 
   void start();
   void close();
@@ -38,13 +37,8 @@ public:
 
   void setKeepAlive(const bool &enabled, const int &delay);
 
-  uv_tcp_t* getSocket();
-
-
 
 protected:
-  uv_tcp_t* tcp_socket;
-
   static void read(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
   static void writeCb(uv_write_t *handle, int status);
   static void freeWriteReq(uv_write_t *handle);

@@ -18,7 +18,7 @@ TcpSocket::~TcpSocket()
 
 void TcpSocket::start()
 {
-  uv_read_start((uv_stream_t*) uv_handle, allocCb, read);
+  uv_read_start((uv_stream_t*) uv_handle, allocCb, receiveCb);
 }
 
 void TcpSocket::close()
@@ -34,10 +34,10 @@ void TcpSocket::connect(const char *addr, const int &port)
 }
 
 void
-TcpSocket::read(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
+TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
 {
   SocketDescriptor socketDiscriptor = getFd((uv_handle_t*) handle);
-
+ 
   if(nread > 0)
     {
       uv_buf_t buffer = uv_buf_init(buf->base, nread);

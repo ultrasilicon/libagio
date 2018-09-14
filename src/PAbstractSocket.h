@@ -23,9 +23,9 @@ public:
   virtual void stop();
   virtual void write(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
   static int getFd(uv_handle_t *handle);
+  static void allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf);
 
 protected:
-  static void allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf);
 };
 
 

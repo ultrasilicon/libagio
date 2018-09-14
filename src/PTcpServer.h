@@ -7,7 +7,7 @@
 #include "PTcpSocket.h"
 
 #include <unordered_set>
-
+#include <map>
 
 
 PARSLEY_NAMESPACE_BEGIN
@@ -33,6 +33,8 @@ public:
   TcpServer(const char* ip, const int &port, const int &backLog, Loop *l);
 
   int bind(const char *ip, const int &port);
+  int listen();
+  int stop();
 
 private:
   std::unordered_set<TcpSocket*> client_set;

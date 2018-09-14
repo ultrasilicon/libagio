@@ -121,7 +121,7 @@ public:
   Loop();
   Loop(uv_loop_t* l);
 
-  int run(const uv_run_mode &mode);
+  int run(const uv_run_mode &mode = UV_RUN_DEFAULT);
   void close();
   int tryClose();
   uv_loop_t* uvHandle();

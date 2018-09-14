@@ -20,7 +20,7 @@ void TcpServerUtils::tcpNewConnectionCb(uv_stream_t *handle, int status)
 TcpServer::TcpServer(Loop *l)
   : TcpServerUtils (l)
 {
-
+  uv_tcp_init(loop->uvHandle(), uv_handle);
 }
 
 TcpServer::TcpServer(const char *ip, const int &port, const int &backLog, Loop *l)
@@ -33,7 +33,6 @@ TcpServer::TcpServer(const char *ip, const int &port, const int &backLog, Loop *
     {
       fprintf(stderr, "Listen error %s\n", uv_strerror(r));
     }
-
 }
 
 int TcpServer::bind(const char *ip, const int &port)
@@ -43,8 +42,27 @@ int TcpServer::bind(const char *ip, const int &port)
   return uv_tcp_bind(uv_handle, (const struct sockaddr*) addr, 0);
 }
 
+int TcpServer::listen()
+{
+  return uv_listen((uv_stream_t*) uv_handle
+                   , 128
+                   , &tcpNewConnectionCb);
+}
+
+int TcpServer::stop()
+{
+  return 0;
+}
+
 bool TcpServer::accept()
 {
+  uv_connect_t *v = new uv_connect_t();
+  delete v;
+
+  std::map<int, int> *m = new std::map<int,int>();
+//  m->insert();
+//  delete m;
+
   TcpSocket *client = new TcpSocket(loop);
   connect(&client->onReadyRead, this, &TcpServer::onReadyRead); //< Make id and record.
   client_set.insert(client);
@@ -53,7 +71,7 @@ bool TcpServer::accept()
 
 void TcpServer::onReadyRead(Buffer buf, char* ip)
 {
-
+  fprintf(stderr, "%s", buf.base);
 }
 
 

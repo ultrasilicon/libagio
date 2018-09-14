@@ -6,9 +6,7 @@ using namespace Parsley;
 TcpSocket::TcpSocket(Loop *l)
   : TcpSocketUtils(l)
 {
-  loop = l;
   uv_tcp_init(loop->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
 }
 
 TcpSocket::~TcpSocket()
@@ -30,7 +28,7 @@ void TcpSocket::close()
 void TcpSocket::connect(const char *addr, const int &port)
 {
 //  struct sockaddr_in dest = uv_ip4_addr(addr, port);
-//  uv_connect_t *connect = (uv_connect_t*) malloc(sizeof(uv_connect_t));
+  uv_connect_t *connect = (uv_connect_t*) malloc(sizeof(uv_connect_t));
 //  uv_tcp_connect(connect, tcp_socket, dest, on_connect);
 }
 

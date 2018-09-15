@@ -3,6 +3,48 @@
 
 using namespace Parsley;
 
+
+void TcpSocketUtils::writeCb(uv_write_t *handle, int status)
+{
+  if(status)
+    {
+      fprintf(stderr, "Write error %s\n", uv_strerror(status));
+    }
+  freeWriteReq(handle);
+}
+
+void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
+{
+  if(nread > 0)
+    {
+      uv_buf_t buffer = uv_buf_init(buf->base, nread);
+      getInstance((uv_tcp_t*)handle)->onReadyRead.call(buffer, "");
+      return;
+    }
+  if(nread < 0)
+    {
+      if (nread != UV_EOF)
+        {
+          fprintf(stderr, "%s", uv_err_name((int)nread));
+        }
+//      Log::net(Log::Normal, "TcpSocket::tcpRead()", "Disconnected from discriptor: " + QString::number(socketDiscriptor));
+      uv_close((uv_handle_t*) handle, nullptr);
+    }
+
+  free(buf->base);
+}
+
+
+void TcpSocketUtils::freeWriteReq(uv_write_t *handle)
+{
+  write_req_t *req = (write_req_t*) handle;
+  free(req->buf.base);
+  free(req);
+}
+
+
+
+
 TcpSocket::TcpSocket(Loop *l)
   : TcpSocketUtils(l)
 {
@@ -18,7 +60,7 @@ TcpSocket::~TcpSocket()
 
 void TcpSocket::start()
 {
-  uv_read_start((uv_stream_t*) uv_handle, allocCb, read);
+  uv_read_start((uv_stream_t*) uv_handle, allocCb, receiveCb);
 }
 
 void TcpSocket::close()
@@ -30,33 +72,9 @@ void TcpSocket::connect(const char *addr, const int &port)
 {
 //  struct sockaddr_in dest = uv_ip4_addr(addr, port);
   uv_connect_t *connect = (uv_connect_t*) malloc(sizeof(uv_connect_t));
-//  uv_tcp_connect(connect, tcp_socket, dest, on_connect);
+//  uv_tcp_connect(connect, uv_handle, dest, onConnected);
 }
 
-void
-TcpSocket::read(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
-{
-  SocketDescriptor socketDiscriptor = getFd((uv_handle_t*) handle);
-
-  if(nread > 0)
-    {
-      uv_buf_t buffer = uv_buf_init(buf->base, nread);
-//      decodeTcp(QString::fromUtf8(buffer.base, buffer.len), hiveClient);
-
-      return;
-    }
-  if(nread < 0)
-    {
-      if (nread != UV_EOF)
-        {
-//          Log::net(Log::Critical, "TcpSocket::tcpRead()", "TCP Read error: " + QString(uv_err_name(nread)));
-        }
-//      Log::net(Log::Normal, "TcpSocket::tcpRead()", "Disconnected from discriptor: " + QString::number(socketDiscriptor));
-      uv_close((uv_handle_t*) handle, nullptr);
-    }
-
-  free(buf->base);
-}
 
 void
 TcpSocket::write(const uv_buf_t *data)
@@ -77,23 +95,5 @@ void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
                    , delay);
 }
 
-void
-TcpSocket::writeCb(uv_write_t *handle, int status)
-{
-  if(status)
-    {
-      fprintf(stderr, "Write error %s\n", uv_strerror(status));
-    }
-
-  freeWriteReq(handle);
-}
-
-void
-TcpSocket::freeWriteReq(uv_write_t *handle)
-{
-  write_req_t *req = (write_req_t*) handle;
-  free(req->buf.base);
-  free(req);
-}
 
 

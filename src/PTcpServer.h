@@ -21,7 +21,8 @@ public:
   explicit TcpServerUtils(Loop *l) : PObject(l) {}
 
 protected:
-  static void tcpNewConnectionCb(uv_stream_t *handle, int status);
+  static void newConnectionCb(uv_stream_t *handle, int status);
+  static void readyReadCb(Buffer buf, char *ip);
 };
 
 class TcpServer
@@ -30,17 +31,26 @@ class TcpServer
   friend TcpServerUtils;
 public:
   TcpServer(Loop *l);
-  TcpServer(const char* ip, const int &port, const int &backLog, Loop *l);
+  TcpServer(char *ip, const int &port, Loop *l);
+  TcpServer(char *ip, const int &port, const int &backLog, Loop *l);
 
-  int bind(const char *ip, const int &port);
+  int bind();
+  int bind(char *ip, const int &port);
   int listen();
+  int listen(const int &backLog);
   int stop();
+
+  Callback<void, Buffer, char*> onReadyRead;
 
 private:
   std::unordered_set<TcpSocket*> client_set;
 
-  bool accept();
-  void onReadyRead(Buffer buf, char* ip);
+  void onPacketReady(Buffer buf, char* ip);
+
+  char *ip_;
+  int port_;
+  int back_log_;
+  void accept();
 };
 
 PARSLEY_NAMESPACE_END

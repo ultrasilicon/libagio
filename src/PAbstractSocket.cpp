@@ -34,10 +34,10 @@ void AbstractSocket::allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t
 int AbstractSocket::getFd(uv_handle_t* handle)
 {
   int fd;
-#ifdef Q_OS_WIN
-  uv_fileno(handle, (uv_os_fd_t*)(&fd));
-#else
+#ifndef Q_OS_WIN
   uv_fileno(handle, &fd);
+#else
+  uv_fileno(handle, (uv_os_fd_t*)(&fd));
 #endif
   return fd;
 }

@@ -14,9 +14,9 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, co
    */
   if(nread != 0 && addr)
     {
+      Buffer buffer = uv_buf_init(buf->base, nread);
       char senderAddr[17] = { 0 };
       uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
-      Buffer buffer = uv_buf_init(buf->base, nread);
 
       getInstance(handle)->onReadyRead.call(buffer, senderAddr);
     }

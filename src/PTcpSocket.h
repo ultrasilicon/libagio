@@ -12,19 +12,27 @@ class TcpSocketUtils
     : public PObject<uv_tcp_t, TcpSocket>
 {
 public:
-  TcpSocketUtils(Loop *l) : PObject(l){}
-
-};
-
-class TcpSocket
-    : public AbstractSocket
-    , public TcpSocketUtils
-{
   typedef struct {
     uv_write_t req;
     uv_buf_t buf;
   } write_req_t;
 
+  TcpSocketUtils(Loop *l) : PObject(l){}
+
+  Callback<void, const int&> onConnected;
+
+
+protected:
+  static void receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
+  static void writeCb(uv_write_t *handle, int status);
+  static void freeWriteReq(uv_write_t *handle);
+};
+
+
+class TcpSocket
+    : public AbstractSocket
+    , public TcpSocketUtils
+{
 
 public:
   TcpSocket(Loop *l);
@@ -38,10 +46,6 @@ public:
   void setKeepAlive(const bool &enabled, const int &delay);
 
 
-protected:
-  static void read(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
-  static void writeCb(uv_write_t *handle, int status);
-  static void freeWriteReq(uv_write_t *handle);
 };
 
 

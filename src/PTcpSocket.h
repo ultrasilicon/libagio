@@ -42,10 +42,7 @@ public:
   void close();
   void connect(const char* addr, const int &port);
   void write(const uv_buf_t *data);
-
   void setKeepAlive(const bool &enabled, const int &delay);
-
-
 };
 
 

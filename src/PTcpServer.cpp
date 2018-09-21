@@ -15,11 +15,6 @@ void TcpServerUtils::newConnectionCb(uv_stream_t *handle, int status)
   getInstance((uv_tcp_t*)handle)->accept();
 }
 
-void TcpServerUtils::readyReadCb(Buffer buf, char*ip)
-{
-
-}
-
 TcpServer::TcpServer(Loop *l)
   : TcpServer(nullptr, 0, 128, l)
 {
@@ -80,7 +75,7 @@ void TcpServer::accept()
   //< Here we invoke TcpSocket as a user, but we are acturally an internal class.
   //< To be more efficient, why not use a static function binding?
   //< a children map might be needed, recording sockets' fd.
-  connect(&client->onReadyRead, this, &TcpServer::onPacketReady); //<< record fd?
+  connect(&client->onReadyRead, &onReadyRead); //<< record fd?
   client_set.insert(client);
   if(uv_accept((uv_stream_t*)uv_handle, (uv_stream_t*)client->getUvHandle()) == 0)
     {
@@ -92,10 +87,10 @@ void TcpServer::accept()
     }
 }
 
-void TcpServer::onPacketReady(Buffer buf, char *ip) //< Theoretically shoud not exist until mecanism above is built
-{
-  fprintf(stderr, "%s", buf.base);
-}
+//void TcpServer::onPacketReady(Buffer buf, char *ip) //< Theoretically shoud not exist until mecanism above is built
+//{
+//  onReadyRead.call(buf, ip);
+//}
 
 
 

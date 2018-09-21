@@ -16,10 +16,6 @@ SOURCES += main.cpp \
     ../../../src/PAddress.cpp \
     ../../../src/PUtils.cpp
 
-PKG_CONFIG = /usr/local/bin/pkg-config
-CONFIG += link_pkgconfig
-PKGCONFIG += libuv
-
 HEADERS += \
     ../../../src/PAbstractSocket.h \
     ../../../src/PAddress.h \
@@ -32,3 +28,7 @@ HEADERS += \
     ../../../src/PTimer.h \
     ../../../src/PUdpSocket.h \
     ../../../src/PUtils.h
+
+#PKG_CONFIG = /usr/local/bin/pkg-config
+CONFIG += link_pkgconfig
+PKGCONFIG += libuv

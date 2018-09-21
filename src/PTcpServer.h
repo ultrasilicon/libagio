@@ -22,7 +22,6 @@ public:
 
 protected:
   static void newConnectionCb(uv_stream_t *handle, int status);
-  static void readyReadCb(Buffer buf, char *ip);
 };
 
 class TcpServer
@@ -45,7 +44,7 @@ public:
 private:
   std::unordered_set<TcpSocket*> client_set;
 
-  void onPacketReady(Buffer buf, char* ip);
+//  void onPacketReady(Buffer buf, char* ip);
 
   char *ip_;
   int port_;

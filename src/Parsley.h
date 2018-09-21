@@ -95,6 +95,16 @@ struct Callback {
     f = Functor<T, Ret, Args...>(obj, func);
   }
 
+  void connect(Ret (*func)(Args...))
+  {
+    f = func;
+  }
+
+  void connect(Callback<Ret, Args...> *cb)
+  {
+    f = cb->f;
+  }
+
   Ret call(Args... args) noexcept
   {
     if(f)
@@ -157,6 +167,18 @@ template<typename Ret1, typename... Args1, class T, typename Ret2, typename... A
 void connect(Callback<Ret1, Args1...> *cb, T *obj , Ret2 (T::*func)(Args2...))
 {
   cb->connect(obj, func);
+}
+
+template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
+void connect(Callback<Ret1, Args1...> *cb, Ret2 (*func)(Args2...))
+{
+  cb->connect(func);
+}
+
+template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
+void connect(Callback<Ret1, Args1...> *cb1, Callback<Ret2, Args2...> *cb2)
+{
+  cb1->connect(cb2);
 }
 
 template <typename UvHandle, typename PHandle>

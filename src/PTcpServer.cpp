@@ -16,7 +16,7 @@ void TcpServerUtils::newConnectionCb(uv_stream_t *handle, int status)
 }
 
 TcpServer::TcpServer(Loop *l)
-  : TcpServer(nullptr, 0, 128, l)
+  : TcpServer("", 0, 128, l)
 {
 }
 

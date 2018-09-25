@@ -33,7 +33,6 @@ class TcpSocket
     : public AbstractSocket
     , public TcpSocketUtils
 {
-
 public:
   TcpSocket(Loop *l);
   ~TcpSocket();

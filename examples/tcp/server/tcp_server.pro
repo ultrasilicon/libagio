@@ -29,6 +29,9 @@ HEADERS += \
     ../../../src/PUdpSocket.h \
     ../../../src/PUtils.h
 
-#PKG_CONFIG = /usr/local/bin/pkg-config
+mac {
+    PKG_CONFIG = /usr/local/bin/pkg-config
+}
+
 CONFIG += link_pkgconfig
 PKGCONFIG += libuv

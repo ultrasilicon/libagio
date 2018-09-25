@@ -6,7 +6,8 @@ using namespace Parsley;
 
 void receive_cb(Buffer data, char* ip)
 {
-  cout << ip << ": " << data.base;
+  // cout << ip << ": " << data.base;
+  free(data.base);
 }
 
 int main()

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <../../../src/PTcpServer.h>
+#include <PTcpServer.h>
 
 using namespace std;
 using namespace Parsley;

@@ -2,7 +2,7 @@
 [![license](https://img.shields.io/github/license/ultrasilicon/libParsley.svg)](https://github.com/ultrasilicon/libParsley/blob/master/LICENSE)
 [![platform](https://img.shields.io/badge/Platform-desktop%20%7C%20mobile-ff69b4.svg?style=flat)](http://doc.qt.io/qt-5/supported-platforms.html)
 
-### Cross platform C++ OOP high performance async library  
+### Asynchronous cross-platform high performance C++ library 
 * **This library is currently under primary development**
 * Platform: Linux, MacOS, Windows, Android and embedded unix.
 * Naming convention follows libqt.
@@ -18,7 +18,7 @@
 using namespace std;
 using namespace Parsley;
 
-void receive_cb(Buffer data, char* ip)
+void read_cb(Buffer data, char* ip)
 {
   cout << ip << ": " << data.base;
   free(data.base);
@@ -28,10 +28,10 @@ int main()
 {
   Loop l;
 
-  TcpServer *server = new TcpServer(&l);
-  server->bind("127.0.0.1", 63773);
-  server->listen();
-  connect(&server->onReadyRead, &receive_cb);
+  TcpServer *s = new TcpServer(&l);
+  s->bind("127.0.0.1", 63773);
+  s->listen();
+  connect(&s->onReadyRead, &read_cb);
 
   return l.run();
 }

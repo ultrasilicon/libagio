@@ -24,7 +24,8 @@ SOURCES += \
     ./src/Parsley.cpp \
     ./src/PFile.cpp \
     ./src/PCheck.cpp \
-    ./src/PAsync.cpp
+    ./src/PAsync.cpp \
+    PFunction.cpp
 
 HEADERS += \
     ./include/PAbstractSocket.h \
@@ -37,7 +38,8 @@ HEADERS += \
     ./include/Parsley.h \
     ./include/PFile.h \
     ./include/PCheck.h \
-    ./include/PAsync.h
+    ./include/PAsync.h \
+    PFunction.h
 unix {
     target.path = /usr/lib
     INSTALLS += target

@@ -68,11 +68,13 @@ void TcpSocket::close()
   uv_close((uv_handle_t*) uv_handle, nullptr);
 }
 
-void TcpSocket::connect(const char *addr, const int &port)
+void TcpSocket::connect(const char *ip, const int &port)
 {
-//  struct sockaddr_in dest = uv_ip4_addr(addr, port);
+  sockaddr_in addr;
+  uv_ip4_addr(ip, port, &addr);
   uv_connect_t *connect = (uv_connect_t*) malloc(sizeof(uv_connect_t));
-//  uv_tcp_connect(connect, uv_handle, dest, onConnected);
+//  uv_tcp_connect(connect, uv_handle, (sockaddr*)&addr, receiveCb);
+  //< where is UV connect callback?
 }
 
 

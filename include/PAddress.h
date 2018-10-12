@@ -12,8 +12,6 @@ public:
   Address();
 
 private:
-
-
 };
 
 PARSLEY_NAMESPACE_END

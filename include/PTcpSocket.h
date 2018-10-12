@@ -21,7 +21,6 @@ public:
 
   Callback<void, const int&> onConnected;
 
-
 protected:
   static void receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
   static void writeCb(uv_write_t *handle, int status);

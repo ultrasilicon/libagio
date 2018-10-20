@@ -14,7 +14,7 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
    */
   if(nread != 0 && addr)
     {
-      BufferT *buffer = new BufferT(buf->base, nread, Loop::defaultLoop());
+      Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
       char senderAddr[17] = { 0 };
       uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
 
@@ -76,7 +76,7 @@ UdpSocket::stop()
 }
 
 void
-UdpSocket::write(const char *ip, const int &port, BufferT &buf)
+UdpSocket::write(const char *ip, const int &port, Buffer &buf)
 {
   uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
   struct sockaddr_in addr;

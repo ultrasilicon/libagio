@@ -2,18 +2,19 @@
 
 using namespace Parsley;
 
-BufferT::BufferT(char *data, const int len, Loop *l)
+Buffer::Buffer(char *data, const int len, Loop *l)
   : PObject(l)
 {
-  uv_buf_init(data, len);
+  *uv_handle = uv_buf_init(data, len);
+  regInstance(uv_handle, this);
 }
 
-BufferT::~BufferT()
+Buffer::~Buffer()
 {
 
 }
 
-std::string BufferT::toString()
+std::string Buffer::toString()
 {
   return std::string(uv_handle->base, uv_handle->len);
 }

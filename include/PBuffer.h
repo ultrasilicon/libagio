@@ -7,14 +7,14 @@
 
 PARSLEY_NAMESPACE_BEGIN
 
-class BufferT;
+class Buffer;
 
-class BufferT
-    : public PObject<uv_buf_t, BufferT>
+class Buffer
+    : public PObject<uv_buf_t, Buffer>
 {
 public:
-  BufferT(char* data, const int len, Loop *l);
-  ~BufferT();
+  Buffer(char* data, const int len, Loop *l);
+  ~Buffer();
 
   std::string toString();
 };

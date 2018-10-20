@@ -131,8 +131,8 @@ std::string File::readAll()
 {
   //! This is the way Node.js source code does.
   std::string contents;
-  buffer = (Buffer *)malloc(sizeof(Buffer));
-  *buffer = uv_buf_init(buffer_memory, sizeof(buffer_memory));
+  delete buffer;
+  buffer = new Buffer(buffer_memory, sizeof(buffer_memory), loop);
   int r;
 
   while (true)
@@ -140,7 +140,7 @@ std::string File::readAll()
       r = uv_fs_read(loop->uvHandle()
                      , uv_handle
                      , file_descriptor
-                     , buffer
+                     , buffer->getUvHandle()
                      , 1
                      , contents.length()  // offset
                      , nullptr);
@@ -148,7 +148,7 @@ std::string File::readAll()
 
       if (r <= 0)
         break;
-      contents.append(buffer->base, r);
+      contents.append(buffer->getUvHandle()->base, r);
     }
   return contents;
 }
@@ -159,8 +159,8 @@ int File::read(Buffer *buf, const Mode &syncMode)
   return uv_fs_read(loop->uvHandle()
                     , uv_handle
                     , file_descriptor
-                    , buffer
-                    , buffer->len
+                    , buffer->getUvHandle()
+                    , buffer->getUvHandle()->len
                     , -1
                     , syncMode == Mode::AsyncMode ? readCb : nullptr);
 }
@@ -170,8 +170,8 @@ int File::write(Buffer *buf, const Mode &syncMode)
   return uv_fs_write(loop->uvHandle()
                      , uv_handle
                      , file_descriptor
-                     , buf
-                     , buf->len
+                     , buf->getUvHandle()
+                     , buf->getUvHandle()->len
                      , -1
                      , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
 }

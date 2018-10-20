@@ -4,7 +4,7 @@
 using namespace std;
 using namespace Parsley;
 
-void receive_cb(BufferT* data, char* ip)
+void receive_cb(Buffer* data, char* ip)
 {
   cout << ip << ": " << data->toString();
   delete data;

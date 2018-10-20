@@ -23,8 +23,6 @@ enum Mode {
   SyncMode = 1
 };
 
-using Buffer = uv_buf_t;
-
 class LoopUtils;
 class Loop;
 
@@ -103,7 +101,8 @@ PObject<UvHandle, PHandle>::~PObject()
 template<typename UvHandle, typename PHandle>
 void PObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
 {
-  instance_map.insert({ uvHandle, pHandle });
+  if(!instance_map.count(uvHandle))
+    instance_map.insert({ uvHandle, pHandle });
 }
 
 template<typename UvHandle, typename PHandle>

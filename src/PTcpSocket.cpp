@@ -17,7 +17,7 @@ void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_
 {
   if(nread > 0)
     {
-      BufferT *buffer = new BufferT(buf->base, nread, Loop::defaultLoop());
+      Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
       getInstance((uv_tcp_t*)handle)->onReadyRead.call(buffer, ""); //! IP!!
       return;
     }

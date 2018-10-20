@@ -4,10 +4,10 @@
 using namespace std;
 using namespace Parsley;
 
-void receive_cb(Buffer data, char* ip)
+void receive_cb(BufferT* data, char* ip)
 {
-  cout << ip << ": " << data.base;
-  free(data.base);
+  cout << ip << ": " << data->toString();
+  delete data;
 }
 
 int main()

@@ -93,9 +93,11 @@ PObject<UvHandle, PHandle>::PObject(Loop *l)
 template<typename UvHandle, typename PHandle>
 PObject<UvHandle, PHandle>::~PObject()
 {
-  removeInstance(uv_handle);
   if(uv_handle)
-    free(uv_handle);
+    {
+      removeInstance(uv_handle);
+      free(uv_handle);
+    }
 }
 
 template<typename UvHandle, typename PHandle>

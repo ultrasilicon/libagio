@@ -25,7 +25,7 @@ protected:
 };
 
 class TcpServer
-    : protected TcpServerUtils
+    : private TcpServerUtils
 {
   friend TcpServerUtils;
 public:
@@ -39,7 +39,7 @@ public:
   int listen(const int &backLog);
   int stop();
 
-  Callback<void, Buffer, char*> onReadyRead;
+  Callback<void, BufferT*, char*> onReadyRead;
 
 private:
   std::unordered_set<TcpSocket*> client_set;

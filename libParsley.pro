@@ -25,7 +25,7 @@ SOURCES += \
     ./src/PFile.cpp \
     ./src/PCheck.cpp \
     ./src/PAsync.cpp \
-    PFunction.cpp
+    ./src/PFunction.cpp
 
 HEADERS += \
     ./include/PAbstractSocket.h \
@@ -39,17 +39,17 @@ HEADERS += \
     ./include/PFile.h \
     ./include/PCheck.h \
     ./include/PAsync.h \
-    PFunction.h
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
+    ./include/PFunction.h
+
+mac {
+    PKG_CONFIG = /usr/local/bin/pkg-config
+    CONFIG += dylib
 }
 
 unix {
+    target.path = /usr/lib
+    INSTALLS += target
     CONFIG += link_pkgconfig
     PKGCONFIG += libuv
 }
 
-mac {
-    CONFIG += dylib
-}

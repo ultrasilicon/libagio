@@ -15,7 +15,7 @@ class UdpSocketUtils
 public:
   UdpSocketUtils(Loop *l) : PObject(l){}
 protected:
-  static void receiveCb(uv_udp_t* handle, ssize_t nread, const Buffer *buf, const sockaddr *addr, unsigned flags);
+  static void receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags);
   static void writtenCb(uv_udp_send_t* req, int status);
 
 };
@@ -23,7 +23,7 @@ protected:
 
 class UdpSocket
     : public AbstractSocket
-    , protected UdpSocketUtils
+    , private UdpSocketUtils
 {
 public:
   UdpSocket(Loop *l);
@@ -32,7 +32,7 @@ public:
   void bind(const char *ip, const int &port);
   void start();
   void stop();
-  void write(const char *ip, const int &port, const Buffer *buf);
+  void write(const char *ip, const int &port, BufferT &buf);
   void setBroadcatEnabled(const bool &enabled = true);
 
 };

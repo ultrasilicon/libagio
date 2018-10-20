@@ -6,7 +6,7 @@ using namespace Parsley;
 
 
 void
-UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, const sockaddr *addr, unsigned flags)
+UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags)
 {
   /*! DOC: libuv 1.18.1-dev
    *  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,
@@ -14,7 +14,7 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const Buffer *buf, co
    */
   if(nread != 0 && addr)
     {
-      Buffer buffer = uv_buf_init(buf->base, nread);
+      BufferT *buffer = new BufferT(buf->base, nread, Loop::defaultLoop());
       char senderAddr[17] = { 0 };
       uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
 
@@ -76,12 +76,12 @@ UdpSocket::stop()
 }
 
 void
-UdpSocket::write(const char *ip, const int &port, const Buffer *buf)
+UdpSocket::write(const char *ip, const int &port, BufferT &buf)
 {
   uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
   struct sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
-  uv_udp_send(req, uv_handle, buf, 1, (const struct sockaddr *)&addr, writtenCb);
+  uv_udp_send(req, uv_handle, buf.getUvHandle(), 1, (const struct sockaddr *)&addr, writtenCb);
 }
 
 void

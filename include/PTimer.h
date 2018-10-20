@@ -30,7 +30,7 @@ protected:
 };
 
 class Timer
-    : public TimerUtils
+    : private TimerUtils
 {
 public:
   Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);

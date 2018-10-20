@@ -16,7 +16,10 @@ SOURCES += main.cpp \
     ../../../src/PTimer.cpp \
     ../../../src/PUdpSocket.cpp \
     ../../../src/PAddress.cpp \
-    ../../../src/PUtils.cpp
+    ../../../src/PUtils.cpp \
+    ../../../src/PFunction.cpp \
+    ../../../src/PBuffer.cpp
+
 
 HEADERS += \
     ../../../include/PAbstractSocket.h \
@@ -29,7 +32,9 @@ HEADERS += \
     ../../../include/PTcpSocket.h \
     ../../../include/PTimer.h \
     ../../../include/PUdpSocket.h \
-    ../../../include/PUtils.h
+    ../../../include/PUtils.h \
+    ../../../include/PFunction.h \
+    ../../../include/PBuffer.h
 
 mac {
     PKG_CONFIG = /usr/local/bin/pkg-config

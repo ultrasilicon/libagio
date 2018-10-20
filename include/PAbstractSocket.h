@@ -3,6 +3,7 @@
 
 
 #include "Parsley.h"
+#include "PBuffer.h"
 
 
 PARSLEY_NAMESPACE_BEGIN
@@ -15,7 +16,7 @@ public:
 
   virtual ~AbstractSocket();
 
-  Callback<void, Buffer, char*> onReadyRead;
+  Callback<void, BufferT*, char*> onReadyRead;
   Callback<void, const SocketDescriptor&> onWritten;
 
   virtual void bind(const char* ipAddr, const int &port);

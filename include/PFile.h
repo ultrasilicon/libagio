@@ -59,7 +59,7 @@ private:
   ssize_t file_descriptor = 0;
   std::string path;
   char buffer_memory[4096];
-  Buffer *buffer;
+  Buffer *buffer = nullptr;
 };
 
 

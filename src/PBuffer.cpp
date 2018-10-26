@@ -14,6 +14,16 @@ Buffer::~Buffer()
 
 }
 
+char *Buffer::data()
+{
+  return uv_handle->base;
+}
+
+int Buffer::length()
+{
+  return uv_handle->len;
+}
+
 std::string Buffer::toString()
 {
   return std::string(uv_handle->base, uv_handle->len);

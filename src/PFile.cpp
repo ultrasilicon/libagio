@@ -131,7 +131,8 @@ std::string File::readAll()
 {
   //! This is the way Node.js source code does.
   std::string contents;
-  delete buffer;
+  if(buffer)
+    delete buffer;
   buffer = new Buffer(buffer_memory, sizeof(buffer_memory), loop);
   int r;
 

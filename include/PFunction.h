@@ -2,7 +2,7 @@
 #define PFUNCTION_H
 
 #include <functional>
-
+namespace Parsley {
 
 template<class T, typename Ret, typename... Args>
 struct Function;
@@ -110,6 +110,10 @@ template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
 void connect(Callback<Ret1, Args1...> *cb1, Callback<Ret2, Args2...> *cb2)
 {
   cb1->connect(cb2);
+}
+
+
+
 }
 
 #endif // PFUNCTION_H

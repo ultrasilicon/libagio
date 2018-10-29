@@ -11,7 +11,7 @@ Buffer::Buffer(char *data, const int len, Loop *l)
 
 Buffer::~Buffer()
 {
-
+  free(uv_handle->base);
 }
 
 char *Buffer::data()

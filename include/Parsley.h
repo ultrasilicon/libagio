@@ -10,7 +10,7 @@
 #include "PFunction.h"
 
 #include <stdlib.h>
-#include <map>
+#include <unordered_map>
 
 
 #define PARSLEY_NAMESPACE_BEGIN namespace Parsley {
@@ -74,12 +74,12 @@ protected:
   UvHandle *uv_handle;
 
 private:
-  static std::map<UvHandle*, PHandle*> instance_map;
+  static std::unordered_map<UvHandle*, PHandle*> instance_map;
 
 };
 
 template <typename UvHandle, typename PHandle>
-std::map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map;
+std::unordered_map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map;
 
 template<typename UvHandle, typename PHandle>
 PObject<UvHandle, PHandle>::PObject(Loop *l)

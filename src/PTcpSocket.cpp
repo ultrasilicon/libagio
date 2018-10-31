@@ -13,12 +13,19 @@ void TcpSocketUtils::writeCb(uv_write_t *handle, int status)
   freeWriteReq(handle);
 }
 
+void TcpSocketUtils::connectCb(uv_connect_s *handle, int status)
+{
+
+}
+
 void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
 {
   if(nread > 0)
     {
       Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
-      getInstance((uv_tcp_t*)handle)->onReadyRead.call(buffer, ""); //! IP!!
+
+      TcpSocket * s = getInstance((uv_tcp_t*)handle);
+      s->onReadyRead.call(buffer, s->getPeerAddress());
       return;
     }
   if(nread < 0)
@@ -73,8 +80,7 @@ void TcpSocket::connect(const char *ip, const int &port)
   sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
   uv_connect_t *connect = (uv_connect_t*) malloc(sizeof(uv_connect_t));
-//  uv_tcp_connect(connect, uv_handle, (sockaddr*)&addr, receiveCb);
-  //< where is UV connect callback?
+  uv_tcp_connect(connect, uv_handle, (sockaddr*)&addr, connectCb);
 }
 
 
@@ -94,7 +100,19 @@ void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
 {
   uv_tcp_keepalive(uv_handle
                    , enabled ? 1 : 0
-                   , delay);
+                               , delay);
+}
+
+const std::string& TcpSocket::getPeerAddress()
+{
+  if(peer_address == "")
+    {
+      sockaddr_in addr;
+      int addrLen;
+      uv_tcp_getpeername((uv_tcp_t*)this->uv_handle, (sockaddr*)&addr, &addrLen);
+      peer_address = std::string(inet_ntoa(addr.sin_addr));
+    }
+  return peer_address;
 }
 
 

@@ -32,7 +32,7 @@ public:
   void bind(const char *ip, const int &port);
   void start();
   void stop();
-  void write(const char *ip, const int &port, Buffer &buf);
+  void write(const char *ip, const int &port, Buffer *buf);
   void setBroadcatEnabled(const bool &enabled = true);
 
 };

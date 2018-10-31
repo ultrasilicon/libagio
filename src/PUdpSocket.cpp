@@ -76,12 +76,12 @@ UdpSocket::stop()
 }
 
 void
-UdpSocket::write(const char *ip, const int &port, Buffer &buf)
+UdpSocket::write(const char *ip, const int &port, Buffer *buf)
 {
   uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
   struct sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
-  uv_udp_send(req, uv_handle, buf.getUvHandle(), 1, (const struct sockaddr *)&addr, writtenCb);
+  uv_udp_send(req, uv_handle, buf->getUvHandle(), 1, (const struct sockaddr *)&addr, writtenCb);
 }
 
 void

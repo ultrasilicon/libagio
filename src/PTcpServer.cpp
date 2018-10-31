@@ -72,12 +72,12 @@ int TcpServer::stop()
 void TcpServer::accept()
 {
   TcpSocket *client = new TcpSocket(loop);
-  //< Here we invoke TcpSocket as a user, but we are acturally an internal class.
-  //< To be more efficient, why not use a static function binding?
-  //< a children map might be needed, recording sockets' fd.
+//  < Here we invoke TcpSocket as a user, but we are acturally an internal class.
+//  < To be more efficient, why not use a static function binding?
+//  < a children map might be needed, recording sockets' fd.
   connect(&client->onReadyRead, &onReadyRead); //<< record fd?
   client_set.insert(client);
-  if(uv_accept((uv_stream_t*)uv_handle, (uv_stream_t*)client->getUvHandle()) == 0)
+  if(uv_accept((uv_stream_t*) uv_handle, (uv_stream_t*) client->getUvHandle()) == 0)
     {
       client->start();
     }

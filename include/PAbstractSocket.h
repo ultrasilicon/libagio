@@ -16,7 +16,7 @@ public:
 
   virtual ~AbstractSocket();
 
-  Callback<void, Buffer*, char*> onReadyRead;
+  Callback<void, Buffer*, const std::string&> onReadyRead;
   Callback<void, const SocketDescriptor&> onWritten;
 
   virtual void bind(const char* ipAddr, const int &port);

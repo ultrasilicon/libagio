@@ -39,7 +39,7 @@ public:
   int listen(const int &backLog);
   int stop();
 
-  Callback<void, Buffer*, char*> onReadyRead;
+  Callback<void, Buffer*, const std::string&> onReadyRead;
 
 private:
   std::unordered_set<TcpSocket*> client_set;

@@ -18,10 +18,9 @@
 using namespace std;
 using namespace Parsley;
 
-void receive_cb(Buffer* data, const string &ip)
+void receive_cb(string &data, string &ip)
 {
-  cout << ip << ": " << data->toString() << '\n';
-  delete data;
+  cout << ip << ": " << data << '\n';
 }
 
 int main()
@@ -29,7 +28,7 @@ int main()
   Loop l;
 
   TcpServer *server = new TcpServer(&l);
-  server->bind("0.0.0.0", 63773);
+  server->bind("0.0.0.0", 66666);
   server->listen();
   connect(&server->onReadyRead, &receive_cb);
 

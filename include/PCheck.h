@@ -3,7 +3,7 @@
 
 #include "Parsley.h"
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class CheckUtils;
 class Check;
 
@@ -33,5 +33,5 @@ public:
 
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // PCHECK_H

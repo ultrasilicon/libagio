@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 
 class FileUtils;
 class File;
@@ -65,5 +65,5 @@ private:
 
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // PFILESYSTEM_H

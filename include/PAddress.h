@@ -3,7 +3,7 @@
 
 #include "Parsley.h"
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class Address;
 
 class Address
@@ -14,5 +14,5 @@ public:
 private:
 };
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // PADDRESS_H

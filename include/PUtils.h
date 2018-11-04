@@ -4,10 +4,10 @@
 #include "Parsley.h"
 
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 
 
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // UTILS_H

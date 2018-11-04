@@ -11,7 +11,7 @@ Loop *LoopUtils::defaultLoop()
 }
 
 Loop::Loop()
-  : loop((uv_loop_t*) malloc(sizeof(uv_loop_t)))
+  : loop(new uv_loop_t())
 {
   uv_loop_init(loop);
 }
@@ -39,7 +39,7 @@ void Loop::close()
 {
   if(tryClose() == UV_EBUSY)
     {
-      uv_walk_cb uvWalkCb = [](uv_handle_t* handle, void* arg) {
+      uv_walk_cb uvWalkCb = [](uv_handle_t* handle, void*) {
         uv_close_cb uvCloseCb = [](uv_handle_t* handle) {
           if (handle)
             free(handle);

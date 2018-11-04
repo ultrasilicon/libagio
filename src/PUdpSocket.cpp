@@ -14,11 +14,12 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
    */
   if(nread != 0 && addr)
     {
-      Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
+//      Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
       char senderAddr[17] = { 0 };
       uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
-
-      getInstance(handle)->onReadyRead.call(buffer, senderAddr);
+      std::string data(buf->base, nread);
+      std::string ip(senderAddr);
+      getInstance(handle)->onReadyRead.call(data, ip);
     }
 
   free(buf->base);
@@ -58,7 +59,7 @@ UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
 void
 UdpSocket::bind(const char *ip, const int &port)
 {
-  struct sockaddr_in *addr = (sockaddr_in*)malloc(sizeof(sockaddr_in));
+  struct sockaddr_in *addr = P_NEW(sockaddr_in);
   uv_ip4_addr(ip, port, addr);
   uv_udp_bind(uv_handle, (const struct sockaddr*) addr, UV_UDP_REUSEADDR);
 }
@@ -78,7 +79,7 @@ UdpSocket::stop()
 void
 UdpSocket::write(const char *ip, const int &port, Buffer *buf)
 {
-  uv_udp_send_t *req = (uv_udp_send_t*)malloc(sizeof(uv_udp_send_t));
+  uv_udp_send_t *req = P_NEW(uv_udp_send_t);
   struct sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
   uv_udp_send(req, uv_handle, buf->getUvHandle(), 1, (const struct sockaddr *)&addr, writtenCb);

@@ -11,10 +11,15 @@ AbstractSocket::~AbstractSocket()
 
 void AbstractSocket::write(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
 {
+  P_USED(handle);
+  P_USED(nread);
+  P_USED(buf);
 }
 
 void AbstractSocket::bind(const char *ipAddr, const int &port)
 {
+  P_USED(ipAddr);
+  P_USED(port);
 }
 
 void AbstractSocket::start()
@@ -27,6 +32,7 @@ void AbstractSocket::stop()
 
 void AbstractSocket::allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf)
 {
+  P_USED(handle);
   buf->base = (char*) malloc(suggestedSize);
   buf->len = suggestedSize;
 }

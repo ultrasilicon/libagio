@@ -6,7 +6,7 @@
 #include "PBuffer.h"
 
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class AbstractSocket;
 
 class AbstractSocket
@@ -16,7 +16,7 @@ public:
 
   virtual ~AbstractSocket();
 
-  Callback<void, Buffer*, const std::string&> onReadyRead;
+  Callback<void, std::string&, std::string&> onReadyRead;
   Callback<void, const SocketDescriptor&> onWritten;
 
   virtual void bind(const char* ipAddr, const int &port);
@@ -30,5 +30,5 @@ protected:
 };
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // ABSTRACTSOCKET_H

@@ -3,7 +3,7 @@
 
 #include "Parsley.h"
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class AsyncUtils;
 class Async;
 
@@ -30,5 +30,5 @@ private:
 };
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // PASYNC_H

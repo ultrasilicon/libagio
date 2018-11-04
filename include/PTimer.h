@@ -15,7 +15,7 @@
 //#include "Log.h"
 
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class TimerUtils;
 class Timer;
 
@@ -49,5 +49,5 @@ private:
 };
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // TIMER_H

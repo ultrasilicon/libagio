@@ -22,10 +22,11 @@ void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_
 {
   if(nread > 0)
     {
-      Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
+//      Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
 
-      TcpSocket * s = getInstance((uv_tcp_t*)handle);
-      s->onReadyRead.call(buffer, s->getPeerAddress());
+      TcpSocket *s = getInstance((uv_tcp_t*)handle);
+      std::string data(buf->base, nread);
+      s->onReadyRead.call(data, s->getPeerAddress());
       return;
     }
   if(nread < 0)
@@ -79,7 +80,7 @@ void TcpSocket::connect(const char *ip, const int &port)
 {
   sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
-  uv_connect_t *connect = (uv_connect_t*) malloc(sizeof(uv_connect_t));
+  uv_connect_t *connect = P_NEW(uv_connect_t);
   uv_tcp_connect(connect, uv_handle, (sockaddr*)&addr, connectCb);
 }
 
@@ -87,7 +88,7 @@ void TcpSocket::connect(const char *ip, const int &port)
 void
 TcpSocket::write(const uv_buf_t *data)
 {
-  write_req_t *req = (write_req_t*) malloc(sizeof(write_req_t));
+  write_req_t *req = P_NEW(write_req_t);
   req->buf = uv_buf_init(data->base, data->len);
   uv_write((uv_write_t*) req
            , (uv_stream_t*)uv_handle
@@ -100,10 +101,10 @@ void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
 {
   uv_tcp_keepalive(uv_handle
                    , enabled ? 1 : 0
-                               , delay);
+                   , delay);
 }
 
-const std::string& TcpSocket::getPeerAddress()
+std::string& TcpSocket::getPeerAddress()
 {
   if(peer_address == "")
     {

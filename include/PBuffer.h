@@ -5,7 +5,7 @@
 
 #include <string>
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 
 class Buffer;
 
@@ -23,5 +23,5 @@ public:
 };
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // PBUFFER_H

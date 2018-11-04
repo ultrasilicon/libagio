@@ -4,7 +4,7 @@
 #include "PAbstractSocket.h"
 
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class TcpSocketUtils;
 class TcpSocket;
 
@@ -43,12 +43,12 @@ public:
   void write(const uv_buf_t *data);
   void setKeepAlive(const bool &enabled, const int &delay);
 
-  const std::string &getPeerAddress();
+  std::string &getPeerAddress();
 
 private:
   std::string peer_address;
 };
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // TCPSOCKET_H

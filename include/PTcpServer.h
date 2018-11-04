@@ -10,7 +10,7 @@
 #include <map>
 
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class TcpServerUtils;
 class TcpServer;
 
@@ -39,7 +39,7 @@ public:
   int listen(const int &backLog);
   int stop();
 
-  Callback<void, Buffer*, const std::string&> onReadyRead;
+  Callback<void, std::string&, std::string&> onReadyRead;
 
 private:
   std::unordered_set<TcpSocket*> client_set;
@@ -52,5 +52,5 @@ private:
   void accept();
 };
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // TCPSERVER_H

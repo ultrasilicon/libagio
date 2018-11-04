@@ -4,7 +4,7 @@
 #include "PAbstractSocket.h"
 
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 class UdpSocketUtils;
 class UdpSocket;
 
@@ -37,5 +37,5 @@ public:
 
 };
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // UDPSOCKET_H

@@ -13,10 +13,12 @@
 #include <unordered_map>
 
 
-#define PARSLEY_NAMESPACE_BEGIN namespace Parsley {
-#define PARSLEY_NAMESPACE_END }
+#define P_NS_BEGIN namespace Parsley {
+#define P_NS_END }
+#define P_NEW(ptr) static_cast<ptr*>(malloc(sizeof(ptr)))
+#define P_USED(var) (void)var
 
-PARSLEY_NAMESPACE_BEGIN
+P_NS_BEGIN
 
 enum Mode {
   AsyncMode = 0,
@@ -84,7 +86,7 @@ std::unordered_map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map
 template<typename UvHandle, typename PHandle>
 PObject<UvHandle, PHandle>::PObject(Loop *l)
   : loop(l)
-  , uv_handle((UvHandle*) malloc(sizeof(UvHandle)))
+  , uv_handle(new UvHandle())
 {
 }
 
@@ -94,7 +96,7 @@ PObject<UvHandle, PHandle>::~PObject()
   if(uv_handle)
     {
       removeInstance(uv_handle);
-      free(uv_handle);
+//      free(uv_handle);
     }
 }
 
@@ -130,5 +132,5 @@ Loop *PObject<UvHandle, PHandle>::getLoop()
 }
 
 
-PARSLEY_NAMESPACE_END
+P_NS_END
 #endif // PARSLEY_H

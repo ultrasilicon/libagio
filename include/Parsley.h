@@ -15,7 +15,7 @@
 
 #define P_NS_BEGIN namespace Parsley {
 #define P_NS_END }
-#define P_NEW(ptr) static_cast<ptr*>(malloc(sizeof(ptr)))
+#define CXX_MALLOC(ptr) static_cast<ptr*>(malloc(sizeof(ptr)))
 #define P_USED(var) (void)var
 
 P_NS_BEGIN

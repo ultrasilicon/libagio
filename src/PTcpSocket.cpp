@@ -80,7 +80,7 @@ void TcpSocket::connect(const char *ip, const int &port)
 {
   sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
-  uv_connect_t *connect = P_NEW(uv_connect_t);
+  uv_connect_t *connect = CXX_MALLOC(uv_connect_t);
   uv_tcp_connect(connect, uv_handle, (sockaddr*)&addr, connectCb);
 }
 
@@ -88,7 +88,7 @@ void TcpSocket::connect(const char *ip, const int &port)
 void
 TcpSocket::write(const uv_buf_t *data)
 {
-  write_req_t *req = P_NEW(write_req_t);
+  write_req_t *req = CXX_MALLOC(write_req_t);
   req->buf = uv_buf_init(data->base, data->len);
   uv_write((uv_write_t*) req
            , (uv_stream_t*)uv_handle

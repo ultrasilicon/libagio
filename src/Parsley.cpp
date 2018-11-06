@@ -60,7 +60,7 @@ void Loop::close()
       int result = tryClose();
       if (result)
         {
-//          qDebug() << "failed to close libuv loop: " << uv_err_name(result);
+//          std::cerr << "failed to close libuv loop: " << uv_err_name(result);
         }
     }
 }

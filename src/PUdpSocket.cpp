@@ -7,7 +7,7 @@ using namespace Parsley;
 
 
 void
-UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned flags)
+UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned)
 {
   /*! DOC: libuv 1.18.1-dev
    *  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,

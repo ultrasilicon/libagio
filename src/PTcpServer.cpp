@@ -16,7 +16,7 @@ void TcpServerUtils::newConnectionCb(uv_stream_t *handle, int status)
 }
 
 TcpServer::TcpServer(Loop *l)
-  : TcpServer("", 0, 128, l)
+  : TcpServer({}, 0, 128, l)
 {
 }
 
@@ -87,10 +87,6 @@ void TcpServer::accept()
     }
 }
 
-//void TcpServer::onPacketReady(Buffer buf, char *ip) //< Theoretically shoud not exist until mecanism above is built
-//{
-//  onReadyRead.call(buf, ip);
-//}
 
 
 

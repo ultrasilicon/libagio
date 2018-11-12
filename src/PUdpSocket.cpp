@@ -1,5 +1,4 @@
 #include "PUdpSocket.h"
-#include <QDebug> //REMOVE
 
 #include <map>
 

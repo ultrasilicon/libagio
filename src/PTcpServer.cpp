@@ -37,7 +37,7 @@ TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
 
 int TcpServer::bind()
 {
-  struct sockaddr_in *addr = (sockaddr_in*) malloc(sizeof(sockaddr_in));
+  sockaddr_in *addr = CXX_MALLOC(sockaddr_in);
   uv_ip4_addr(ip_, port_, addr);
   return uv_tcp_bind(uv_handle
                      , (const struct sockaddr*) addr

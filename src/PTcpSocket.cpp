@@ -110,7 +110,7 @@ std::string& TcpSocket::getPeerAddress()
     {
       sockaddr_in addr;
       int addrLen;
-      uv_tcp_getpeername((uv_tcp_t*)this->uv_handle, (sockaddr*)&addr, &addrLen);
+      uv_tcp_getpeername((uv_tcp_t*)uv_handle, (sockaddr*) &addr, &addrLen);
       peer_address = std::string(inet_ntoa(addr.sin_addr));
     }
   return peer_address;

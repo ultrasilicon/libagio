@@ -30,11 +30,11 @@ void AbstractSocket::stop()
 {
 }
 
-void AbstractSocket::allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf)
+void AbstractSocket::allocCb(uv_handle_t *handle, size_t size, uv_buf_t *buf)
 {
   P_USED(handle);
-  buf->base = (char*) malloc(suggestedSize);
-  buf->len = suggestedSize;
+  buf->base = (char*) malloc(size);
+  buf->len = size;
 }
 
 int AbstractSocket::getFd(uv_handle_t* handle)

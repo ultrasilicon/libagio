@@ -18,7 +18,7 @@ class TcpServerUtils
     : public PObject<uv_tcp_t, TcpServer>
 {
 public:
-  explicit TcpServerUtils(Loop *l) : PObject(l) {}
+  explicit TcpServerUtils(Loop *l);
 
 protected:
   static void newConnectionCb(uv_stream_t *handle, int status);
@@ -29,26 +29,23 @@ class TcpServer
 {
   friend TcpServerUtils;
 public:
-  TcpServer(Loop *l);
-  TcpServer(char *ip, const int &port, Loop *l);
-  TcpServer(char *ip, const int &port, const int &backLog, Loop *l);
+  Callback<void, std::string&, std::string&> onReadyRead;
 
+  TcpServer(Loop *l);
+  TcpServer(char *m_ip, const int &m_port, Loop *l);
+  TcpServer(char *m_ip, const int &m_port, const int &backLog, Loop *l);
   int bind();
-  int bind(char *ip, const int &port);
+  int bind(char *m_ip, const int &m_port);
   int listen();
   int listen(const int &backLog);
   int stop();
 
-  Callback<void, std::string&, std::string&> onReadyRead;
-
 private:
-  std::unordered_set<TcpSocket*> client_set;
+  char *m_ip;
+  int m_port;
+  int m_back_log;
+  std::unordered_set<TcpSocket*> m_client_set;
 
-//  void onPacketReady(Buffer buf, char* ip);
-
-  char *ip_;
-  int port_;
-  int back_log_;
   void accept();
 };
 

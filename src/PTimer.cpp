@@ -2,6 +2,11 @@
 
 using namespace Parsley;
 
+TimerUtils::TimerUtils(Loop *l)
+  : PObject(l)
+{
+}
+
 void TimerUtils::timeoutCb(uv_timer_t *handle)
 {
   Timer *t = getInstance(handle);
@@ -14,27 +19,27 @@ void TimerUtils::timeoutCb(uv_timer_t *handle)
 Timer::Timer(Loop *l)
   : TimerUtils(l)
 {
-  uv_timer_init(l->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
+  uv_timer_init(l->uvHandle(), m_uv_handle);
+  regInstance(m_uv_handle, this);
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   : TimerUtils(l)
-  , delay(timeout)
-  , interval(repeat)
+  , m_delay(timeout)
+  , m_interval(repeat)
 {
-  uv_timer_init(l->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
+  uv_timer_init(l->uvHandle(), m_uv_handle);
+  regInstance(m_uv_handle, this);
 }
 
 bool Timer::start()
 {
-  if(delay && interval)
+  if(m_delay && m_interval)
     {
-      uv_timer_start(uv_handle
+      uv_timer_start(m_uv_handle
                      , timeoutCb
-                     , delay
-                     , interval);
+                     , m_delay
+                     , m_interval);
       return true;
     }
   return false;
@@ -42,9 +47,9 @@ bool Timer::start()
 
 int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
 {
-  delay = timeout;
-  interval = repeat;
-  return uv_timer_start(uv_handle
+  m_delay = timeout;
+  m_interval = repeat;
+  return uv_timer_start(m_uv_handle
                         , timeoutCb
                         , timeout
                         , repeat);
@@ -52,6 +57,6 @@ int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
 
 void Timer::stop()
 {
-  uv_timer_stop(uv_handle);
+  uv_timer_stop(m_uv_handle);
 }
 

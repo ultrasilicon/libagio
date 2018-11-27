@@ -17,9 +17,9 @@ public:
     uv_buf_t buf;
   } write_req_t;
 
-  TcpSocketUtils(Loop *l) : PObject(l){}
-
   Callback<void, const int&> onConnected;
+
+  TcpSocketUtils(Loop *l);
 
 protected:
   static void receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
@@ -36,17 +36,15 @@ class TcpSocket
 public:
   TcpSocket(Loop *l);
   ~TcpSocket();
-
   void start();
   void close();
   void connect(const char* addr, const int &port);
   void write(const uv_buf_t *data);
   void setKeepAlive(const bool &enabled, const int &delay);
-
   std::string &getPeerAddress();
 
 private:
-  std::string peer_address;
+  std::string m_peer_address;
 };
 
 

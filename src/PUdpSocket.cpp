@@ -5,6 +5,11 @@
 using namespace Parsley;
 
 
+UdpSocketUtils::UdpSocketUtils(Loop *l)
+  : PObject(l)
+{
+}
+
 void
 UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned)
 {
@@ -40,15 +45,15 @@ UdpSocketUtils::writtenCb(uv_udp_send_t *req, int status)
 UdpSocket::UdpSocket(Loop *l)
   : UdpSocketUtils(l)
 {
-  uv_udp_init(l->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
+  uv_udp_init(l->uvHandle(), m_uv_handle);
+  regInstance(m_uv_handle, this);
 }
 
 UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
   : UdpSocketUtils(l)
 {
-  uv_udp_init(l->uvHandle(), uv_handle);
-  regInstance(uv_handle, this);
+  uv_udp_init(l->uvHandle(), m_uv_handle);
+  regInstance(m_uv_handle, this);
 
   bind(ip, port);
   start();
@@ -60,19 +65,19 @@ UdpSocket::bind(const char *ip, const int &port)
 {
   struct sockaddr_in *addr = CXX_MALLOC(sockaddr_in);
   uv_ip4_addr(ip, port, addr);
-  uv_udp_bind(uv_handle, (const struct sockaddr*) addr, UV_UDP_REUSEADDR);
+  uv_udp_bind(m_uv_handle, (const struct sockaddr*) addr, UV_UDP_REUSEADDR);
 }
 
 void
 UdpSocket::start()
 {
-  uv_udp_recv_start(uv_handle, allocCb, receiveCb);
+  uv_udp_recv_start(m_uv_handle, allocCb, receiveCb);
 }
 
 void
 UdpSocket::stop()
 {
-  uv_udp_recv_stop(uv_handle);
+  uv_udp_recv_stop(m_uv_handle);
 }
 
 void
@@ -81,12 +86,12 @@ UdpSocket::write(const char *ip, const int &port, Buffer *buf)
   uv_udp_send_t *req = CXX_MALLOC(uv_udp_send_t);
   struct sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
-  uv_udp_send(req, uv_handle, buf->getUvHandle(), 1, (const struct sockaddr *)&addr, writtenCb);
+  uv_udp_send(req, m_uv_handle, buf->getUvHandle(), 1, (const struct sockaddr *)&addr, writtenCb);
 }
 
 void
 UdpSocket::setBroadcatEnabled(const bool &enabled)
 {
-  uv_udp_set_broadcast(uv_handle, enabled ? 1 : 0);
+  uv_udp_set_broadcast(m_uv_handle, enabled ? 1 : 0);
 }
 

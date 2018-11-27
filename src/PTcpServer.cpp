@@ -5,6 +5,11 @@
 using namespace Parsley;
 
 
+TcpServerUtils::TcpServerUtils(Loop *l)
+  : PObject(l)
+{
+}
+
 void TcpServerUtils::newConnectionCb(uv_stream_t *handle, int status)
 {
   if(status < 0)
@@ -27,40 +32,40 @@ TcpServer::TcpServer(char *ip, const int &port, Loop *l)
 
 TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
   : TcpServerUtils (l)
-  , ip_(ip)
-  , port_(port)
-  , back_log_(backLog)
+  , m_ip(ip)
+  , m_port(port)
+  , m_back_log(backLog)
 {
-  regInstance(uv_handle, this);
-  uv_tcp_init(loop->uvHandle(), uv_handle);
+  regInstance(m_uv_handle, this);
+  uv_tcp_init(m_loop->uvHandle(), m_uv_handle);
 }
 
 int TcpServer::bind()
 {
   sockaddr_in *addr = CXX_MALLOC(sockaddr_in);
-  uv_ip4_addr(ip_, port_, addr);
-  return uv_tcp_bind(uv_handle
+  uv_ip4_addr(m_ip, m_port, addr);
+  return uv_tcp_bind(m_uv_handle
                      , (const struct sockaddr*) addr
                      , 0);
 }
 
 int TcpServer::bind(char *ip, const int &port)
 {
-  ip_ = ip;
-  port_ = port;
+  ip = ip;
+  m_port = port;
   return bind();
 }
 
 int TcpServer::listen()
 {
-  return uv_listen((uv_stream_t*) uv_handle
-                   , back_log_
+  return uv_listen((uv_stream_t*) m_uv_handle
+                   , m_back_log
                    , &newConnectionCb);
 }
 
 int TcpServer::listen(const int &backLog)
 {
-  back_log_ = backLog;
+  m_back_log = backLog;
   return listen();
 }
 
@@ -71,13 +76,13 @@ int TcpServer::stop()
 
 void TcpServer::accept()
 {
-  TcpSocket *client = new TcpSocket(loop);
+  TcpSocket *client = new TcpSocket(m_loop);
 //  < Here we invoke TcpSocket as a user, but we are acturally an internal class.
 //  < To be more efficient, why not use a static function binding?
 //  < a children map might be needed, recording sockets' fd.
   connect(&client->onReadyRead, &this->onReadyRead); //<< record fd?
-  client_set.insert(client);
-  if(uv_accept((uv_stream_t*) uv_handle, (uv_stream_t*) client->getUvHandle()) == 0)
+  m_client_set.insert(client);
+  if(uv_accept((uv_stream_t*) m_uv_handle, (uv_stream_t*) client->getUvHandle()) == 0)
     {
       client->start();
     }

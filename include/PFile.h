@@ -16,7 +16,7 @@ class FileUtils
     : public PObject<uv_fs_t, File>
 {
 public:
-  FileUtils(Loop *l) : PObject(l){}
+  FileUtils(Loop *l);
 
 protected:
   static void openedCb(uv_fs_t* r);
@@ -31,15 +31,14 @@ class File
 {
   friend FileUtils;
 public:
-  File(Loop *l);
-  File(const std::string &path, Loop *l);
-  ~File();
-
   Callback<void, Buffer*, const ssize_t&> onReadyRead;
   Callback<void> onOpened;
   Callback<void> onClosed;
   Callback<void> onWritten;
 
+  File(Loop *l);
+  File(const std::string &path, Loop *l);
+  ~File();
   int open(const int &flags, const int &mode, const Mode &syncMode);
   int open(char *path, const int &flags, const int &mode, const Mode &syncMode);
   int close(const Mode &syncMode);
@@ -50,16 +49,15 @@ public:
   int truncate(const int &size, const Mode &syncMode);
   static int mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &syncMode);
   static int remove(const std::string &file, Loop *l);
-
   Buffer *getBuffer();
 
 private:
-  void setFileDescriptor(const ssize_t& fd);
+  ssize_t m_fd = 0;
+  std::string m_name;
+  char m_buffer_data[4096];
+  Buffer *m_buffer = nullptr;
 
-  ssize_t file_descriptor = 0;
-  std::string path;
-  char buffer_memory[4096];
-  Buffer *buffer = nullptr;
+  void setFileDescriptor(const ssize_t& fd);
 };
 
 

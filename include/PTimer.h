@@ -23,7 +23,7 @@ class TimerUtils
     : public PObject<uv_timer_t, Timer>
 {
 public:
-  TimerUtils(Loop *l) : PObject(l){}
+  TimerUtils(Loop *l);
 protected:
   static void timeoutCb(uv_timer_t *handle);
 
@@ -33,19 +33,18 @@ class Timer
     : private TimerUtils
 {
 public:
-  Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
-  Timer(Loop *l);
-
   Callback<void, Timer*> onTimedOut;
 
+  Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
+  Timer(Loop *l);
   int start(const uint64_t &timeout, const uint64_t &repeat);
   bool start();
   void stop();
 
 
 private:
-  uint64_t delay = 0;
-  uint64_t interval = 0;
+  uint64_t m_delay = 0;
+  uint64_t m_interval = 0;
 };
 
 

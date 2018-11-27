@@ -11,7 +11,7 @@ class AsyncUtils
   : public PObject<uv_async_t, Async>
 {
 public:
-  AsyncUtils(Loop *l) : PObject(l) {}
+  AsyncUtils(Loop *l);
 
 protected:
   static void executeCb(uv_async_t *r);
@@ -21,11 +21,11 @@ class Async
   : AsyncUtils
 {
 public:
-  Async(Loop *l);
-
   Callback<void> onCalled;
 
+  Async(Loop *l);
   int send();
+
 private:
 };
 

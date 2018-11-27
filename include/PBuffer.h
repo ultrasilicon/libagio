@@ -15,10 +15,8 @@ class Buffer
 public:
   Buffer(char* data, const int len, Loop *l);
   ~Buffer();
-
   char* data();
   int length();
-
   std::string toString();
 };
 

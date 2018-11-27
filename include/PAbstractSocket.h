@@ -14,17 +14,16 @@ class AbstractSocket
 public:
   using SocketDescriptor = int;
 
-  virtual ~AbstractSocket();
-
   Callback<void, std::string&, std::string&> onReadyRead;
   Callback<void, const SocketDescriptor&> onWritten;
 
+  virtual ~AbstractSocket();
   virtual void bind(const char* ipAddr, const int &port);
   virtual void start();
   virtual void stop();
   virtual void write(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
   static int getFd(uv_handle_t *handle);
-  static void allocCb(uv_handle_t *handle, size_t suggestedSize, uv_buf_t *buf);
+  static void allocCb(uv_handle_t *handle, size_t size, uv_buf_t *buf);
 
 protected:
 };

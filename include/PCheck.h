@@ -11,7 +11,7 @@ class CheckUtils
     : public PObject<uv_check_t, Check>
 {
 public:
-  CheckUtils(Loop *l) : PObject(l){}
+  CheckUtils(Loop *l);
 
 protected:
   static void checkCb(uv_check_t *r);
@@ -22,11 +22,10 @@ class Check
     : CheckUtils
 {
 public:
-  Check(Loop *l);
-  ~Check();
-
   Callback<void> onCalled;
 
+  Check(Loop *l);
+  ~Check();
   int start();
   int stop();
 };

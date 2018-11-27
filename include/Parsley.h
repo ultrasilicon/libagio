@@ -67,13 +67,12 @@ public:
   static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
   static void removeInstance(UvHandle *uvHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
-
   UvHandle *getUvHandle();
   Loop *getLoop();
 
 protected:
-  Loop *loop;
-  UvHandle *uv_handle;
+  Loop *m_loop;
+  UvHandle *m_uv_handle;
 
 private:
   static std::unordered_map<UvHandle*, PHandle*> instance_map;
@@ -85,19 +84,16 @@ std::unordered_map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map
 
 template<typename UvHandle, typename PHandle>
 PObject<UvHandle, PHandle>::PObject(Loop *l)
-  : loop(l)
-  , uv_handle(new UvHandle())
+  : m_loop(l)
+  , m_uv_handle(new UvHandle())
 {
 }
 
 template<typename UvHandle, typename PHandle>
 PObject<UvHandle, PHandle>::~PObject()
 {
-  if(uv_handle)
-    {
-      removeInstance(uv_handle);
-//      free(uv_handle);
-    }
+  if(m_uv_handle)
+    removeInstance(m_uv_handle);
 }
 
 template<typename UvHandle, typename PHandle>
@@ -122,13 +118,13 @@ PHandle *PObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
 template<typename UvHandle, typename PHandle>
 UvHandle *PObject<UvHandle, PHandle>::getUvHandle()
 {
-  return uv_handle;
+  return m_uv_handle;
 }
 
 template<typename UvHandle, typename PHandle>
 Loop *PObject<UvHandle, PHandle>::getLoop()
 {
-  return loop;
+  return m_loop;
 }
 
 

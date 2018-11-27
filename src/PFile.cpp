@@ -2,6 +2,11 @@
 
 using namespace Parsley;
 
+FileUtils::FileUtils(Loop *l)
+  : PObject(l)
+{
+}
+
 void FileUtils::openedCb(uv_fs_t *r)
 {
   File *f = getInstance(r);
@@ -74,26 +79,26 @@ void FileUtils::writtenCb(uv_fs_t *r)
 File::File(Loop *l)
   : FileUtils(l)
 {
-  regInstance(uv_handle, this);
+  regInstance(m_uv_handle, this);
 }
 
 File::File(const std::string &path, Loop *l)
   : FileUtils(l)
-  , path(path)
+  , m_name(path)
 {
-  regInstance(uv_handle, this);
+  regInstance(m_uv_handle, this);
 }
 
 File::~File()
 {
-  uv_fs_req_cleanup(uv_handle);
+  uv_fs_req_cleanup(m_uv_handle);
 }
 
 int File::open(const int &flags, const int &mode, const Mode &syncMode)
 {
-  int r = file_descriptor = uv_fs_open(syncMode == Mode::AsyncMode ? loop->uvHandle() : nullptr
-                    , uv_handle
-                    , path.data()
+  int r = m_fd = uv_fs_open(syncMode == Mode::AsyncMode ? m_loop->uvHandle() : nullptr
+                    , m_uv_handle
+                    , m_name.data()
                     , flags
                     , mode
                     , syncMode == Mode::AsyncMode ? openedCb : nullptr);
@@ -108,15 +113,15 @@ int File::open(const int &flags, const int &mode, const Mode &syncMode)
 
 int File::open(char *path, const int &flags, const int &mode, const Mode &syncMode)
 {
-  this->path = path;
+  this->m_name = path;
   return open(flags, mode, syncMode);
 }
 
 int File::close(const Mode &syncMode)
 {
-  int r = uv_fs_close(loop->uvHandle()
-                     , uv_handle
-                     , uv_handle->result
+  int r = uv_fs_close(m_loop->uvHandle()
+                     , m_uv_handle
+                     , m_uv_handle->result
                      , syncMode == Mode::AsyncMode ? closedCb : nullptr);
 
   if(syncMode == Mode::SyncMode)
@@ -131,46 +136,46 @@ std::string File::readAll()
 {
   //! This is the way Node.js source code does.
   std::string contents;
-  if(buffer)
-    delete buffer;
-  buffer = new Buffer(buffer_memory, sizeof(buffer_memory), loop);
+  if(m_buffer)
+    delete m_buffer;
+  m_buffer = new Buffer(m_buffer_data, sizeof(m_buffer_data), m_loop);
   int r;
 
   while (true)
     {
-      r = uv_fs_read(loop->uvHandle()
-                     , uv_handle
-                     , file_descriptor
-                     , buffer->getUvHandle()
+      r = uv_fs_read(m_loop->uvHandle()
+                     , m_uv_handle
+                     , m_fd
+                     , m_buffer->getUvHandle()
                      , 1
                      , contents.length()  // offset
                      , nullptr);
-      uv_fs_req_cleanup(uv_handle);
+      uv_fs_req_cleanup(m_uv_handle);
 
       if (r <= 0)
         break;
-      contents.append(buffer->getUvHandle()->base, r);
+      contents.append(m_buffer->getUvHandle()->base, r);
     }
   return contents;
 }
 
 int File::read(Buffer *buf, const Mode &syncMode)
 {
-  buffer = buf;
-  return uv_fs_read(loop->uvHandle()
-                    , uv_handle
-                    , file_descriptor
-                    , buffer->getUvHandle()
-                    , buffer->getUvHandle()->len
+  m_buffer = buf;
+  return uv_fs_read(m_loop->uvHandle()
+                    , m_uv_handle
+                    , m_fd
+                    , m_buffer->getUvHandle()
+                    , m_buffer->getUvHandle()->len
                     , -1
                     , syncMode == Mode::AsyncMode ? readCb : nullptr);
 }
 
 int File::write(Buffer *buf, const Mode &syncMode)
 {
-  return uv_fs_write(loop->uvHandle()
-                     , uv_handle
-                     , file_descriptor
+  return uv_fs_write(m_loop->uvHandle()
+                     , m_uv_handle
+                     , m_fd
                      , buf->getUvHandle()
                      , buf->getUvHandle()->len
                      , -1
@@ -181,9 +186,9 @@ int File::write(std::string &data, const Mode &syncMode)
 {
   //! This is the way Node.js source code does.
   uv_buf_t buf = uv_buf_init(const_cast<char*>(data.c_str()), data.length());
-  return uv_fs_write(loop->uvHandle()
-                     , uv_handle
-                     , file_descriptor
+  return uv_fs_write(m_loop->uvHandle()
+                     , m_uv_handle
+                     , m_fd
                      , &buf
                      , 1
                      , -1
@@ -192,9 +197,9 @@ int File::write(std::string &data, const Mode &syncMode)
 
 int File::truncate(const int &size, const Mode &syncMode)
 {
-  return uv_fs_ftruncate(loop->uvHandle()
-                     , uv_handle
-                     , uv_handle->result
+  return uv_fs_ftruncate(m_loop->uvHandle()
+                     , m_uv_handle
+                     , m_uv_handle->result
                      , size
                      , nullptr); //! Add Aync Callback!
 }
@@ -224,10 +229,10 @@ int File::remove(const std::string &file, Loop *l)
 
 Buffer *File::getBuffer()
 {
-  return buffer;
+  return m_buffer;
 }
 
 void File::setFileDescriptor(const ssize_t &fd)
 {
-  file_descriptor = fd;
+  m_fd = fd;
 }

@@ -3,7 +3,7 @@
 using namespace Parsley;
 
 AsyncUtils::AsyncUtils(Loop *l)
-  : PObject(l)
+  : PUvObject(l)
 {
 }
 
@@ -16,11 +16,11 @@ void AsyncUtils::executeCb(uv_async_t *r)
 Async::Async(Loop *l)
   : AsyncUtils(l)
 {
-  uv_async_init(m_loop->uvHandle(), m_uv_handle, executeCb);
-  regInstance(m_uv_handle, this);
+  uv_async_init(m_loop->uvHandle(), m_uv_obj, executeCb);
+  regInstance(m_uv_obj, this);
 }
 
 int Async::send()
 {
-  return uv_async_send(m_uv_handle);
+  return uv_async_send(m_uv_obj);
 }

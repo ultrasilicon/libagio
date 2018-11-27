@@ -9,7 +9,7 @@ class TcpSocketUtils;
 class TcpSocket;
 
 class TcpSocketUtils
-    : public PObject<uv_tcp_t, TcpSocket>
+    : public PUvObject<uv_tcp_t, TcpSocket>
 {
 public:
   typedef struct {

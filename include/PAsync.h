@@ -8,7 +8,7 @@ class AsyncUtils;
 class Async;
 
 class AsyncUtils
-  : public PObject<uv_async_t, Async>
+  : public PUvObject<uv_async_t, Async>
 {
 public:
   AsyncUtils(Loop *l);

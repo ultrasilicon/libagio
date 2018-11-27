@@ -15,7 +15,7 @@ class TcpServerUtils;
 class TcpServer;
 
 class TcpServerUtils
-    : public PObject<uv_tcp_t, TcpServer>
+    : public PUvObject<uv_tcp_t, TcpServer>
 {
 public:
   explicit TcpServerUtils(Loop *l);

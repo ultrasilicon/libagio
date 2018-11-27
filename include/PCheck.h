@@ -8,7 +8,7 @@ class CheckUtils;
 class Check;
 
 class CheckUtils
-    : public PObject<uv_check_t, Check>
+    : public PUvObject<uv_check_t, Check>
 {
 public:
   CheckUtils(Loop *l);

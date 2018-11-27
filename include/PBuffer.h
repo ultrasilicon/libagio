@@ -10,7 +10,7 @@ P_NS_BEGIN
 class Buffer;
 
 class Buffer
-    : public PObject<uv_buf_t, Buffer>
+    : public PUvObject<uv_buf_t, Buffer>
 {
 public:
   Buffer(char* data, const int len, Loop *l);

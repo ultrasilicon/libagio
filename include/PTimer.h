@@ -20,7 +20,7 @@ class TimerUtils;
 class Timer;
 
 class TimerUtils
-    : public PObject<uv_timer_t, Timer>
+    : public PUvObject<uv_timer_t, Timer>
 {
 public:
   TimerUtils(Loop *l);

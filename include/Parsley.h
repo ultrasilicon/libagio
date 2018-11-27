@@ -29,7 +29,7 @@ class LoopUtils;
 class Loop;
 
 template <typename UvHandle, typename PHandle>
-class PObject;
+class PUvObject;
 
 class LoopUtils
 {
@@ -57,13 +57,31 @@ private:
   uv_loop_t* loop;
 };
 
+//template <typename UvHandle, typename PHandle>
+//class PObject
+//{
+//public:
+//  PObject();
+//  ~PObject();
+
+//  static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
+//  static void removeInstance(UvHandle *uvHandle);
+//  static PHandle *getInstance(UvHandle *uvHandle);
+//  UvHandle *getUvHandle();
+//protected:
+//  UvHandle *m_c_obj;
+
+//private:
+//  static std::unordered_map<UvHandle*, PHandle*> m_instances;
+//};
 
 template <typename UvHandle, typename PHandle>
-class PObject
+class PUvObject
 {
 public:
-  PObject(Loop *l);
-  ~PObject();
+  PUvObject(Loop *l);
+  ~PUvObject();
+
   static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
   static void removeInstance(UvHandle *uvHandle);
   static PHandle *getInstance(UvHandle *uvHandle);
@@ -72,57 +90,57 @@ public:
 
 protected:
   Loop *m_loop;
-  UvHandle *m_uv_handle;
+  UvHandle *m_uv_obj;
 
 private:
-  static std::unordered_map<UvHandle*, PHandle*> instance_map;
+  static std::unordered_map<UvHandle*, PHandle*> m_instances;
 
 };
 
 template <typename UvHandle, typename PHandle>
-std::unordered_map<UvHandle*, PHandle*> PObject<UvHandle, PHandle>::instance_map;
+std::unordered_map<UvHandle*, PHandle*> PUvObject<UvHandle, PHandle>::m_instances;
 
 template<typename UvHandle, typename PHandle>
-PObject<UvHandle, PHandle>::PObject(Loop *l)
+PUvObject<UvHandle, PHandle>::PUvObject(Loop *l)
   : m_loop(l)
-  , m_uv_handle(new UvHandle())
+  , m_uv_obj(new UvHandle())
 {
 }
 
 template<typename UvHandle, typename PHandle>
-PObject<UvHandle, PHandle>::~PObject()
+PUvObject<UvHandle, PHandle>::~PUvObject()
 {
-  if(m_uv_handle)
-    removeInstance(m_uv_handle);
+  if(m_uv_obj)
+    removeInstance(m_uv_obj);
 }
 
 template<typename UvHandle, typename PHandle>
-void PObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
+void PUvObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
 {
-  if(!instance_map.count(uvHandle))
-    instance_map.insert({ uvHandle, pHandle });
+  if(!m_instances.count(uvHandle))
+    m_instances.insert({ uvHandle, pHandle });
 }
 
 template<typename UvHandle, typename PHandle>
-void PObject<UvHandle, PHandle>::removeInstance(UvHandle *uvHandle)
+void PUvObject<UvHandle, PHandle>::removeInstance(UvHandle *uvHandle)
 {
-  instance_map.erase(instance_map.find(uvHandle));
+  m_instances.erase(m_instances.find(uvHandle));
 }
 
 template<typename UvHandle, typename PHandle>
-PHandle *PObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
+PHandle *PUvObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
 {
-  return instance_map[uvHandle];
+  return m_instances[uvHandle];
 }
 
 template<typename UvHandle, typename PHandle>
-UvHandle *PObject<UvHandle, PHandle>::getUvHandle()
+UvHandle *PUvObject<UvHandle, PHandle>::getUvHandle()
 {
-  return m_uv_handle;
+  return m_uv_obj;
 }
 
 template<typename UvHandle, typename PHandle>
-Loop *PObject<UvHandle, PHandle>::getLoop()
+Loop *PUvObject<UvHandle, PHandle>::getLoop()
 {
   return m_loop;
 }

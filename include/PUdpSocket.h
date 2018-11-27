@@ -10,7 +10,7 @@ class UdpSocket;
 
 
 class UdpSocketUtils
-    : public PObject<uv_udp_t, UdpSocket>
+    : public PUvObject<uv_udp_t, UdpSocket>
 {
 public:
   UdpSocketUtils(Loop *l);

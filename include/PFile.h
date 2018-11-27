@@ -13,7 +13,7 @@ class File;
 
 
 class FileUtils
-    : public PObject<uv_fs_t, File>
+    : public PUvObject<uv_fs_t, File>
 {
 public:
   FileUtils(Loop *l);

@@ -3,7 +3,7 @@
 using namespace Parsley;
 
 CheckUtils::CheckUtils(Loop *l)
-  : PObject(l)
+  : PUvObject(l)
 {
 }
 
@@ -16,8 +16,8 @@ void CheckUtils::checkCb(uv_check_t *r)
 Check::Check(Loop *l)
   : CheckUtils(l)
 {
-  uv_check_init(l->uvHandle(), m_uv_handle);
-  regInstance(m_uv_handle, this);
+  uv_check_init(l->uvHandle(), m_uv_obj);
+  regInstance(m_uv_obj, this);
 }
 
 Check::~Check()
@@ -26,11 +26,11 @@ Check::~Check()
 
 int Check::start()
 {
-  return uv_check_start(m_uv_handle
+  return uv_check_start(m_uv_obj
                         , checkCb);
 }
 
 int Check::stop()
 {
-  return uv_check_stop(m_uv_handle);
+  return uv_check_stop(m_uv_obj);
 }

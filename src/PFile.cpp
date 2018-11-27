@@ -3,7 +3,7 @@
 using namespace Parsley;
 
 FileUtils::FileUtils(Loop *l)
-  : PObject(l)
+  : PUvObject(l)
 {
 }
 
@@ -79,25 +79,25 @@ void FileUtils::writtenCb(uv_fs_t *r)
 File::File(Loop *l)
   : FileUtils(l)
 {
-  regInstance(m_uv_handle, this);
+  regInstance(m_uv_obj, this);
 }
 
 File::File(const std::string &path, Loop *l)
   : FileUtils(l)
   , m_name(path)
 {
-  regInstance(m_uv_handle, this);
+  regInstance(m_uv_obj, this);
 }
 
 File::~File()
 {
-  uv_fs_req_cleanup(m_uv_handle);
+  uv_fs_req_cleanup(m_uv_obj);
 }
 
 int File::open(const int &flags, const int &mode, const Mode &syncMode)
 {
   int r = m_fd = uv_fs_open(syncMode == Mode::AsyncMode ? m_loop->uvHandle() : nullptr
-                    , m_uv_handle
+                    , m_uv_obj
                     , m_name.data()
                     , flags
                     , mode
@@ -120,8 +120,8 @@ int File::open(char *path, const int &flags, const int &mode, const Mode &syncMo
 int File::close(const Mode &syncMode)
 {
   int r = uv_fs_close(m_loop->uvHandle()
-                     , m_uv_handle
-                     , m_uv_handle->result
+                     , m_uv_obj
+                     , m_uv_obj->result
                      , syncMode == Mode::AsyncMode ? closedCb : nullptr);
 
   if(syncMode == Mode::SyncMode)
@@ -144,13 +144,13 @@ std::string File::readAll()
   while (true)
     {
       r = uv_fs_read(m_loop->uvHandle()
-                     , m_uv_handle
+                     , m_uv_obj
                      , m_fd
                      , m_buffer->getUvHandle()
                      , 1
                      , contents.length()  // offset
                      , nullptr);
-      uv_fs_req_cleanup(m_uv_handle);
+      uv_fs_req_cleanup(m_uv_obj);
 
       if (r <= 0)
         break;
@@ -163,7 +163,7 @@ int File::read(Buffer *buf, const Mode &syncMode)
 {
   m_buffer = buf;
   return uv_fs_read(m_loop->uvHandle()
-                    , m_uv_handle
+                    , m_uv_obj
                     , m_fd
                     , m_buffer->getUvHandle()
                     , m_buffer->getUvHandle()->len
@@ -174,7 +174,7 @@ int File::read(Buffer *buf, const Mode &syncMode)
 int File::write(Buffer *buf, const Mode &syncMode)
 {
   return uv_fs_write(m_loop->uvHandle()
-                     , m_uv_handle
+                     , m_uv_obj
                      , m_fd
                      , buf->getUvHandle()
                      , buf->getUvHandle()->len
@@ -187,7 +187,7 @@ int File::write(std::string &data, const Mode &syncMode)
   //! This is the way Node.js source code does.
   uv_buf_t buf = uv_buf_init(const_cast<char*>(data.c_str()), data.length());
   return uv_fs_write(m_loop->uvHandle()
-                     , m_uv_handle
+                     , m_uv_obj
                      , m_fd
                      , &buf
                      , 1
@@ -198,8 +198,8 @@ int File::write(std::string &data, const Mode &syncMode)
 int File::truncate(const int &size, const Mode &syncMode)
 {
   return uv_fs_ftruncate(m_loop->uvHandle()
-                     , m_uv_handle
-                     , m_uv_handle->result
+                     , m_uv_obj
+                     , m_uv_obj->result
                      , size
                      , nullptr); //! Add Aync Callback!
 }

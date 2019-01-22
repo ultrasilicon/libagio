@@ -90,8 +90,6 @@ struct Callback {
   {
     f = cb->f;
   }
-
-
 };
 
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>

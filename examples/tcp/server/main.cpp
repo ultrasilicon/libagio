@@ -1,12 +1,15 @@
 #include <iostream>
 #include <PTcpServer.h>
+#include <PAddress.h>
+#include <PFunction.h>
 
 using namespace std;
 using namespace Parsley;
 
-void receive_cb(string &data, string &ip)
+void receive_cb(string& data, TcpSocket* s)
 {
-  cout << ip << ": " << data << '\n';
+  cout << s->peerAddress()->toIPString() << ": " << data << '\n';
+
 }
 
 int main()

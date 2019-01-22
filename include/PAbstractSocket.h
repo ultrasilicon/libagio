@@ -4,9 +4,10 @@
 
 #include "Parsley.h"
 #include "PBuffer.h"
-
+#include "PAddress.h"
 
 P_NS_BEGIN
+
 class AbstractSocket;
 
 class AbstractSocket
@@ -14,8 +15,8 @@ class AbstractSocket
 public:
   using SocketDescriptor = int;
 
-  Callback<void, std::string&, std::string&> onReadyRead;
-  Callback<void, const SocketDescriptor&> onWritten;
+//  Callback<void, std::string&, AbstractSocket*> onReadyRead;
+//  Callback<void, const SocketDescriptor&> onWritten;
 
   virtual ~AbstractSocket();
   virtual void bind(const char* ipAddr, const int &port);

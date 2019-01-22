@@ -29,7 +29,7 @@ class TcpServer
 {
   friend TcpServerUtils;
 public:
-  Callback<void, std::string&, std::string&> onReadyRead;
+  Callback<void, std::string&, TcpSocket*> onReadyRead;
 
   TcpServer(Loop *l);
   TcpServer(char *m_ip, const int &m_port, Loop *l);

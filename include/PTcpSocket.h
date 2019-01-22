@@ -2,7 +2,7 @@
 #define TCPSOCKET_H
 
 #include "PAbstractSocket.h"
-
+#include "PAddress.h"
 
 P_NS_BEGIN
 class TcpSocketUtils;
@@ -34,6 +34,9 @@ class TcpSocket
     , public TcpSocketUtils
 {
 public:
+  Callback<void, std::string&, TcpSocket*> onReadyRead;
+  Callback<void, const SocketDescriptor&> onWritten;
+
   TcpSocket(Loop *l);
   ~TcpSocket();
   void start();
@@ -41,10 +44,12 @@ public:
   void connect(const char* addr, const int &port);
   void write(const uv_buf_t *data);
   void setKeepAlive(const bool &enabled, const int &delay);
-  std::string &getPeerAddress();
+  const IPAddress *peerAddress();
+  const IPAddress *retrievePeerAddress();
 
-private:
-  std::string m_peer_address;
+protected:
+  IPAddress *m_peer_address = nullptr;
+
 };
 
 

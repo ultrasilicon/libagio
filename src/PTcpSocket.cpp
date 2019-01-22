@@ -26,11 +26,9 @@ void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_
 {
   if(nread > 0)
     {
-//      Buffer *buffer = new Buffer(buf->base, nread, Loop::defaultLoop());
-
       TcpSocket *s = getInstance((uv_tcp_t*)handle);
       std::string data(buf->base, nread);
-      s->onReadyRead.call(data, s->getPeerAddress());
+      s->onReadyRead.call(data, s);
       return;
     }
   if(nread < 0)
@@ -39,10 +37,8 @@ void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_
         {
           fprintf(stderr, "%s", uv_err_name((int)nread));
         }
-//      Log::net(Log::Normal, "TcpSocket::tcpRead()", "Disconnected from discriptor: " + QString::number(socketDiscriptor));
       uv_close((uv_handle_t*) handle, nullptr);
     }
-
   free(buf->base);
 }
 
@@ -68,6 +64,7 @@ TcpSocket::~TcpSocket()
 {
   //! This might cause delay on quit, be careful!
   close();
+  delete m_peer_address;
 }
 
 void TcpSocket::start()
@@ -108,15 +105,29 @@ void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
                    , delay);
 }
 
-std::string& TcpSocket::getPeerAddress()
+const IPAddress* TcpSocket::peerAddress()
 {
-  if(m_peer_address == "")
+  if(!m_peer_address || m_peer_address->version() == IPAddress::None)
     {
-      sockaddr_in addr;
-      int addrLen;
-      uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) &addr, &addrLen);
-      m_peer_address = std::string(inet_ntoa(addr.sin_addr));
+      return retrievePeerAddress();
     }
+  std::cout << m_peer_address->toIPString();
+
+  return m_peer_address;
+}
+
+const IPAddress* TcpSocket::retrievePeerAddress()
+{
+  sockaddr_storage addr;
+  int addrLen;
+  if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) &addr, &addrLen) != 0)
+    {
+      std::cout << "uv_tcp_getpeername error";
+      return nullptr;
+    }
+  std::cout << std::string(inet_ntoa(((sockaddr_in*)&addr)->sin_addr));
+
+  m_peer_address = new IPAddress(&addr);
   return m_peer_address;
 }
 

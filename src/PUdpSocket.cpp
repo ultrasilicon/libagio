@@ -19,10 +19,11 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
    */
   if(nread != 0 && addr)
     {
-      char senderAddr[17] = { 0 };
-      uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
+//      char senderAddr[17] = { 0 };
+//      uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
+//      std::string ip(senderAddr);
       std::string data(buf->base, nread);
-      std::string ip(senderAddr);
+      IPAddress ip((sockaddr_storage*)addr);
       getInstance(handle)->onReadyRead.call(data, ip);
     }
 

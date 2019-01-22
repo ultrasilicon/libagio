@@ -11,11 +11,13 @@
 
 #include <stdlib.h>
 #include <unordered_map>
-
+#include <string>
+#include <iostream>
 
 #define P_NS_BEGIN namespace Parsley {
 #define P_NS_END }
 #define CXX_MALLOC(type) static_cast<type*>(malloc(sizeof(type)))
+#define CXX_MALLOC_CSTR(size) static_cast<char*>(malloc(size * sizeof(char)))
 #define P_USED(var) (void)var
 
 P_NS_BEGIN

@@ -51,7 +51,7 @@ int TcpServer::bind()
 
 int TcpServer::bind(char *ip, const int &port)
 {
-  ip = ip;
+  m_ip = ip;
   m_port = port;
   return bind();
 }

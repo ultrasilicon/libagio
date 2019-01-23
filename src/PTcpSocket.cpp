@@ -111,7 +111,7 @@ const IPAddress* TcpSocket::peerAddress()
     {
       return retrievePeerAddress();
     }
-  std::cout << m_peer_address->toIPString();
+//  std::cout << m_peer_address->toIPString();
 
   return m_peer_address;
 }
@@ -125,7 +125,7 @@ const IPAddress* TcpSocket::retrievePeerAddress()
       std::cout << "uv_tcp_getpeername error";
       return nullptr;
     }
-  std::cout << std::string(inet_ntoa(((sockaddr_in*)&addr)->sin_addr));
+  std::cout << "original" << std::string(inet_ntoa(((sockaddr_in*)&addr)->sin_addr));
 
   m_peer_address = new IPAddress(&addr);
   return m_peer_address;

@@ -118,16 +118,16 @@ const IPAddress* TcpSocket::peerAddress()
 
 const IPAddress* TcpSocket::retrievePeerAddress()
 {
-  sockaddr_storage addr;
+  sockaddr_storage *addr = CXX_MALLOC(sockaddr_storage);
   int addrLen;
-  if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) &addr, &addrLen) != 0)
+  if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) addr, &addrLen) != 0)
     {
       std::cout << "uv_tcp_getpeername error";
       return nullptr;
     }
   std::cout << "original" << std::string(inet_ntoa(((sockaddr_in*)&addr)->sin_addr));
 
-  m_peer_address = new IPAddress(&addr);
+  m_peer_address = new IPAddress(addr);
   return m_peer_address;
 }
 

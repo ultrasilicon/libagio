@@ -66,7 +66,6 @@ std::string IPAddress::toString(sockaddr_storage &addr)
 std::string IPAddress::toIPString(in_addr addr)
 {
   char buf[INET_ADDRSTRLEN];
-  std::cout << "std::string IPAddress::toIPString(const sockaddr_in &addr)\n";
   if(!inet_ntop(AF_INET, &addr, buf, sizeof(buf)))
     return {};
   return buf;

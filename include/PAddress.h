@@ -25,7 +25,7 @@ public:
   ~IPAddress();
 
   static std::string toString(sockaddr_storage &addr);
-  std::string toIPString(in_addr addr) const;
+  static std::string toIPString(in_addr addr);
   static std::string toIPString(in6_addr addr);
 
   void setAddress(sockaddr_in *addr);

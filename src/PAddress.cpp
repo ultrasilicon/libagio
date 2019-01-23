@@ -63,11 +63,10 @@ std::string IPAddress::toString(sockaddr_storage &addr)
   return std::string(hoststr) + ":" + portstr;
 }
 
-std::string IPAddress::toIPString(in_addr addr) const
+std::string IPAddress::toIPString(in_addr addr)
 {
-  //! Ghost code!!
-  //! Do not call this function, it manipulates other class members!
   char buf[INET_ADDRSTRLEN];
+  std::cout << "std::string IPAddress::toIPString(const sockaddr_in &addr)\n";
   if(!inet_ntop(AF_INET, &addr, buf, sizeof(buf)))
     return {};
   return buf;
@@ -75,8 +74,6 @@ std::string IPAddress::toIPString(in_addr addr) const
 
 std::string IPAddress::toIPString(in6_addr addr)
 {
-  //! Ghost code!!
-  //! Do not call this function, it manipulates other class members!
   char buf[INET6_ADDRSTRLEN];
   if(!inet_ntop(AF_INET6, &addr, buf, sizeof(buf)))
     return {};
@@ -131,22 +128,9 @@ IPAddress::Version IPAddress::version() const
 std::string IPAddress::toIPString() const
 {
   if(m_version == IPv4 && m_ip4)
-    {
-      in_addr addr = m_ip4->sin_addr;
-      char buf[INET_ADDRSTRLEN];
-      std::cout << "std::string IPAddress::toIPString(const sockaddr_in &addr)\n";
-      if(!inet_ntop(AF_INET, &addr, buf, sizeof(buf)))
-        return {};
-      return buf;
-    }
+    return toIPString(m_ip4->sin_addr); //! debug break
   else if(m_version == IPv6 && m_ip6)
-    {
-      in6_addr addr = m_ip6->sin6_addr;
-      char buf[INET6_ADDRSTRLEN];
-      if(!inet_ntop(AF_INET6, &addr, buf, sizeof(buf)))
-        return {};
-      return buf;
-    }
+    return toIPString(m_ip6->sin6_addr);
   else
     return "";
 }

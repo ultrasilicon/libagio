@@ -19,7 +19,6 @@ void TcpSocketUtils::writeCb(uv_write_t *handle, int status)
 
 void TcpSocketUtils::connectCb(uv_connect_s *handle, int status)
 {
-
 }
 
 void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
@@ -107,12 +106,8 @@ void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
 
 const IPAddress* TcpSocket::peerAddress()
 {
-  if(!m_peer_address || m_peer_address->version() == IPAddress::None)
-    {
-      return retrievePeerAddress();
-    }
-//  std::cout << m_peer_address->toIPString();
-
+  if(!m_peer_address || m_peer_address->version() == IPAddress::None)    
+    return retrievePeerAddress();
   return m_peer_address;
 }
 
@@ -121,12 +116,7 @@ const IPAddress* TcpSocket::retrievePeerAddress()
   sockaddr_storage *addr = CXX_MALLOC(sockaddr_storage);
   int addrLen;
   if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) addr, &addrLen) != 0)
-    {
-      std::cout << "uv_tcp_getpeername error";
-      return nullptr;
-    }
-  std::cout << "original" << std::string(inet_ntoa(((sockaddr_in*)&addr)->sin_addr));
-
+    return nullptr;
   m_peer_address = new IPAddress(addr);
   return m_peer_address;
 }

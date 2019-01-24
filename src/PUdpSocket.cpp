@@ -23,7 +23,9 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 //      uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
 //      std::string ip(senderAddr);
       std::string data(buf->base, nread);
-      IPAddress ip((sockaddr_storage*)addr);
+      sockaddr_storage *addrCopy = CXX_MALLOC(sockaddr_storage);
+      memcpy((sockaddr_storage*) addr, addrCopy, sizeof(sockaddr_storage));
+      IPAddress ip(addrCopy);
       getInstance(handle)->onReadyRead.call(data, ip);
     }
 

@@ -117,7 +117,7 @@ const IPAddress* TcpSocket::retrievePeerAddress()
   int addrLen;
   if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) addr, &addrLen) != 0)
     return nullptr;
-  m_peer_address = new IPAddress(addr);
+  m_peer_address = new IPAddress(*addr);
   return m_peer_address;
 }
 

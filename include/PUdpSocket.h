@@ -26,7 +26,7 @@ class UdpSocket
     , private UdpSocketUtils
 {
 public:
-  Callback<void, std::string&, IPAddress*> onReadyRead;
+  Callback<void, std::string&, IPAddress> onReadyRead;
   Callback<void, const SocketDescriptor&> onWritten;
 
   UdpSocket(Loop *l);
@@ -35,7 +35,7 @@ public:
   void bind(const char *ip, const int &port);
   void start();
   void stop();
-  void write(const char *ip, const int &port, Buffer *buf);
+  void write(const char *ip, const int &port, const std::string &data);
   void setBroadcatEnabled(const bool &enabled = true);
 
 };

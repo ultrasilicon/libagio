@@ -1,7 +1,7 @@
 #include "PAbstractSocket.h"
 
 #include <functional>
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace Parsley;
 

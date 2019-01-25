@@ -20,7 +20,8 @@ Buffer::Buffer(char *data, const int len, Loop *l)
 
 Buffer::~Buffer()
 {
-  free(m_uv_obj->base);
+  if(m_uv_obj->base)
+    free(m_uv_obj->base);
 }
 
 char *Buffer::data()

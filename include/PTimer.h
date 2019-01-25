@@ -35,16 +35,18 @@ class Timer
 public:
   Callback<void, Timer*> onTimedOut;
 
-  Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
   Timer(Loop *l);
+  Timer(const uint64_t &repeat, Loop *l);
+  Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
+  int start();
+  int start(const uint64_t &repeat);
   int start(const uint64_t &timeout, const uint64_t &repeat);
-  bool start();
   void stop();
 
 
 private:
-  uint64_t m_delay = 0;
-  uint64_t m_interval = 0;
+  uint64_t m_timeout = 0;
+  uint64_t m_repeat = 0;
 };
 
 

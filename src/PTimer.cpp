@@ -23,32 +23,38 @@ Timer::Timer(Loop *l)
   regInstance(m_uv_obj, this);
 }
 
-Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
+Timer::Timer(const uint64_t &repeat, Loop *l)
   : TimerUtils(l)
-  , m_delay(timeout)
-  , m_interval(repeat)
+  , m_repeat(repeat)
 {
   uv_timer_init(l->uvHandle(), m_uv_obj);
   regInstance(m_uv_obj, this);
 }
 
-bool Timer::start()
+Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
+  : TimerUtils(l)
+  , m_timeout(timeout)
+  , m_repeat(repeat)
 {
-  if(m_delay && m_interval)
-    {
-      uv_timer_start(m_uv_obj
-                     , timeoutCb
-                     , m_delay
-                     , m_interval);
-      return true;
-    }
-  return false;
+  uv_timer_init(l->uvHandle(), m_uv_obj);
+  regInstance(m_uv_obj, this);
 }
 
-int Timer::start(const uint64_t &timeout, const uint64_t &repeat) //! TODO: duplicated?
+int Timer::start()
 {
-  m_delay = timeout;
-  m_interval = repeat;
+  return start(m_timeout, m_repeat);
+}
+
+int Timer::start(const uint64_t &repeat)
+{
+  m_repeat = repeat;
+  return start(m_timeout, repeat);
+}
+
+int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
+{
+  m_timeout = timeout;
+  m_repeat = repeat;
   return uv_timer_start(m_uv_obj
                         , timeoutCb
                         , timeout

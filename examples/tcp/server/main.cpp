@@ -1,24 +1,22 @@
 #include <iostream>
 #include <PTcpServer.h>
-#include <PAddress.h>
-#include <PFunction.h>
 
 using namespace std;
 using namespace Parsley;
 
-void receive_cb(string& data, TcpSocket* s)
+void receive_cb(string& data, TcpSocket* sock)
 {
-  cout << s->peerAddress()->toIPString() << ": " << data << '\n';
+  cout << sock->peerAddress()->toIPString() << ": " << data << '\n';
 }
 
 int main()
 {
-  Loop l;
+  Loop loop;
 
-  TcpServer *server = new TcpServer(&l);
+  TcpServer *server = new TcpServer(&loop);
   server->bind("0.0.0.0", 63773);
   server->listen();
   connect(&server->onReadyRead, &receive_cb);
 
-  return l.run();
+  return loop.run();
 }

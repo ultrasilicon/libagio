@@ -9,7 +9,7 @@
 * libParsley is created based on [libuv](https://github.com/libuv/libuv) to serve for [Project Hive](https://github.com/HiveChat/Hive-desktop), the lovely p2p chat app.
 ### Examples:
 
-##### Simple TCP Server
+##### TCP Server
 
 ```c++
 #include <iostream>
@@ -36,7 +36,7 @@ int main()
 }
 ```
 
-##### Simple TCP Server
+##### UDP Socket Read/Write
 
 ```c++
 #include <iostream>

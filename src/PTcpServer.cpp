@@ -45,7 +45,7 @@ int TcpServer::bind()
   sockaddr_in *addr = CXX_MALLOC(sockaddr_in);
   uv_ip4_addr(m_ip, m_port, addr);
   return uv_tcp_bind(m_uv_obj
-                     , (const struct sockaddr*) addr
+                     , (const sockaddr*) addr
                      , 0);
 }
 

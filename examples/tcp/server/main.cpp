@@ -8,9 +8,7 @@ using namespace Parsley;
 
 void receive_cb(string& data, TcpSocket* s)
 {
-  cout << s->peerAddress()->toIPString() << ": " << data;
-  cout << '\n';
-
+  cout << s->peerAddress()->toIPString() << ": " << data << '\n';
 }
 
 int main()

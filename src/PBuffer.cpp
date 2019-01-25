@@ -2,6 +2,15 @@
 
 using namespace Parsley;
 
+
+
+Parsley::Buffer::Buffer(const std::string &data, Loop *l)
+  : PUvObject(l)
+{
+  *m_uv_obj = uv_buf_init((char*)data.c_str(), data.size());
+  regInstance(m_uv_obj, this);
+}
+
 Buffer::Buffer(char *data, const int len, Loop *l)
   : PUvObject(l)
 {

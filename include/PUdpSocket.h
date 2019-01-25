@@ -26,7 +26,7 @@ class UdpSocket
     , private UdpSocketUtils
 {
 public:
-  Callback<void, std::string&, IPAddress&> onReadyRead;
+  Callback<void, std::string&, IPAddress*> onReadyRead;
   Callback<void, const SocketDescriptor&> onWritten;
 
   UdpSocket(Loop *l);

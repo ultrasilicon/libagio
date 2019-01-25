@@ -45,7 +45,7 @@ bool Timer::start()
   return false;
 }
 
-int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
+int Timer::start(const uint64_t &timeout, const uint64_t &repeat) //! TODO: duplicated?
 {
   m_delay = timeout;
   m_interval = repeat;

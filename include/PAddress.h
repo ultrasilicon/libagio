@@ -18,6 +18,9 @@ public:
   };
 
   IPAddress();
+  IPAddress(const sockaddr_storage &addr);
+  IPAddress(const sockaddr_in &addr);
+  IPAddress(const sockaddr_in6 &addr);
   IPAddress(sockaddr_storage *addr);
   IPAddress(sockaddr_in *addr);
   IPAddress(sockaddr_in6 *addr);
@@ -28,6 +31,7 @@ public:
   static std::string toIPString(in_addr addr);
   static std::string toIPString(in6_addr addr);
 
+  void setAddress(sockaddr_storage *addr);
   void setAddress(sockaddr_in *addr);
   void setAddress(sockaddr_in6 *addr);
   void setAddress(const std::string& addr, const uint16_t& port);

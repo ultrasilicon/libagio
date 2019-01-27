@@ -108,7 +108,7 @@ const IPAddress* TcpSocket::peerAddress()
 {
   if(!m_peer_address || m_peer_address->version() == IPAddress::None)    
     return retrievePeerAddress();
-  return m_peer_address;
+  return retrievePeerAddress();
 }
 
 const IPAddress* TcpSocket::retrievePeerAddress()

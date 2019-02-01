@@ -13,8 +13,8 @@ template<typename Ret, typename... Args>
 struct Callback;
 
 template <class T, typename std::enable_if<std::is_class<T>::value, T>::type* = nullptr>
-void onMember(T&) {
-
+void onClass(T&) {
+  
 }
 
 

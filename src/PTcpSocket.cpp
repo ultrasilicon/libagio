@@ -19,6 +19,7 @@ void TcpSocketUtils::writeCb(uv_write_t *handle, int status)
 
 void TcpSocketUtils::connectCb(uv_connect_s *handle, int status)
 {
+
 }
 
 void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
@@ -45,7 +46,6 @@ void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_
 void TcpSocketUtils::freeWriteReq(uv_write_t *handle)
 {
   write_req_t *req = (write_req_t*) handle;
-  free(req->buf.base);
   free(req);
 }
 
@@ -86,10 +86,10 @@ void TcpSocket::connect(const char *ip, const int &port)
 
 
 void
-TcpSocket::write(const uv_buf_t *data)
+TcpSocket::write(const std::string& data)
 {
   write_req_t *req = CXX_MALLOC(write_req_t);
-  req->buf = uv_buf_init(data->base, data->len);
+  req->buf = uv_buf_init((char*) data.c_str(), data.size());
   uv_write((uv_write_t*) req
            , (uv_stream_t*)m_uv_obj
            , &req->buf
@@ -113,11 +113,12 @@ const IPAddress* TcpSocket::peerAddress()
 
 const IPAddress* TcpSocket::retrievePeerAddress()
 {
-  sockaddr_storage *addr = CXX_MALLOC(sockaddr_storage);
+  sockaddr_storage addr;
   int addrLen;
-  if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) addr, &addrLen) != 0)
+  if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) &addr, &addrLen) != 0)
     return nullptr;
-  m_peer_address = new IPAddress(*addr);
+  m_peer_address = new IPAddress(addr);
+
   return m_peer_address;
 }
 

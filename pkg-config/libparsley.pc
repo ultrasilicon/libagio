@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libparsley
+Version: 0.0.1
+Description: Asynchronous cross-platform C++ library with delicate OOP callback system.
+Requires: libuv
+Libs: -L${libdir} -lparsley
+Cflags: -I/usr/local/parsley/include

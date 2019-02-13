@@ -12,10 +12,16 @@ struct Functor;
 template<typename Ret, typename... Args>
 struct Callback;
 
-template <class T, typename std::enable_if<std::is_class<T>::value, T>::type* = nullptr>
-void onMember(T&) {
+//template <class T, typename std::enable_if<std::is_member_function_pointer<T>::value, T>::type* = nullptr>
+//void do_stuff(T& t) {
+//  std::cout << "do_stuff integral\n";
+//    // an implementation for integral types (int, char, unsigned, etc.)
+//}
 
-}
+//template <class T, >
+//void do_stuff(T& t) {
+//    // an implementation for class types
+//}
 
 
 template<class T, typename Ret, typename... Args>

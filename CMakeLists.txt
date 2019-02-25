@@ -1,17 +1,12 @@
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 3.9)
 
 # Project
 #############################################################
 get_filename_component(PROJECT_DIR_NAME ${CMAKE_CURRENT_LIST_DIR} NAME)
-string(REPLACE " " "_" PROJECT_DIR_NAME ${PROJECT_DIR_NAME})
-
 project(${PROJECT_DIR_NAME}
-        VERSION 1.0.0.0 # <major>.<minor>.<patch>.<tweak>
-        LANGUAGES CXX)
-
-string(SUBSTRING ${PROJECT_NAME} 3 -1 LIB_NAME)
-string(TOLOWER ${LIB_NAME} LIB_NAME)
-
+	VERSION 0.1.0 # <major>.<minor>.<patch>.<tweak>
+	LANGUAGES CXX
+	DESCRIPTION "A cross-platform async C++ library with delicate OOP callback system.")
 
 set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/PAbstractSocket.h
@@ -45,26 +40,20 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/Parsley.cpp
 )
 
-# prepare pkg-config file
-if(UNIX)
-set(PKGCONFIG
-    ${PROJECT_SOURCE_DIR}/pkg-config/libparsley.pc
-)
-endif(UNIX)
+include_directories(/usr/local/include)
+include_directories(./include)
+
 
 # Build Flags
 #############################################################
 
 # compiler flags
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_STANDARD 1z)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-# debug
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
-
-# release
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -flto")
 
 # If no build type is set, the default is Release
@@ -77,8 +66,44 @@ endif(NOT CMAKE_BUILD_TYPE)
 if(UNIX)
 find_package(PkgConfig)
 pkg_check_modules(LIBUV REQUIRED libuv)
-
 endif(UNIX)
+
+
+
+#if(NOT LIBUV)
+#    message(FATAL_ERROR "libuv was not found.")
+#endif(NOT LIBUV)
+
+
+add_library(${PROJECT_DIR_NAME} SHARED
+	${INCLUDE} ${SRC}
+)
+
+target_link_libraries(${PROJECT_DIR_NAME} uv)
+
+# set_target_properties(${PROJECT_DIR_NAME} PROPERTIES SOVERSION 1)
+set_target_properties(${PROJECT_DIR_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+
+# INSTALL
+include(GNUInstallDirs)
+install(TARGETS ${PROJECT_DIR_NAME}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+	DESTINATION include/${PROJECT_DIR_NAME}
+	FILES_MATCHING PATTERN "${PROJECT_DIR_NAME}/include/*.h"
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
+
+if(NOT CMAKE_INSTALL_PREFIX)
+    set(CMAKE_INSTALL_PREFIX /usr/local)
+endif(NOT CMAKE_INSTALL_PREFIX)
+
+configure_file(${PROJECT_DIR_NAME}.pc.in ${PROJECT_DIR_NAME}.pc @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_DIR_NAME}.pc
+	DESTINATION lib/pkgconfig
+	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
 
 
 

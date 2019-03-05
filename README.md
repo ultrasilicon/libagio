@@ -7,9 +7,25 @@
 * Platform: Linux, MacOS, Windows, Android and embedded unix.
 * Naming convention follows libqt.
 * libParsley is created based on [libuv](https://github.com/libuv/libuv) to serve for [Project Hive](https://github.com/HiveChat/Hive-desktop), the lovely p2p chat app.
+## Build
+
+- Dependency:
+  - `libuv`: https://github.com/libuv/libuv
+- Build with cmake:
+
+```bash
+git clone https://github.com/ultrasilicon/libParsley.git
+cd libParsley
+mkdir build 
+cd build
+cmake ..
+make -j8
+make install
+```
+
 ## Examples:
 
-##### TCP Server
+### TCP Server
 
 ```c++
 #include <iostream>
@@ -36,44 +52,36 @@ int main()
 }
 ```
 
-##### UDP Socket Read/Write
+### UDP Socket
 
 ```c++
 #include <iostream>
-#include <PUdpSocket.h>
+#include <PTcpSocket.h>
 #include <PTimer.h>
 
 using namespace std;
 using namespace Parsley;
 
-static Loop* loop;
-static UdpSocket* server;
-static Timer* timer;
+TcpSocket *client;
 
-void send_cb(Timer*)
+void timeout_cb(Timer *t)
 {
-  server->write("255.255.255.255", 44444, "hello");
-}
-
-void receive_cb(string& data, IPAddress ip)
-{
-  cout << ip.toIPString() << ": " << data << '\n';
+  client->write("hello");
 }
 
 int main()
 {
-  loop = new Loop();
+  Loop loop;
 
-  server = new UdpSocket("0.0.0.0", 44444, loop);
-  connect(&server->onReadyRead, &receive_cb);
+  client = new TcpSocket(&loop);
+  client->connect("127.0.0.1", 63773);
+  client->start();
 
-  timer = new Timer(500, loop);
-  connect(&timer->onTimedOut, &send_cb);
-
-  server->start();
+  Timer *timer = new Timer(500, &loop);
+  connect(&timer->onTimedOut, &timeout_cb);
   timer->start();
 
-  return loop->run();
+  return loop.run();
 }
 ```
 
@@ -92,24 +100,6 @@ uv_fs_t | Parsley::File | 60% | Good for basic use, some file & dir operatin not
 uv_udp_t | Parsley::UdpSocket | 60% | Good for basic use, multicast not yet implemented 
 uv_tcp_t | Parsley::TcpSocket | 50% |Good for basic use
 uv_tcp_t | Parsley::TcpServer | 100% |Done
-
-
-
-## Build
-
-* Dependency:
-  * `libuv`: https://github.com/libuv/libuv
-* Build with cmake:
-
-```bash
-git clone https://github.com/ultrasilicon/libParsley.git
-cd libParsley
-mkdir build 
-cd build
-cmake ..
-make -j8
-make install
-```
 
 
 

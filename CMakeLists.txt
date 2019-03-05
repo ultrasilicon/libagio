@@ -75,6 +75,7 @@ add_library(${PROJECT_DIR_NAME} SHARED
 target_link_libraries(${PROJECT_DIR_NAME} uv)
 
 # set_target_properties(${PROJECT_DIR_NAME} PROPERTIES SOVERSION 1)
+set_target_properties(${PROJECT_DIR_NAME} PROPERTIES PREFIX "")
 set_target_properties(${PROJECT_DIR_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
 # INSTALL

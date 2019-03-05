@@ -4,23 +4,22 @@
 
 ### Asynchronous cross-platform high performance C++ library 
 * **This library is currently under primary development**
-* Platform: Linux, MacOS, Windows, Android and embedded unix.
-* Naming convention follows libqt.
 * libParsley is created based on [libuv](https://github.com/libuv/libuv) to serve for [Project Hive](https://github.com/HiveChat/Hive-desktop), the lovely p2p chat app.
+
 ## Build
 
 - Dependency:
-  - `libuv`: https://github.com/libuv/libuv
+  - [libuv](https://github.com/libuv/libuv)
 - Build with cmake:
 
 ```bash
-git clone https://github.com/ultrasilicon/libParsley.git
-cd libParsley
-mkdir build 
-cd build
-cmake ..
-make -j8
-make install
+$ git clone https://github.com/ultrasilicon/libParsley.git
+$ cd libParsley
+$ mkdir build 
+$ cd build
+$ cmake ..
+$ make
+$ make install
 ```
 
 ## Examples:

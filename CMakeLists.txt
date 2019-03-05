@@ -68,13 +68,6 @@ find_package(PkgConfig)
 pkg_check_modules(LIBUV REQUIRED libuv)
 endif(UNIX)
 
-
-
-#if(NOT LIBUV)
-#    message(FATAL_ERROR "libuv was not found.")
-#endif(NOT LIBUV)
-
-
 add_library(${PROJECT_DIR_NAME} SHARED
 	${INCLUDE} ${SRC}
 )

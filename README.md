@@ -28,7 +28,8 @@ $ make install
 
 ```c++
 #include <iostream>
-#include <PTcpServer.h>
+#include <string>
+#include <libParsley/PTcpServer.h>
 
 using namespace std;
 using namespace Parsley;
@@ -51,12 +52,12 @@ int main()
 }
 ```
 
-### UDP Socket
+### TCP Client
 
 ```c++
 #include <iostream>
-#include <PTcpSocket.h>
-#include <PTimer.h>
+#include <libParsley/PTcpSocket.h>
+#include <libParsley/PTimer.h>
 
 using namespace std;
 using namespace Parsley;

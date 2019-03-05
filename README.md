@@ -7,7 +7,7 @@
 * Platform: Linux, MacOS, Windows, Android and embedded unix.
 * Naming convention follows libqt.
 * libParsley is created based on [libuv](https://github.com/libuv/libuv) to serve for [Project Hive](https://github.com/HiveChat/Hive-desktop), the lovely p2p chat app.
-### Examples:
+## Examples:
 
 ##### TCP Server
 
@@ -79,7 +79,7 @@ int main()
 
 
 
-### Progress
+## Progress
 
 libuv | libParsley | Progress | Comments
 ------- | ------- | ------- | ------- 
@@ -95,10 +95,22 @@ uv_tcp_t | Parsley::TcpServer | 100% |Done
 
 
 
-## Documents
-* Coming soon!
-
 ## Build
-* Coming soon!
+
+* Dependency:
+  * `libuv`: https://github.com/libuv/libuv
+* Build with cmake:
+
+```bash
+git clone https://github.com/ultrasilicon/libParsley.git
+cd libParsley
+mkdir build 
+cd build
+cmake ..
+make -j8
+make install
+```
+
+
 
 

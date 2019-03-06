@@ -3,10 +3,12 @@ cmake_minimum_required(VERSION 3.9)
 # Project
 #############################################################
 get_filename_component(PROJECT_DIR_NAME ${CMAKE_CURRENT_LIST_DIR} NAME)
-project(${PROJECT_DIR_NAME}
+string(TOLOWER ${PROJECT_DIR_NAME} PROJECT_NAME)
+project(${PROJECT_NAME}
 	VERSION 0.1.0 # <major>.<minor>.<patch>.<tweak>
 	LANGUAGES CXX
 	DESCRIPTION "A cross-platform async C++ library with delicate OOP callback system.")
+
 
 set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/PAbstractSocket.h
@@ -68,54 +70,31 @@ find_package(PkgConfig)
 pkg_check_modules(LIBUV REQUIRED libuv)
 endif(UNIX)
 
-add_library(${PROJECT_DIR_NAME} SHARED
+add_library(${PROJECT_NAME} SHARED
 	${INCLUDE} ${SRC}
 )
 
-target_link_libraries(${PROJECT_DIR_NAME} uv)
+target_link_libraries(${PROJECT_NAME} uv)
 
 # set_target_properties(${PROJECT_DIR_NAME} PROPERTIES SOVERSION 1)
-set_target_properties(${PROJECT_DIR_NAME} PROPERTIES PREFIX "")
-set_target_properties(${PROJECT_DIR_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
 # INSTALL
 include(GNUInstallDirs)
-install(TARGETS ${PROJECT_DIR_NAME}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+configure_file(${PROJECT_DIR_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
+
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+	DESTINATION lib/pkgconfig)
+
+install(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION lib)
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-	DESTINATION include/${PROJECT_DIR_NAME}
-	FILES_MATCHING PATTERN "${PROJECT_DIR_NAME}/include/*.h"
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
-
-if(NOT CMAKE_INSTALL_PREFIX)
-    set(CMAKE_INSTALL_PREFIX /usr/local)
-endif(NOT CMAKE_INSTALL_PREFIX)
-
-configure_file(${PROJECT_DIR_NAME}.pc.in ${PROJECT_DIR_NAME}.pc @ONLY)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_DIR_NAME}.pc
-	DESTINATION lib/pkgconfig
-	PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	DESTINATION include/${PROJECT_NAME}
+	USE_SOURCE_PERMISSIONS
+	FILES_MATCHING PATTERN "${PROJECT_DIR_NAME}/include/*.h")
 
 
 

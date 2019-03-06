@@ -17,8 +17,6 @@ public:
     uv_buf_t buf;
   } write_req_t;
 
-  Callback<void, const int&> onConnected;
-
   TcpSocketUtils(Loop *l);
 
 protected:
@@ -34,6 +32,7 @@ class TcpSocket
     , public TcpSocketUtils
 {
 public:
+  Callback<void> onConnected;
   Callback<void, std::string&, TcpSocket*> onReadyRead;
   Callback<void, const SocketDescriptor&> onWritten;
 

@@ -19,7 +19,7 @@ void TcpSocketUtils::writeCb(uv_write_t *handle, int status)
 
 void TcpSocketUtils::connectCb(uv_connect_s *handle, int status)
 {
-
+  getInstance((uv_tcp_t*) handle)->onConnected.call();
 }
 
 void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)

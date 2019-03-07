@@ -34,7 +34,7 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 void
 UdpSocketUtils::writtenCb(uv_udp_send_t *req, int status)
 {
-  int socketDescriptor = AbstractSocket::getFd((uv_handle_t*) req->handle);
+  int socketDescriptor = Utils::getFd((uv_handle_t*) req->handle);
   getInstance(req->handle)->onWritten.call(socketDescriptor);
   free(req->bufs);
   free(req);

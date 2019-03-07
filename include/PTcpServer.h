@@ -5,8 +5,9 @@
 #define TCP_BACKLOG 128
 
 #include "PTcpSocket.h"
+#include "PUtils.h"
 
-#include <unordered_set>
+#include <unordered_map>
 #include <map>
 
 
@@ -44,7 +45,7 @@ private:
   char *m_ip;
   int m_port;
   int m_back_log;
-  std::unordered_set<TcpSocket*> m_client_set;
+  std::unordered_map<int, TcpSocket*> m_client_set;
 
   void accept();
 };

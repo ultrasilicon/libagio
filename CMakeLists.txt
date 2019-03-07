@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
 
-# Project
-#############################################################
 get_filename_component(PROJECT_DIR_NAME ${CMAKE_CURRENT_LIST_DIR} NAME)
 string(TOLOWER ${PROJECT_DIR_NAME} PROJECT_NAME)
 project(${PROJECT_NAME}
@@ -46,8 +44,6 @@ include_directories(/usr/local/include)
 include_directories(./include)
 
 
-# Build Flags
-#############################################################
 
 # compiler flags
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -63,8 +59,8 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)
 
-# Dependencies
-#############################################################
+
+
 if(UNIX)
 find_package(PkgConfig)
 pkg_check_modules(LIBUV REQUIRED libuv)
@@ -83,8 +79,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 # INSTALL
 include(GNUInstallDirs)
 
-configure_file(${PROJECT_DIR_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
-
+configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
 	DESTINATION lib/pkgconfig)
 

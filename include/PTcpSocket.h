@@ -38,6 +38,7 @@ public:
 
   TcpSocket(Loop *l);
   ~TcpSocket();
+
   void start();
   void close();
   void connect(const char* addr, const int &port);

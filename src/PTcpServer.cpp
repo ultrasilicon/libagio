@@ -79,9 +79,8 @@ void TcpServer::accept()
   TcpSocket *client = new TcpSocket(m_loop);
 //  < Here we invoke TcpSocket as a user, but we are acturally an internal class.
 //  < To be more efficient, why not use a static function binding?
-//  < a children map might be needed, recording sockets' fd.
-  connect(&client->onReadyRead, &this->onReadyRead); //<< record fd?
-  m_client_set.insert(client);
+  connect(&client->onReadyRead, &this->onReadyRead);
+  m_client_set.insert({Utils::getFd((uv_handle_t*)client), client});
   if(uv_accept((uv_stream_t*) m_uv_obj, (uv_stream_t*) client->getUvHandle()) == 0)
     {
       client->start();

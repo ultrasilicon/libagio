@@ -6,7 +6,11 @@
 
 P_NS_BEGIN
 
-
+class Utils
+{
+public:
+  static int getFd(uv_handle_t* handle);
+};
 
 
 P_NS_END

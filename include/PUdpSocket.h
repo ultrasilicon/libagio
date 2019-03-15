@@ -33,7 +33,7 @@ public:
   UdpSocket(const char *ip, const int &port, Loop *l);
 
   void bind(const char *ip, const int &port);
-  void start();
+  int start();
   void stop();
   void write(const char *ip, const int &port, const std::string &data);
   void setBroadcatEnabled(const bool &enabled = true);

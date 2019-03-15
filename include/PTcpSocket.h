@@ -22,7 +22,7 @@ public:
 protected:
   static void receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf);
   static void writeCb(uv_write_t *handle, int status);
-  static void connectCb(uv_connect_s *handle, int status);
+  static void connectCb(uv_connect_t *handle, int status);
   static void freeWriteReq(uv_write_t *handle);
 };
 
@@ -39,10 +39,10 @@ public:
   TcpSocket(Loop *l);
   ~TcpSocket();
 
-  void start();
+  int start();
   void close();
-  void connect(const char* addr, const int &port);
-  void write(const std::string &data);
+  int connect(const char* addr, const int &port);
+  int write(const std::string &data);
   void setKeepAlive(const bool &enabled, const int &delay);
   const IPAddress *peerAddress();
   const IPAddress *retrievePeerAddress();

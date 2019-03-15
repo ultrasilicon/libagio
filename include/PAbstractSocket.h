@@ -20,7 +20,7 @@ public:
 
   virtual ~AbstractSocket();
   virtual void bind(const char* ipAddr, const int &port);
-  virtual void start();
+  virtual int start();
   virtual void stop();
   static void allocCb(uv_handle_t *handle, size_t size, uv_buf_t *buf);
 

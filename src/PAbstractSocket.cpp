@@ -15,7 +15,7 @@ void AbstractSocket::bind(const char *ipAddr, const int &port)
   P_USED(port);
 }
 
-void AbstractSocket::start()
+int AbstractSocket::start()
 {
 }
 

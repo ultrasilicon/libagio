@@ -17,9 +17,9 @@ void TcpSocketUtils::writeCb(uv_write_t *handle, int status)
   freeWriteReq(handle);
 }
 
-void TcpSocketUtils::connectCb(uv_connect_s *handle, int status)
+void TcpSocketUtils::connectCb(uv_connect_t *handle, int status)
 {
-  getInstance((uv_tcp_t*) handle)->onConnected.call();
+//  getInstance((uv_tcp_t*) handle)->onConnected.call();
 }
 
 void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
@@ -66,9 +66,9 @@ TcpSocket::~TcpSocket()
   delete m_peer_address;
 }
 
-void TcpSocket::start()
+int TcpSocket::start()
 {
-  uv_read_start((uv_stream_t*) m_uv_obj, allocCb, receiveCb);
+  return uv_read_start((uv_stream_t*) m_uv_obj, allocCb, receiveCb);
 }
 
 void TcpSocket::close()
@@ -76,21 +76,26 @@ void TcpSocket::close()
   uv_close((uv_handle_t*) m_uv_obj, nullptr);
 }
 
-void TcpSocket::connect(const char *ip, const int &port)
+int TcpSocket::connect(const char *ip, const int &port)
 {
-  sockaddr_in addr;
-  uv_ip4_addr(ip, port, &addr);
-  uv_connect_t *connect = CXX_MALLOC(uv_connect_t);
-  uv_tcp_connect(connect, m_uv_obj, (sockaddr*)&addr, connectCb);
+  auto *addr = CXX_MALLOC(sockaddr_in);
+  uv_ip4_addr(ip, port, addr);
+  auto *connect = CXX_MALLOC(uv_connect_t);
+
+//  if (m_uv_obj->type != UV_TCP)
+//    std::cout << "handle type UV_EINVAL"<< std::endl;
+//  if (((sockaddr*)addr)->sa_family != AF_INET && ((sockaddr*)addr)->sa_family != AF_INET6)
+//    std::cout << "addr type UV_EINVAL"<< std::endl;
+
+  return uv_tcp_connect(connect, m_uv_obj, (sockaddr*)addr, &connectCb);
 }
 
 
-void
-TcpSocket::write(const std::string& data)
+int TcpSocket::write(const std::string& data)
 {
-  write_req_t *req = CXX_MALLOC(write_req_t);
+  auto *req = CXX_MALLOC(write_req_t);
   req->buf = uv_buf_init((char*) data.c_str(), data.size());
-  uv_write((uv_write_t*) req
+  return uv_write((uv_write_t*) req
            , (uv_stream_t*)m_uv_obj
            , &req->buf
            , 1

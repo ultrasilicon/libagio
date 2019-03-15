@@ -69,10 +69,9 @@ UdpSocket::bind(const char *ip, const int &port)
   uv_udp_bind(m_uv_obj, (const sockaddr*) &addr, UV_UDP_REUSEADDR);
 }
 
-void
-UdpSocket::start()
+int UdpSocket::start()
 {
-  uv_udp_recv_start(m_uv_obj, allocCb, receiveCb);
+  return uv_udp_recv_start(m_uv_obj, allocCb, receiveCb);
 }
 
 void

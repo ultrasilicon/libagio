@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <libParsley/PUdpSocket.h>
-#include <libParsley/PTimer.h>
+#include <libparsley/PUdpSocket.h>
+#include <libparsley/PTimer.h>
 
 using namespace std;
 using namespace Parsley;
@@ -15,9 +15,9 @@ void send_cb(Timer*)
   server->write("255.255.255.255", 44444, "hello");
 }
 
-void receive_cb(string& data, IPAddress ip)
+void receive_cb(string& data, IPAddress& ip)
 {
-  cout << ip.toIPString() << ": " << data << '\n';
+  cout << ip.toIPString() << ": " << data << endl;
 }
 
 int main()

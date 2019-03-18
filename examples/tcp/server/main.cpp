@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
-#include <libParsley/PTcpServer.h>
+#include <libparsley/PTcpServer.h>
 
 using namespace std;
 using namespace Parsley;
 
 void receive_cb(string& data, TcpSocket* sock)
 {
-  cout << sock->peerAddress()->toIPString() << ": " << data << '\n';
+  cout << sock->peerAddress()->toIPString() << ": " << data << endl;
 }
 
 int main()

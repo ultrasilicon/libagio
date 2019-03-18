@@ -14,32 +14,32 @@ CONFIG += c++1z
 INCLUDEPATH += ./include
 
 SOURCES += \
-    ./src/PAbstractSocket.cpp \
-    ./src/PAddress.cpp \
-    ./src/PTcpServer.cpp \
-    ./src/PTcpSocket.cpp \
-    ./src/PTimer.cpp \
-    ./src/PUdpSocket.cpp \
-    ./src/PUtils.cpp \
-    ./src/Parsley.cpp \
-    ./src/PFile.cpp \
-    ./src/PCheck.cpp \
-    ./src/PAsync.cpp \
-    ./src/PFunction.cpp
+    ./src/AbstractSocket.cpp \
+    ./src/Address.cpp \
+    ./src/TcpServer.cpp \
+    ./src/TcpSocket.cpp \
+    ./src/Timer.cpp \
+    ./src/UdpSocket.cpp \
+    ./src/Utils.cpp \
+    ./src/arsley.cpp \
+    ./src/File.cpp \
+    ./src/Check.cpp \
+    ./src/Async.cpp \
+    ./src/Function.cpp
 
 HEADERS += \
-    ./include/PAbstractSocket.h \
-    ./include/PAddress.h \
-    ./include/PTcpServer.h \
-    ./include/PTcpSocket.h \
-    ./include/PTimer.h \
-    ./include/PUdpSocket.h \
-    ./include/PUtils.h \
-    ./include/Parsley.h \
-    ./include/PFile.h \
-    ./include/PCheck.h \
-    ./include/PAsync.h \
-    ./include/PFunction.h
+    ./include/AbstractSocket.h \
+    ./include/Address.h \
+    ./include/TcpServer.h \
+    ./include/TcpSocket.h \
+    ./include/Timer.h \
+    ./include/UdpSocket.h \
+    ./include/Utils.h \
+    ./include/arsley.h \
+    ./include/File.h \
+    ./include/Check.h \
+    ./include/Async.h \
+    ./include/Function.h
 
 mac {
     PKG_CONFIG = /usr/local/bin/pkg-config

@@ -10,5 +10,5 @@ mac {
 }
 
 CONFIG += link_pkgconfig
-PKGCONFIG += libparsley
+PKGCONFIG += libparsley libuv
 

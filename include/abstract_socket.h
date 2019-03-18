@@ -2,9 +2,9 @@
 #define ABSTRACTSOCKET_H
 
 
-#include "Parsley.h"
-#include "PBuffer.h"
-#include "PAddress.h"
+#include "parsley.h"
+#include "buffer.h"
+#include "address.h"
 
 P_NS_BEGIN
 
@@ -22,7 +22,8 @@ public:
   virtual void bind(const char* ipAddr, const int &port);
   virtual int start();
   virtual void stop();
-  static void allocCb(uv_handle_t *handle, size_t size, uv_buf_t *buf);
+
+  static void allocCb(uv_handle_t *, size_t size, uv_buf_t *buf);
 
 protected:
 };

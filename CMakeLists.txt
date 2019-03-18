@@ -9,35 +9,35 @@ project(${PROJECT_NAME}
 
 
 set(INCLUDE
-	${PROJECT_SOURCE_DIR}/include/PAbstractSocket.h
-	${PROJECT_SOURCE_DIR}/include/PAddress.h
-	${PROJECT_SOURCE_DIR}/include/PAsync.h
-	${PROJECT_SOURCE_DIR}/include/PBuffer.h
-	${PROJECT_SOURCE_DIR}/include/PCheck.h
-	${PROJECT_SOURCE_DIR}/include/PFile.h
-	${PROJECT_SOURCE_DIR}/include/PFunction.h
-	${PROJECT_SOURCE_DIR}/include/PTcpServer.h
-	${PROJECT_SOURCE_DIR}/include/PTcpSocket.h
-	${PROJECT_SOURCE_DIR}/include/PTimer.h
-	${PROJECT_SOURCE_DIR}/include/PUdpSocket.h
-	${PROJECT_SOURCE_DIR}/include/PUtils.h
-	${PROJECT_SOURCE_DIR}/include/Parsley.h
+	${PROJECT_SOURCE_DIR}/include/abstract_socket.h
+	${PROJECT_SOURCE_DIR}/include/address.h
+	${PROJECT_SOURCE_DIR}/include/async.h
+	${PROJECT_SOURCE_DIR}/include/buffer.h
+	${PROJECT_SOURCE_DIR}/include/check.h
+	${PROJECT_SOURCE_DIR}/include/file.h
+	${PROJECT_SOURCE_DIR}/include/function.h
+	${PROJECT_SOURCE_DIR}/include/tcp_server.h
+	${PROJECT_SOURCE_DIR}/include/tcp_socket.h
+	${PROJECT_SOURCE_DIR}/include/timer.h
+	${PROJECT_SOURCE_DIR}/include/udp_socket.h
+	${PROJECT_SOURCE_DIR}/include/utils.h
+	${PROJECT_SOURCE_DIR}/include/parsley.h
 )
 
 set(SRC
-	${PROJECT_SOURCE_DIR}/src/PAbstractSocket.cpp
-	${PROJECT_SOURCE_DIR}/src/PAddress.cpp
-	${PROJECT_SOURCE_DIR}/src/PAsync.cpp
-	${PROJECT_SOURCE_DIR}/src/PBuffer.cpp
-	${PROJECT_SOURCE_DIR}/src/PCheck.cpp
-	${PROJECT_SOURCE_DIR}/src/PFile.cpp
-	${PROJECT_SOURCE_DIR}/src/PFunction.cpp
-	${PROJECT_SOURCE_DIR}/src/PTcpServer.cpp
-	${PROJECT_SOURCE_DIR}/src/PTcpSocket.cpp
-	${PROJECT_SOURCE_DIR}/src/PTimer.cpp
-	${PROJECT_SOURCE_DIR}/src/PUdpSocket.cpp
-	${PROJECT_SOURCE_DIR}/src/PUtils.cpp
-	${PROJECT_SOURCE_DIR}/src/Parsley.cpp
+	${PROJECT_SOURCE_DIR}/src/abstract_socket.cpp
+	${PROJECT_SOURCE_DIR}/src/address.cpp
+	${PROJECT_SOURCE_DIR}/src/async.cpp
+	${PROJECT_SOURCE_DIR}/src/buffer.cpp
+	${PROJECT_SOURCE_DIR}/src/check.cpp
+	${PROJECT_SOURCE_DIR}/src/File.cpp
+	${PROJECT_SOURCE_DIR}/src/function.cpp
+	${PROJECT_SOURCE_DIR}/src/tcp_server.cpp
+	${PROJECT_SOURCE_DIR}/src/tcp_socket.cpp
+	${PROJECT_SOURCE_DIR}/src/timer.cpp
+	${PROJECT_SOURCE_DIR}/src/udp_socket.cpp
+	${PROJECT_SOURCE_DIR}/src/utils.cpp
+	${PROJECT_SOURCE_DIR}/src/parsley.cpp
 )
 
 include_directories(/usr/local/include)

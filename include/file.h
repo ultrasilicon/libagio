@@ -1,8 +1,8 @@
 #ifndef PFILESYSTEM_H
 #define PFILESYSTEM_H
 
-#include "Parsley.h"
-#include "PBuffer.h"
+#include "parsley.h"
+#include "buffer.h"
 #include <string>
 #include <iostream>
 

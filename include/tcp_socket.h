@@ -1,8 +1,8 @@
 #ifndef TCPSOCKET_H
 #define TCPSOCKET_H
 
-#include "PAbstractSocket.h"
-#include "PAddress.h"
+#include "abstract_socket.h"
+#include "address.h"
 
 P_NS_BEGIN
 class TcpSocketUtils;

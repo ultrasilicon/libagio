@@ -1,7 +1,7 @@
 #ifndef PCHECK_H
 #define PCHECK_H
 
-#include "Parsley.h"
+#include "parsley.h"
 
 P_NS_BEGIN
 class CheckUtils;

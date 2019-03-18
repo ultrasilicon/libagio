@@ -1,8 +1,8 @@
 #ifndef UDPSOCKET_H
 #define UDPSOCKET_H
 
-#include "PAbstractSocket.h"
-#include "PUtils.h"
+#include "abstract_socket.h"
+#include "utils.h"
 
 P_NS_BEGIN
 class UdpSocketUtils;

@@ -1,4 +1,4 @@
-#include "PAbstractSocket.h"
+#include "abstract_socket.h"
 
 #include <functional>
 #include <cstdlib>
@@ -23,9 +23,8 @@ void AbstractSocket::stop()
 {
 }
 
-void AbstractSocket::allocCb(uv_handle_t *handle, size_t size, uv_buf_t *buf)
+void AbstractSocket::allocCb(uv_handle_t *, size_t size, uv_buf_t *buf)
 {
-  P_USED(handle);
   buf->base = (char*) malloc(size);
   buf->len = size;
 }

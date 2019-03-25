@@ -10,7 +10,7 @@ struct Function;
 template<class T, typename Ret, typename... Args>
 struct Functor;
 template<typename Ret, typename... Args>
-struct Callback;
+struct CallbackHandler;
 
 //template <class T, typename std::enable_if<std::is_member_function_pointer<T>::value, T>::type* = nullptr>
 //void do_stuff(T& t) {
@@ -74,7 +74,7 @@ Functor<T, Ret, Args...> functor_wrap(T *obj , Ret (T::*func)(Args...))
 
 
 template<typename Ret, typename... Args>
-struct Callback {
+struct CallbackHandler {
   using Func = std::function<Ret(Args...)>;
   Func f;
 
@@ -99,28 +99,28 @@ struct Callback {
   }
 
   //! Callback<>
-  void connect(Callback<Ret, Args...> *cb)
+  void connect(CallbackHandler<Ret, Args...> *handler)
   {
-    f = cb->f;
+    f = handler->f;
   }
 };
 
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
-void connect(Callback<Ret1, Args1...> *cb, T *obj , Ret2 (T::*func)(Args2...))
+void connect(CallbackHandler<Ret1, Args1...> *handler, T *obj , Ret2 (T::*func)(Args2...))
 {
-  cb->connect(obj, func);
+  handler->connect(obj, func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void connect(Callback<Ret1, Args1...> *cb, Ret2 (*func)(Args2...))
+void connect(CallbackHandler<Ret1, Args1...> *handler, Ret2 (*func)(Args2...))
 {
-  cb->connect(func);
+  handler->connect(func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void connect(Callback<Ret1, Args1...> *cb1, Callback<Ret2, Args2...> *cb2)
+void connect(CallbackHandler<Ret1, Args1...> *handler1, CallbackHandler<Ret2, Args2...> *handler2)
 {
-  cb1->connect(cb2);
+  handler1->connect(handler2);
 }
 
 

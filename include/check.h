@@ -22,7 +22,7 @@ class Check
     : CheckUtils
 {
 public:
-  Callback<void> onCalled;
+  CallbackHandler<void> onCalled;
 
   Check(Loop *l);
   ~Check();

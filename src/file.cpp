@@ -94,16 +94,16 @@ File::~File()
   uv_fs_req_cleanup(m_uv_obj);
 }
 
-int File::open(const int &flags, const int &mode, const Mode &syncMode)
+int File::open(const int &flags, const int &mode, const Mode &m)
 {
-  int r = m_fd = uv_fs_open(syncMode == Mode::AsyncMode ? m_loop->uvHandle() : nullptr
+  int r = m_fd = uv_fs_open(m == Mode::Async ? m_loop->uvHandle() : nullptr
                     , m_uv_obj
                     , m_name.data()
                     , flags
                     , mode
-                    , syncMode == Mode::AsyncMode ? openedCb : nullptr);
+                    , m == Mode::Async ? openedCb : nullptr);
 
-  if(syncMode == Mode::SyncMode)
+  if(m == Mode::Sync)
     {
 //      callFileOpened();
     }
@@ -111,20 +111,20 @@ int File::open(const int &flags, const int &mode, const Mode &syncMode)
   return r;
 }
 
-int File::open(char *path, const int &flags, const int &mode, const Mode &syncMode)
+int File::open(char *path, const int &flags, const int &mode, const Mode &m)
 {
   this->m_name = path;
-  return open(flags, mode, syncMode);
+  return open(flags, mode, m);
 }
 
-int File::close(const Mode &syncMode)
+int File::close(const Mode &m)
 {
   int r = uv_fs_close(m_loop->uvHandle()
                      , m_uv_obj
                      , m_uv_obj->result
-                     , syncMode == Mode::AsyncMode ? closedCb : nullptr);
+                     , m == Mode::Async ? closedCb : nullptr);
 
-  if(syncMode == Mode::SyncMode)
+  if(m == Mode::Sync)
     {
 //      callFileClosed();
     }
@@ -159,7 +159,7 @@ std::string File::readAll()
   return contents;
 }
 
-int File::read(Buffer *buf, const Mode &syncMode)
+int File::read(Buffer *buf, const Mode &m)
 {
   m_buffer = buf;
   return uv_fs_read(m_loop->uvHandle()
@@ -168,10 +168,10 @@ int File::read(Buffer *buf, const Mode &syncMode)
                     , m_buffer->getUvHandle()
                     , m_buffer->getUvHandle()->len
                     , -1
-                    , syncMode == Mode::AsyncMode ? readCb : nullptr);
+                    , m == Mode::Async ? readCb : nullptr);
 }
 
-int File::write(Buffer *buf, const Mode &syncMode)
+int File::write(Buffer *buf, const Mode &m)
 {
   return uv_fs_write(m_loop->uvHandle()
                      , m_uv_obj
@@ -179,7 +179,7 @@ int File::write(Buffer *buf, const Mode &syncMode)
                      , buf->getUvHandle()
                      , buf->getUvHandle()->len
                      , -1
-                     , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
+                     , m == Mode::Async ? writtenCb : nullptr);
 }
 
 int File::write(std::string &data, const Mode &syncMode)
@@ -192,10 +192,10 @@ int File::write(std::string &data, const Mode &syncMode)
                      , &buf
                      , 1
                      , -1
-                     , syncMode == Mode::AsyncMode ? writtenCb : nullptr);
+                     , syncMode == Mode::Async ? writtenCb : nullptr);
 }
 
-int File::truncate(const int &size, const Mode &syncMode)
+int File::truncate(const int &size, const Mode &m)
 {
   return uv_fs_ftruncate(m_loop->uvHandle()
                      , m_uv_obj
@@ -204,7 +204,7 @@ int File::truncate(const int &size, const Mode &syncMode)
                      , nullptr); //! Add Aync Callback!
 }
 
-int File::mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &syncMode)
+int File::mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &m)
 {
   uv_fs_t r;
   int ret = uv_fs_mkdir(l->uvHandle()

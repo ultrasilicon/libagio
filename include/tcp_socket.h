@@ -1,6 +1,7 @@
 #ifndef TCPSOCKET_H
 #define TCPSOCKET_H
 
+#include "stream.h"
 #include "abstract_socket.h"
 #include "address.h"
 
@@ -28,13 +29,14 @@ protected:
 
 
 class TcpSocket
-    : public AbstractSocket
+    : public Stream
+    , public AbstractSocket
     , public TcpSocketUtils
 {
 public:
-  Callback<void> onConnected;
-  Callback<void, std::string&, TcpSocket*> onReadyRead;
-  Callback<void, const SocketDescriptor&> onWritten;
+  CallbackHandler<void> onConnected;
+  CallbackHandler<void, std::string&, TcpSocket*> onReadyRead;
+  CallbackHandler<void, const SocketDescriptor&> onWritten;
 
   TcpSocket(Loop *l);
   ~TcpSocket();

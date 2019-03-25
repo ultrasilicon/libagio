@@ -1,26 +1,26 @@
-#include "async.h"
+#include "async_event.h"
 
 using namespace Parsley;
 
-AsyncUtils::AsyncUtils(Loop *l)
+AsyncEventUtils::AsyncEventUtils(Loop *l)
   : PUvObject(l)
 {
 }
 
-void AsyncUtils::executeCb(uv_async_t *r)
+void AsyncEventUtils::executeCb(uv_async_t *r)
 {
   getInstance(r)->onCalled.call();
 }
 
 
-Async::Async(Loop *l)
-  : AsyncUtils(l)
+AsyncEvent::AsyncEvent(Loop *l)
+  : AsyncEventUtils(l)
 {
   uv_async_init(m_loop->uvHandle(), m_uv_obj, executeCb);
   regInstance(m_uv_obj, this);
 }
 
-int Async::send()
+int AsyncEvent::send()
 {
   return uv_async_send(m_uv_obj);
 }

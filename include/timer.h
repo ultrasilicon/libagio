@@ -33,7 +33,7 @@ class Timer
     : private TimerUtils
 {
 public:
-  Callback<void, Timer*> onTimedOut;
+  CallbackHandler<void, Timer*> onTimedOut;
 
   Timer(Loop *l);
   Timer(const uint64_t &repeat, Loop *l);

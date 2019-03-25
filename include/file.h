@@ -31,23 +31,23 @@ class File
 {
   friend FileUtils;
 public:
-  Callback<void, Buffer*, const ssize_t&> onReadyRead;
-  Callback<void> onOpened;
-  Callback<void> onClosed;
-  Callback<void> onWritten;
+  CallbackHandler<void, Buffer*, const ssize_t&> onReadyRead;
+  CallbackHandler<void> onOpened;
+  CallbackHandler<void> onClosed;
+  CallbackHandler<void> onWritten;
 
   File(Loop *l);
   File(const std::string &path, Loop *l);
   ~File();
-  int open(const int &flags, const int &mode, const Mode &syncMode);
-  int open(char *path, const int &flags, const int &mode, const Mode &syncMode);
-  int close(const Mode &syncMode);
-  int read(Buffer *buf, const Mode &syncMode);
+  int open(const int &flags, const int &mode, const Mode &m);
+  int open(char *path, const int &flags, const int &mode, const Mode &m);
+  int close(const Mode &m);
+  int read(Buffer *buf, const Mode &m);
   std::string readAll();
-  int write(Buffer *buf, const Mode &syncMode); // TODO: not finished
-  int write(std::string &data, const Mode &syncMode);
-  int truncate(const int &size, const Mode &syncMode);
-  static int mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &syncMode);
+  int write(Buffer *buf, const Mode &m); // TODO: not finished
+  int write(std::string &data, const Mode &m);
+  int truncate(const int &size, const Mode &m);
+  static int mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &m);
   static int remove(const std::string &file, Loop *l);
   Buffer *getBuffer();
 

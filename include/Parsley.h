@@ -22,9 +22,9 @@
 
 P_NS_BEGIN
 
-enum Mode {
-  AsyncMode = 0,
-  SyncMode = 1
+enum class Mode {
+  Async = 0,
+  Sync = 1
 };
 
 class LoopUtils;

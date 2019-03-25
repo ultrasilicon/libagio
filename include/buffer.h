@@ -16,10 +16,14 @@ public:
   Buffer(const std::string &data, Loop *l);
   Buffer(char* data, const int len, Loop *l);
   ~Buffer();
+
   char* data();
   int length();
   std::string toString();
 };
+
+
+
 
 
 P_NS_END

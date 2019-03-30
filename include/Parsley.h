@@ -22,7 +22,7 @@
 
 P_NS_BEGIN
 
-enum class Mode {
+enum Mode {
   Async = 0,
   Sync = 1
 };

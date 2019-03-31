@@ -17,7 +17,8 @@ void TcpServerUtils::newConnectionCb(uv_stream_t *handle, int status)
       fprintf(stderr, "%s\n", uv_strerror(status));
       return;
     }
-  getInstance((uv_tcp_t*)handle)->accept();
+  TcpServer* s = getInstance((uv_tcp_t*)handle);
+  s->onNewConnection.call(s);
 }
 
 TcpServer::TcpServer(Loop *l)
@@ -69,26 +70,20 @@ int TcpServer::listen(const int &backLog)
   return listen();
 }
 
-int TcpServer::stop()
+void TcpServer::close()
 {
-  return 0;
+  return uv_close((uv_handle_t*) m_uv_obj, nullptr);
 }
 
-void TcpServer::accept()
+int TcpServer::accept(TcpSocket *client)
 {
-  TcpSocket *client = new TcpSocket(m_loop);
-//  < Here we invoke TcpSocket as a user, but we are acturally an internal class.
-//  < To be more efficient, why not use a static function binding?
-  connect(&client->onReadyRead, &this->onReadyRead);
-  m_client_set.insert({Utils::getFd((uv_handle_t*)client), client});
-  if(uv_accept((uv_stream_t*) m_uv_obj, (uv_stream_t*) client->getUvHandle()) == 0)
-    {
-      client->start();
-    }
+  int r = uv_accept((uv_stream_t*) m_uv_obj
+                    , (uv_stream_t*) client->getUvHandle());
+  if(r == 0)
+    client->start();
   else
-    {
-      uv_close((uv_handle_t*) client, nullptr);
-    }
+    uv_close((uv_handle_t*) client, nullptr);
+  return r;
 }
 
 

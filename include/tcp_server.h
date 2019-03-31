@@ -30,7 +30,7 @@ class TcpServer
 {
   friend TcpServerUtils;
 public:
-  CallbackHandler<void, std::string&, TcpSocket*> onReadyRead;
+  CallbackHandler<void, TcpServer*> onNewConnection;
 
   TcpServer(Loop *l);
   TcpServer(char *ip, const int &port, Loop *l);
@@ -39,15 +39,14 @@ public:
   int bind(char *ip, const int &port);
   int listen();
   int listen(const int &backLog);
-  int stop();
+  int accept(TcpSocket *client);
+  void close();
 
 private:
   char *m_ip;
   int m_port;
   int m_back_log;
-  std::unordered_map<int, TcpSocket*> m_client_set;
 
-  void accept();
 };
 
 P_NS_END

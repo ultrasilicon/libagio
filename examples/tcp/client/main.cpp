@@ -1,6 +1,6 @@
 #include <iostream>
-#include <libparsley/PTcpSocket.h>
-#include <libparsley/PTimer.h>
+#include <libparsley/tcp_socket.h>
+#include <libparsley/timer.h>
 
 #include <uv.h>
 
@@ -11,9 +11,8 @@ static TcpSocket *client;
 
 void timeout_cb(Timer *t)
 {  
-  client->write("hello");
-  cout << "written" << endl;
-//  t->stop();
+  if(client->write("hello") == 0)
+    cout << "written" << endl;
 }
 
 void connected_cb()
@@ -27,7 +26,7 @@ int main()
 
   client = new TcpSocket(&loop);
   connect(&client->onConnected, &connected_cb);
-  cout << uv_strerror(client->connect("127.0.0.1", 63779)) << endl;
+  client->connect("127.0.0.1", 63773);
   client->start();
 
   Timer *timer = new Timer(2000, 500, &loop);

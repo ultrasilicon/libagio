@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <libparsley/PUdpSocket.h>
-#include <libparsley/PTimer.h>
+#include <libparsley/udp_socket.h>
+#include <libparsley/timer.h>
 
 using namespace std;
 using namespace Parsley;

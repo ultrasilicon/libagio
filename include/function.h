@@ -106,19 +106,19 @@ struct CallbackHandler {
 };
 
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
-void connect(CallbackHandler<Ret1, Args1...> *handler, T *obj , Ret2 (T::*func)(Args2...))
+void on(CallbackHandler<Ret1, Args1...> *handler, T *obj , Ret2 (T::*func)(Args2...))
 {
   handler->connect(obj, func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void connect(CallbackHandler<Ret1, Args1...> *handler, Ret2 (*func)(Args2...))
+void on(CallbackHandler<Ret1, Args1...> *handler, Ret2 (*func)(Args2...))
 {
   handler->connect(func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void connect(CallbackHandler<Ret1, Args1...> *handler1, CallbackHandler<Ret2, Args2...> *handler2)
+void on(CallbackHandler<Ret1, Args1...> *handler1, CallbackHandler<Ret2, Args2...> *handler2)
 {
   handler1->connect(handler2);
 }

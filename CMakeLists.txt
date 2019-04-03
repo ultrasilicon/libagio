@@ -31,7 +31,7 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/async_event.cpp
 	${PROJECT_SOURCE_DIR}/src/buffer.cpp
 	${PROJECT_SOURCE_DIR}/src/check.cpp
-	${PROJECT_SOURCE_DIR}/src/File.cpp
+	${PROJECT_SOURCE_DIR}/src/file.cpp
 	${PROJECT_SOURCE_DIR}/src/function.cpp
 	${PROJECT_SOURCE_DIR}/src/stream.cpp
 	${PROJECT_SOURCE_DIR}/src/tcp_server.cpp

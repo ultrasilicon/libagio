@@ -79,10 +79,10 @@ int TcpServer::accept(TcpSocket *client)
 {
   int r = uv_accept((uv_stream_t*) m_uv_obj
                     , (uv_stream_t*) client->getUvHandle());
-  if(r == 0)
-    client->start();
+  if(r < 0)
+    uv_close((uv_handle_t*) client->getUvHandle(), nullptr);
   else
-    uv_close((uv_handle_t*) client, nullptr);
+    client->start();
   return r;
 }
 

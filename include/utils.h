@@ -10,6 +10,7 @@ class Utils
 {
 public:
   static int getFd(uv_handle_t* handle);
+  static const char *errStr(int err);
 };
 
 

@@ -27,17 +27,17 @@ struct CallbackHandler;
 template<class T, typename Ret, typename... Args>
 struct Function {
   using F = Ret(T::*)(Args...);
-  T* o;
-  F f;
+  T* o_;
+  F f_;
 
   Function(T* obj, F func)
-    : o(obj)
-    , f(func)
+    : o_(obj)
+    , f_(func)
   {}
 
   Ret call(Args... args)
   {
-    return (o->*f)(args...);
+    return (o_->*f_)(args...);
   }
 };
 
@@ -52,17 +52,17 @@ static Function<T, Ret, Args...> function_wrap(T *t, Ret(T::*f)(Args...))
 template<class T, typename Ret, typename... Args>
 struct Functor {
     using F = Ret (T::*)(Args...);
-    T *o;
-    F f;
+    T *o_;
+    F f_;
 
     Functor(T *obj, F func)
-        : o(obj)
-        , f(func)
+        : o_(obj)
+        , f_(func)
     {}
 
     Ret operator()(Args... args)
     {
-        return (o->*f)(args...);
+        return (o_->*f_)(args...);
     }
 };
 
@@ -76,12 +76,12 @@ Functor<T, Ret, Args...> functor_wrap(T *obj , Ret (T::*func)(Args...))
 template<typename Ret, typename... Args>
 struct CallbackHandler {
   using Func = std::function<Ret(Args...)>;
-  Func f;
+  Func f_;
 
   Ret call(Args... args) noexcept
   {
-    if(f)
-      return f(args ...);
+    if(f_)
+      return f_(args ...);
     return Ret();
   }
 
@@ -89,19 +89,19 @@ struct CallbackHandler {
   template<class T>
   void connect(T *obj , Ret (T::*func)(Args...))
   {
-    f = Functor<T, Ret, Args...>(obj, func);
+    f_ = Functor<T, Ret, Args...>(obj, func);
   }
 
   //! Static funtion
   void connect(Ret (*func)(Args...))
   {
-    f = func;
+    f_ = func;
   }
 
   //! Callback<>
   void connect(CallbackHandler<Ret, Args...> *handler)
   {
-    f = handler->f;
+    f_ = handler->f_;
   }
 };
 

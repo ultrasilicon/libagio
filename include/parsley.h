@@ -56,7 +56,7 @@ public:
   uv_loop_t* uvHandle();
 
 private:
-  uv_loop_t* loop;
+  uv_loop_t* loop_;
 };
 
 //template <typename UvHandle, typename PHandle>

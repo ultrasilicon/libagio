@@ -63,7 +63,7 @@ TcpSocket::~TcpSocket()
 {
   //! This might cause delay on quit, be careful!
   close();
-  delete m_peer_address;
+  delete peer_address_;
 }
 
 int TcpSocket::start()
@@ -111,7 +111,7 @@ void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
 
 const IPAddress* TcpSocket::peerAddress()
 {
-  if(!m_peer_address || m_peer_address->version() == IPAddress::None)    
+  if(!peer_address_ || peer_address_->version() == IPAddress::None)    
     return retrievePeerAddress();
   return retrievePeerAddress();
 }
@@ -122,9 +122,9 @@ const IPAddress* TcpSocket::retrievePeerAddress()
   int addrLen;
   if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) &addr, &addrLen) != 0)
     return nullptr;
-  m_peer_address = new IPAddress(addr);
+  peer_address_ = new IPAddress(addr);
 
-  return m_peer_address;
+  return peer_address_;
 }
 
 

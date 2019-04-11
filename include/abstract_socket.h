@@ -19,9 +19,9 @@ public:
 //  Callback<void, const SocketDescriptor&> onWritten;
 
   virtual ~AbstractSocket();
-  virtual void bind(const char* ipAddr, const int &port);
-  virtual int start();
-  virtual void stop();
+  virtual void bind(const char* ipAddr, const int &port) = 0;
+  virtual int start() = 0;
+  virtual void stop() = 0;
 
   static void allocCb(uv_handle_t *, size_t size, uv_buf_t *buf);
 

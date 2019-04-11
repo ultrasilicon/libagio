@@ -43,9 +43,9 @@ public:
   void close();
 
 private:
-  char *m_ip;
-  int m_port;
-  int m_back_log;
+  char *ip_;
+  int port_;
+  int back_log_;
 
 };
 

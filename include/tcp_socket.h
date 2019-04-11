@@ -50,7 +50,7 @@ public:
   const IPAddress *retrievePeerAddress();
 
 protected:
-  IPAddress *m_peer_address = nullptr;
+  IPAddress *peer_address_ = nullptr;
 
 };
 

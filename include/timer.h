@@ -45,8 +45,8 @@ public:
 
 
 private:
-  uint64_t m_timeout = 0;
-  uint64_t m_repeat = 0;
+  uint64_t timeout_ = 0;
+  uint64_t repeat_ = 0;
 };
 
 

@@ -11,13 +11,13 @@ Loop *LoopUtils::defaultLoop()
 }
 
 Loop::Loop()
-  : loop(new uv_loop_t())
+  : loop_(new uv_loop_t())
 {
-  uv_loop_init(loop);
+  uv_loop_init(loop_);
 }
 
 Loop::Loop(uv_loop_t *l)
-  : loop(l)
+  : loop_(l)
 {
 }
 
@@ -28,7 +28,7 @@ Loop::~Loop()
 
 int Loop::run(const uv_run_mode &mode)
 {
-  return uv_run(loop, mode);
+  return uv_run(loop_, mode);
 }
 
 /*!
@@ -67,13 +67,13 @@ void Loop::close()
 
 int Loop::tryClose()
 {
-  return uv_loop_close(loop);
+  return uv_loop_close(loop_);
 }
 
 
 uv_loop_t *Loop::uvHandle()
 {
-  return loop;
+  return loop_;
 }
 
 

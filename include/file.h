@@ -36,7 +36,7 @@ public:
   CallbackHandler<void> onClosed;
   CallbackHandler<void> onWritten;
 
-  File(Loop *l);
+  File(Loop *l = Loop::defaultLoop());
   File(const std::string &path, Loop *l);
   ~File();
   int open(const int &flags, const int &mode, const Mode &m);
@@ -52,10 +52,10 @@ public:
   Buffer *getBuffer();
 
 private:
-  ssize_t m_fd = 0;
-  std::string m_name;
-  char m_buffer_data[4096];
-  Buffer *m_buffer = nullptr;
+  ssize_t fd_ = 0;
+  std::string name_;
+  char buffer_data_[4096];
+  Buffer *buffer_ = nullptr;
 
   void setFileDescriptor(const ssize_t& fd);
 };

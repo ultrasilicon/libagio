@@ -84,7 +84,7 @@ File::File(Loop *l)
 
 File::File(const std::string &path, Loop *l)
   : FileUtils(l)
-  , name_(path)
+  , path_(path)
 {
   regInstance(m_uv_obj, this);
 }
@@ -94,13 +94,23 @@ File::~File()
   uv_fs_req_cleanup(m_uv_obj);
 }
 
-int File::open(const int &flags, const int &mode, const Mode &m)
+void File::setPath(const std::string &path)
+{
+  path_ = path;
+}
+
+std::string File::getPath() const
+{
+  return path_;
+}
+
+int File::open(const int &flags, const int &perm, const Mode &m)
 {
   int r = fd_ = uv_fs_open(m == Mode::Async ? m_loop->uvHandle() : nullptr
                     , m_uv_obj
-                    , name_.data()
+                    , path_.data()
                     , flags
-                    , mode
+                    , perm
                     , m == Mode::Async ? openedCb : nullptr);
 
   if(m == Mode::Sync)
@@ -111,10 +121,10 @@ int File::open(const int &flags, const int &mode, const Mode &m)
   return r;
 }
 
-int File::open(char *path, const int &flags, const int &mode, const Mode &m)
+int File::open(char *path, const int &flags, const int &perm, const Mode &m)
 {
-  this->name_ = path;
-  return open(flags, mode, m);
+  this->path_ = path;
+  return open(flags, perm, m);
 }
 
 int File::close(const Mode &m)
@@ -204,13 +214,13 @@ int File::truncate(const int &size, const Mode &m)
                      , nullptr); //! Add Aync Callback!
 }
 
-int File::mkdir(const std::string &dir, const int &mode, Loop *l, const Mode &m)
+int File::mkdir(const std::string &dir, const int &perm, Loop *l, const Mode &m)
 {
   uv_fs_t r;
   int ret = uv_fs_mkdir(l->uvHandle()
               , &r
               , dir.data()
-              , mode
+              , perm
               , /*syncMode == Mode::Async ? nullptr : nullptr*/nullptr); //! Add Aync Callback!
   uv_fs_req_cleanup(&r);
   return ret;

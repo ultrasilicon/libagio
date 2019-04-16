@@ -21,7 +21,7 @@ class AsyncEvent
   : public AsyncEventUtils
 {
 public:
-  CallbackHandler<void> onCalled;
+  CallbackHandler<void()> onCalled;
 
   AsyncEvent(Loop *l);
   int send();

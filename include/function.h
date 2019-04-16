@@ -11,6 +11,8 @@ template<class T, typename Ret, typename... Args>
 struct Functor;
 template<typename Ret, typename... Args>
 struct CallbackHandler;
+template<typename Ret, typename... Args>
+struct CallbackHandler<Ret(Args...)>;
 
 //template <class T, typename std::enable_if<std::is_member_function_pointer<T>::value, T>::type* = nullptr>
 //void do_stuff(T& t) {
@@ -48,7 +50,6 @@ static Function<T, Ret, Args...> function_wrap(T *t, Ret(T::*f)(Args...))
     return fp;
 }
 
-
 template<class T, typename Ret, typename... Args>
 struct Functor {
     using F = Ret (T::*)(Args...);
@@ -74,7 +75,7 @@ Functor<T, Ret, Args...> functor_wrap(T *obj , Ret (T::*func)(Args...))
 
 
 template<typename Ret, typename... Args>
-struct CallbackHandler {
+struct CallbackHandler<Ret(Args...)> {
   using Func = std::function<Ret(Args...)>;
   Func f_;
 
@@ -106,19 +107,19 @@ struct CallbackHandler {
 };
 
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
-void on(CallbackHandler<Ret1, Args1...> *handler, T *obj , Ret2 (T::*func)(Args2...))
+void on(CallbackHandler<Ret1(Args1...)> *handler, T *obj , Ret2 (T::*func)(Args2...))
 {
   handler->connect(obj, func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void on(CallbackHandler<Ret1, Args1...> *handler, Ret2 (*func)(Args2...))
+void on(CallbackHandler<Ret1(Args1...)> *handler, Ret2 (*func)(Args2...))
 {
   handler->connect(func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void on(CallbackHandler<Ret1, Args1...> *handler1, CallbackHandler<Ret2, Args2...> *handler2)
+void on(CallbackHandler<Ret1(Args1...)> *handler1, CallbackHandler<Ret2(Args2...)> *handler2)
 {
   handler1->connect(handler2);
 }

@@ -30,7 +30,7 @@ class TcpServer
 {
   friend TcpServerUtils;
 public:
-  CallbackHandler<void, TcpServer*> onNewConnection;
+  CallbackHandler<void(TcpServer*)> onNewConnection;
 
   TcpServer(Loop *l);
   TcpServer(char *ip, const int &port, Loop *l);

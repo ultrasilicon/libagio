@@ -31,10 +31,10 @@ class File
 {
   friend FileUtils;
 public:
-  CallbackHandler<void, Buffer*, const ssize_t&> onReadyRead;
-  CallbackHandler<void> onOpened;
-  CallbackHandler<void> onClosed;
-  CallbackHandler<void> onWritten;
+  CallbackHandler<void(Buffer*, const ssize_t&)> onReadyRead;
+  CallbackHandler<void()> onOpened;
+  CallbackHandler<void()> onClosed;
+  CallbackHandler<void()> onWritten;
 
   File(Loop *l = Loop::defaultLoop());
   File(const std::string &getPath, Loop *l);

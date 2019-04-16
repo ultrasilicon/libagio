@@ -49,7 +49,7 @@ public:
   int read(Buffer *buf, const Mode &m);
   std::string readAll();
   int write(Buffer *buf, const Mode &m); // TODO: not finished
-  int write(std::string &data, const Mode &m);
+  int write(const std::string &data, const Mode &m);
   int truncate(const int &size, const Mode &m);
   static int mkdir(const std::string &dir, const int &perm, Loop *l, const Mode &m);
   static int remove(const std::string &file, Loop *l);

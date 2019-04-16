@@ -192,7 +192,7 @@ int File::write(Buffer *buf, const Mode &m)
                      , m == Mode::Async ? writtenCb : nullptr);
 }
 
-int File::write(std::string &data, const Mode &syncMode)
+int File::write(const std::string &data, const Mode &syncMode)
 {
   //! This is the way Node.js source code does.
   uv_buf_t buf = uv_buf_init(const_cast<char*>(data.c_str()), data.length());

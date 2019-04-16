@@ -25,10 +25,10 @@ int main()
   loop = new Loop();
 
   server = new UdpSocket("0.0.0.0", 44444, loop);
-  connect(&server->onReadyRead, &receive_cb);
+  on(&server->onReadyRead, &receive_cb);
 
   timer = new Timer(500, loop);
-  connect(&timer->onTimedOut, &send_cb);
+  on(&timer->onTimedOut, &send_cb);
 
   server->start();
   timer->start();

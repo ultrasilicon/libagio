@@ -40,15 +40,15 @@ TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
   , port_(port)
   , back_log_(backLog)
 {
-  regInstance(m_uv_obj, this);
-  uv_tcp_init(m_loop->uvHandle(), m_uv_obj);
+  regInstance(obj_, this);
+  uv_tcp_init(loop_->uvHandle(), obj_);
 }
 
 int TcpServer::bind()
 {
   sockaddr_in *addr = CXX_MALLOC(sockaddr_in);
   uv_ip4_addr(ip_, port_, addr);
-  return uv_tcp_bind(m_uv_obj
+  return uv_tcp_bind(obj_
                      , (const sockaddr*) addr
                      , 0);
 }
@@ -62,7 +62,7 @@ int TcpServer::bind(char *ip, const int &port)
 
 int TcpServer::listen()
 {
-  return uv_listen((uv_stream_t*) m_uv_obj
+  return uv_listen((uv_stream_t*) obj_
                    , back_log_
                    , &newConnectionCb);
 }
@@ -75,12 +75,12 @@ int TcpServer::listen(const int &backLog)
 
 void TcpServer::close()
 {
-  return uv_close((uv_handle_t*) m_uv_obj, nullptr);
+  return uv_close((uv_handle_t*) obj_, nullptr);
 }
 
 int TcpServer::accept(TcpSocket *client)
 {
-  int r = uv_accept((uv_stream_t*) m_uv_obj
+  int r = uv_accept((uv_stream_t*) obj_
                     , (uv_stream_t*) client->getUvHandle());
   if(r < 0)
     uv_close((uv_handle_t*) client->getUvHandle(), nullptr);

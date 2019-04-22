@@ -19,16 +19,16 @@ void TimerUtils::timeoutCb(uv_timer_t *handle)
 Timer::Timer(Loop *l)
   : TimerUtils(l)
 {
-  uv_timer_init(l->uvHandle(), m_uv_obj);
-  regInstance(m_uv_obj, this);
+  uv_timer_init(l->uvHandle(), obj_);
+  regInstance(obj_, this);
 }
 
 Timer::Timer(const uint64_t &repeat, Loop *l)
   : TimerUtils(l)
   , repeat_(repeat)
 {
-  uv_timer_init(l->uvHandle(), m_uv_obj);
-  regInstance(m_uv_obj, this);
+  uv_timer_init(l->uvHandle(), obj_);
+  regInstance(obj_, this);
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
@@ -36,8 +36,8 @@ Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   , timeout_(timeout)
   , repeat_(repeat)
 {
-  uv_timer_init(l->uvHandle(), m_uv_obj);
-  regInstance(m_uv_obj, this);
+  uv_timer_init(l->uvHandle(), obj_);
+  regInstance(obj_, this);
 }
 
 int Timer::start()
@@ -55,7 +55,7 @@ int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
 {
   timeout_ = timeout;
   repeat_ = repeat;
-  return uv_timer_start(m_uv_obj
+  return uv_timer_start(obj_
                         , timeoutCb
                         , timeout
                         , repeat);
@@ -63,6 +63,6 @@ int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
 
 void Timer::stop()
 {
-  uv_timer_stop(m_uv_obj);
+  uv_timer_stop(obj_);
 }
 

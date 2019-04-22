@@ -30,7 +30,7 @@ enum Mode {
 class LoopUtils;
 class Loop;
 
-template <typename UvHandle, typename PHandle>
+template <typename UvT, typename PType>
 class PUvObject;
 
 class LoopUtils
@@ -59,92 +59,98 @@ private:
   uv_loop_t* loop_;
 };
 
-//template <typename UvHandle, typename PHandle>
-//class PObject
-//{
-//public:
-//  PObject();
-//  ~PObject();
 
-//  static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
-//  static void removeInstance(UvHandle *uvHandle);
-//  static PHandle *getInstance(UvHandle *uvHandle);
-//  UvHandle *getUvHandle();
-//protected:
-//  UvHandle *m_c_obj;
 
-//private:
-//  static std::unordered_map<UvHandle*, PHandle*> m_instances;
-//};
+/*!
+ * \arg CType: typename of the c obj
+ * \arg PType: typename of the parsley obj
+ */
+template <typename CType, typename PType>
+class PObject
+{
+public:
+  PObject();
+  ~PObject();
 
-template <typename UvHandle, typename PHandle>
+  static void regInstance(CType *cHandle, PType *pHandle);
+  static void removeInstance(CType *cHandle);
+  static PType *getInstance(CType *cHandle);
+  CType *getUvHandle();
+protected:
+  CType *obj_;
+
+private:
+  static std::unordered_map<CType*, PType*> instances_;
+};
+
+template <typename CType, typename PType>
+std::unordered_map<CType*, PType*> PObject<CType, PType>::instances_;
+
+template<typename CType, typename PType>
+PObject<CType, PType>::PObject()
+  : obj_(new CType())
+{
+}
+
+template<typename CType, typename PType>
+PObject<CType, PType>::~PObject()
+{
+  if(obj_)
+    removeInstance(obj_);
+}
+
+template<typename CType, typename PType>
+void PObject<CType, PType>::regInstance(CType* cHandle, PType* pHandle)
+{
+  if(!instances_.count(cHandle))
+    instances_.insert({ cHandle, pHandle });
+}
+
+template<typename CType, typename PType>
+void PObject<CType, PType>::removeInstance(CType* cHandle)
+{
+  instances_.erase(instances_.find(cHandle));
+}
+
+template<typename CType, typename PType>
+PType* PObject<CType, PType>::getInstance(CType* cHandle)
+{
+  return instances_.at(cHandle);
+}
+
+template<typename CType, typename PType>
+CType* PObject<CType, PType>::getUvHandle()
+{
+  return obj_;
+}
+
+
+
+
+template <typename UvType, typename PType>
 class PUvObject
+    : public PObject<UvType, PType>
 {
 public:
   PUvObject(Loop *l);
-  ~PUvObject();
 
-  static void regInstance(UvHandle *uvHandle, PHandle *pHandle);
-  static void removeInstance(UvHandle *uvHandle);
-  static PHandle *getInstance(UvHandle *uvHandle);
-  UvHandle *getUvHandle();
-  Loop *getLoop();
+  Loop* getLoop();
 
 protected:
-  Loop *m_loop;
-  UvHandle *m_uv_obj;
-
-private:
-  static std::unordered_map<UvHandle*, PHandle*> m_instances;
-
+  Loop* loop_;
 };
 
-template <typename UvHandle, typename PHandle>
-std::unordered_map<UvHandle*, PHandle*> PUvObject<UvHandle, PHandle>::m_instances;
-
-template<typename UvHandle, typename PHandle>
-PUvObject<UvHandle, PHandle>::PUvObject(Loop *l)
-  : m_loop(l)
-  , m_uv_obj(new UvHandle())
+template<typename UvType, typename PType>
+PUvObject<UvType, PType>::PUvObject(Loop *l)
+  : PObject<UvType, PType>()
+  , loop_(l)
 {
 }
 
-template<typename UvHandle, typename PHandle>
-PUvObject<UvHandle, PHandle>::~PUvObject()
+template<typename UvType, typename PType>
+Loop *PUvObject<UvType, PType>::getLoop()
 {
-  if(m_uv_obj)
-    removeInstance(m_uv_obj);
-}
-
-template<typename UvHandle, typename PHandle>
-void PUvObject<UvHandle, PHandle>::regInstance(UvHandle *uvHandle, PHandle *pHandle)
-{
-  if(!m_instances.count(uvHandle))
-    m_instances.insert({ uvHandle, pHandle });
-}
-
-template<typename UvHandle, typename PHandle>
-void PUvObject<UvHandle, PHandle>::removeInstance(UvHandle *uvHandle)
-{
-  m_instances.erase(m_instances.find(uvHandle));
-}
-
-template<typename UvHandle, typename PHandle>
-PHandle *PUvObject<UvHandle, PHandle>::getInstance(UvHandle *uvHandle)
-{
-  return m_instances[uvHandle];
-}
-
-template<typename UvHandle, typename PHandle>
-UvHandle *PUvObject<UvHandle, PHandle>::getUvHandle()
-{
-  return m_uv_obj;
-}
-
-template<typename UvHandle, typename PHandle>
-Loop *PUvObject<UvHandle, PHandle>::getLoop()
-{
-  return m_loop;
+  return loop_;
 }
 
 

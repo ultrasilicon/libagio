@@ -46,15 +46,15 @@ UdpSocketUtils::writtenCb(uv_udp_send_t *req, int status)
 UdpSocket::UdpSocket(Loop *l)
   : UdpSocketUtils(l)
 {
-  uv_udp_init(l->uvHandle(), m_uv_obj);
-  regInstance(m_uv_obj, this);
+  uv_udp_init(l->uvHandle(), obj_);
+  regInstance(obj_, this);
 }
 
 UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
   : UdpSocketUtils(l)
 {
-  uv_udp_init(l->uvHandle(), m_uv_obj);
-  regInstance(m_uv_obj, this);
+  uv_udp_init(l->uvHandle(), obj_);
+  regInstance(obj_, this);
 
   bind(ip, port);
   start();
@@ -66,18 +66,18 @@ UdpSocket::bind(const char *ip, const int &port)
 {
   sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
-  uv_udp_bind(m_uv_obj, (const sockaddr*) &addr, UV_UDP_REUSEADDR);
+  uv_udp_bind(obj_, (const sockaddr*) &addr, UV_UDP_REUSEADDR);
 }
 
 int UdpSocket::start()
 {
-  return uv_udp_recv_start(m_uv_obj, allocCb, receiveCb);
+  return uv_udp_recv_start(obj_, allocCb, receiveCb);
 }
 
 void
 UdpSocket::stop()
 {
-  uv_udp_recv_stop(m_uv_obj);
+  uv_udp_recv_stop(obj_);
 }
 
 void
@@ -87,12 +87,12 @@ UdpSocket::write(const char *ip, const int &port, const std::string &data)
   uv_buf_t buf = uv_buf_init((char*) data.c_str(), data.size());
   struct sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
-  uv_udp_send(req, m_uv_obj, &buf, 1, (const struct sockaddr *)&addr, writtenCb);
+  uv_udp_send(req, obj_, &buf, 1, (const struct sockaddr *)&addr, writtenCb);
 }
 
 void
 UdpSocket::setBroadcatEnabled(const bool &enabled)
 {
-  uv_udp_set_broadcast(m_uv_obj, enabled ? 1 : 0);
+  uv_udp_set_broadcast(obj_, enabled ? 1 : 0);
 }
 

@@ -16,11 +16,11 @@ void AsyncEventUtils::executeCb(uv_async_t *r)
 AsyncEvent::AsyncEvent(Loop *l)
   : AsyncEventUtils(l)
 {
-  uv_async_init(m_loop->uvHandle(), m_uv_obj, executeCb);
-  regInstance(m_uv_obj, this);
+  uv_async_init(loop_->uvHandle(), obj_, executeCb);
+  regInstance(obj_, this);
 }
 
 int AsyncEvent::send()
 {
-  return uv_async_send(m_uv_obj);
+  return uv_async_send(obj_);
 }

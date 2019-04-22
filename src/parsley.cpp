@@ -75,5 +75,3 @@ uv_loop_t *Loop::uvHandle()
 {
   return loop_;
 }
-
-

@@ -4,37 +4,37 @@ using namespace Parsley;
 
 
 
-Parsley::Buffer::Buffer(const std::string &data, Loop *l)
-  : PUvObject(l)
+Parsley::Buffer::Buffer(const std::string &data)
+  : PObject()
 {
-  *m_uv_obj = uv_buf_init((char*)data.c_str(), data.size());
-  regInstance(m_uv_obj, this);
+  *obj_ = uv_buf_init((char*)data.c_str(), data.size());
+  regInstance(obj_, this);
 }
 
-Buffer::Buffer(char *data, const int len, Loop *l)
-  : PUvObject(l)
+Buffer::Buffer(char *data, const int len)
+  : PObject()
 {
-  *m_uv_obj = uv_buf_init(data, len);
-  regInstance(m_uv_obj, this);
+  *obj_ = uv_buf_init(data, len);
+  regInstance(obj_, this);
 }
 
 Buffer::~Buffer()
 {
-  if(m_uv_obj->base)
-    free(m_uv_obj->base);
+  if(obj_->base)
+    free(obj_->base);
 }
 
 char *Buffer::data()
 {
-  return m_uv_obj->base;
+  return obj_->base;
 }
 
 int Buffer::length()
 {
-  return m_uv_obj->len;
+  return obj_->len;
 }
 
 std::string Buffer::toString()
 {
-  return std::string(m_uv_obj->base, m_uv_obj->len);
+  return std::string(obj_->base, obj_->len);
 }

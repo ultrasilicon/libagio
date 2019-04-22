@@ -55,8 +55,8 @@ void TcpSocketUtils::freeWriteReq(uv_write_t *handle)
 TcpSocket::TcpSocket(Loop *l)
   : TcpSocketUtils(l)
 {
-  regInstance(m_uv_obj, this);
-  uv_tcp_init(m_loop->uvHandle(), m_uv_obj);
+  regInstance(obj_, this);
+  uv_tcp_init(loop_->uvHandle(), obj_);
 }
 
 TcpSocket::~TcpSocket()
@@ -68,12 +68,12 @@ TcpSocket::~TcpSocket()
 
 int TcpSocket::start()
 {
-  return uv_read_start((uv_stream_t*) m_uv_obj, allocCb, receiveCb);
+  return uv_read_start((uv_stream_t*) obj_, allocCb, receiveCb);
 }
 
 void TcpSocket::close()
 {
-  uv_close((uv_handle_t*) m_uv_obj, nullptr);
+  uv_close((uv_handle_t*) obj_, nullptr);
 }
 
 int TcpSocket::connect(const char *ip, const int &port)
@@ -87,7 +87,7 @@ int TcpSocket::connect(const char *ip, const int &port)
 //  if (((sockaddr*)addr)->sa_family != AF_INET && ((sockaddr*)addr)->sa_family != AF_INET6)
 //    std::cout << "addr type UV_EINVAL"<< std::endl;
 
-  return uv_tcp_connect(connect, m_uv_obj, (sockaddr*)addr, &connectCb);
+  return uv_tcp_connect(connect, obj_, (sockaddr*)addr, &connectCb);
 }
 
 
@@ -96,7 +96,7 @@ int TcpSocket::write(const std::string& data)
   auto *req = CXX_MALLOC(write_req_t);
   req->buf = uv_buf_init((char*) data.c_str(), data.size());
   return uv_write((uv_write_t*) req
-           , (uv_stream_t*)m_uv_obj
+           , (uv_stream_t*)obj_
            , &req->buf
            , 1
            , writeCb);
@@ -104,7 +104,7 @@ int TcpSocket::write(const std::string& data)
 
 void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
 {
-  uv_tcp_keepalive(m_uv_obj
+  uv_tcp_keepalive(obj_
                    , enabled ? 1 : 0
                    , delay);
 }
@@ -120,7 +120,7 @@ const IPAddress* TcpSocket::retrievePeerAddress()
 {
   sockaddr_storage addr;
   int addrLen;
-  if(uv_tcp_getpeername((uv_tcp_t*)m_uv_obj, (sockaddr*) &addr, &addrLen) != 0)
+  if(uv_tcp_getpeername((uv_tcp_t*)obj_, (sockaddr*) &addr, &addrLen) != 0)
     return nullptr;
   peer_address_ = new IPAddress(addr);
 

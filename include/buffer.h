@@ -10,11 +10,11 @@ P_NS_BEGIN
 class Buffer;
 
 class Buffer
-    : public PUvObject<uv_buf_t, Buffer>
+    : public PObject<uv_buf_t, Buffer>
 {
 public:
-  Buffer(const std::string &data, Loop *l);
-  Buffer(char* data, const int len, Loop *l);
+  Buffer(const std::string &data);
+  Buffer(char* data, const int len);
   ~Buffer();
 
   char* data();

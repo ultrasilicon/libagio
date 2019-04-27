@@ -13,8 +13,8 @@ int Utils::getFd(uv_handle_t* handle)
   return fd;
 }
 
-const char *Utils::errStr(int err)
+const char* Utils::errStr(int err)
 {
-  uv_strerror(err);
+  return uv_strerror(err);
 }
 

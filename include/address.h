@@ -36,9 +36,9 @@ public:
   std::string toIPString() const;
 
 //private:
-  Version m_version = None;
-  sockaddr_in m_ip4;
-  sockaddr_in6 m_ip6;
+  Version version_ = None;
+  sockaddr_in ip4_;
+  sockaddr_in6 ip6_;
 };
 
 

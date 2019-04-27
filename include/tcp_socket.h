@@ -44,6 +44,7 @@ public:
   int start();
   void close();
   int connect(const char* addr, const int &port);
+  int write(char* data);
   int write(const std::string &data);
   void setKeepAlive(const bool &enabled, const int &delay);
   const IPAddress *peerAddress();

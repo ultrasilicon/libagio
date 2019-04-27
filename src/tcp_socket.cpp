@@ -90,6 +90,16 @@ int TcpSocket::connect(const char *ip, const int &port)
   return uv_tcp_connect(connect, obj_, (sockaddr*)addr, &connectCb);
 }
 
+int TcpSocket::write(char* data)
+{
+  auto *req = CXX_MALLOC(write_req_t);
+  req->buf = uv_buf_init(data, strlen(data));
+  return uv_write((uv_write_t*) req
+           , (uv_stream_t*)obj_
+           , &req->buf
+           , 1
+           , writeCb);
+}
 
 int TcpSocket::write(const std::string& data)
 {

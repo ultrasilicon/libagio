@@ -1,37 +1,15 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-/*
- * Maintainance:
- * 1. Remove any duplicated initializations or allocations
- * 2. Check API usage, correct wrong usages.
- * 3. Correct naming convention.
- */
-
-#include <functional>
-
 #include "parsley.h"
 
-//#include "Log.h"
-
-
 P_NS_BEGIN
-class TimerUtils;
-class Timer;
-
-class TimerUtils
-    : public PUvObject<uv_timer_t, Timer>
-{
-public:
-  TimerUtils(Loop *l);
-protected:
-  static void timeoutCb(uv_timer_t *handle);
-
-};
 
 class Timer
-    : private TimerUtils
+    : public PUvObject<uv_timer_t, Timer>
 {
+  static void timeoutCb(uv_timer_t *handle);
+
 public:
   CallbackHandler<void(Timer*)> onTimedOut;
 

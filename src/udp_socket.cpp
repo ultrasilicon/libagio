@@ -5,13 +5,7 @@
 using namespace Parsley;
 
 
-UdpSocketUtils::UdpSocketUtils(Loop *l)
-  : PUvObject(l)
-{
-}
-
-void
-UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned)
+void UdpSocket::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned)
 {
   /*! DOC: libuv 1.18.1-dev
    *  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,
@@ -24,34 +18,31 @@ UdpSocketUtils::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 //      std::string ip(senderAddr);
       std::string data(buf->base, nread);
       IPAddress ip((sockaddr_storage&) *addr);
-      getInstance(handle)->onReadyRead.call(data, ip);
+      getInstance(handle)->onReadyRead(data, ip);
     }
 
   free(buf->base);
   return;
 }
 
-void
-UdpSocketUtils::writtenCb(uv_udp_send_t *req, int status)
+void UdpSocket::writtenCb(uv_udp_send_t *req, int status)
 {
   int socketDescriptor = Utils::getFd((uv_handle_t*) req->handle);
-  getInstance(req->handle)->onWritten.call(socketDescriptor);
+  getInstance(req->handle)->onWritten(socketDescriptor);
   free(req->bufs);
   free(req);
 }
 
 
-
-
 UdpSocket::UdpSocket(Loop *l)
-  : UdpSocketUtils(l)
+  : PUvObject(l)
 {
   uv_udp_init(l->uvHandle(), obj_);
   regInstance(obj_, this);
 }
 
 UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
-  : UdpSocketUtils(l)
+  : PUvObject(l)
 {
   uv_udp_init(l->uvHandle(), obj_);
   regInstance(obj_, this);

@@ -2,12 +2,8 @@
 
 using namespace Parsley;
 
-FileUtils::FileUtils(Loop *l)
-  : PUvObject(l)
-{
-}
 
-void FileUtils::openedCb(uv_fs_t *r)
+void File::openedCb(uv_fs_t *r)
 {
   File *f = getInstance(r);
   if (r->result >= 0)
@@ -15,7 +11,7 @@ void FileUtils::openedCb(uv_fs_t *r)
       f->setFileDescriptor(r->result);
       uv_fs_req_cleanup(r);
 
-      f->onOpened.call();
+      f->onOpened();
     }
   else
     {
@@ -23,14 +19,14 @@ void FileUtils::openedCb(uv_fs_t *r)
     }
 }
 
-void FileUtils::closedCb(uv_fs_t *r)
+void File::closedCb(uv_fs_t *r)
 {
   File *f = getInstance(r);
   if (r->result != -1)
     {
       f->setFileDescriptor(0);
       uv_fs_req_cleanup(r);
-      f->onClosed.call();
+      f->onClosed();
     }
   else
     {
@@ -38,7 +34,7 @@ void FileUtils::closedCb(uv_fs_t *r)
     }
 }
 
-void FileUtils::readCb(uv_fs_t *r)
+void File::readCb(uv_fs_t *r)
 {
   File *f = getInstance(r);
 
@@ -52,12 +48,12 @@ void FileUtils::readCb(uv_fs_t *r)
     }
   else
     {
-      getInstance(r)->onReadyRead.call(f->getBuffer(), r->result);
+      getInstance(r)->onReadyRead(f->getBuffer(), r->result);
     }
   uv_fs_req_cleanup(r);
 }
 
-void FileUtils::writtenCb(uv_fs_t *r)
+void File::writtenCb(uv_fs_t *r)
 {
   if (r->result == -1) {
       fprintf(stderr, "Error writting data to file: s.\n");
@@ -77,13 +73,13 @@ void FileUtils::writtenCb(uv_fs_t *r)
 
 
 File::File(Loop *l)
-  : FileUtils(l)
+  : PUvObject(l)
 {
   regInstance(obj_, this);
 }
 
 File::File(const std::string &path, Loop *l)
-  : FileUtils(l)
+  : PUvObject(l)
   , path_(path)
 {
   regInstance(obj_, this);
@@ -156,7 +152,7 @@ std::string File::readAll()
       r = uv_fs_read(loop_->uvHandle()
                      , obj_
                      , fd_
-                     , buffer_->getUvHandle()
+                     , buffer_->getHandle()
                      , 1
                      , contents.length()  // offset
                      , nullptr);
@@ -164,7 +160,7 @@ std::string File::readAll()
 
       if (r <= 0)
         break;
-      contents.append(buffer_->getUvHandle()->base, r);
+      contents.append(buffer_->getHandle()->base, r);
     }
   return contents;
 }
@@ -175,8 +171,8 @@ int File::read(Buffer *buf, const Mode &m)
   return uv_fs_read(loop_->uvHandle()
                     , obj_
                     , fd_
-                    , buffer_->getUvHandle()
-                    , buffer_->getUvHandle()->len
+                    , buffer_->getHandle()
+                    , buffer_->getHandle()->len
                     , -1
                     , m == Mode::Async ? readCb : nullptr);
 }
@@ -186,8 +182,8 @@ int File::write(Buffer *buf, const Mode &m)
   return uv_fs_write(loop_->uvHandle()
                      , obj_
                      , fd_
-                     , buf->getUvHandle()
-                     , buf->getUvHandle()->len
+                     , buf->getHandle()
+                     , buf->getHandle()->len
                      , -1
                      , m == Mode::Async ? writtenCb : nullptr);
 }

@@ -3,9 +3,9 @@
 using namespace Parsley;
 
 
-Loop LoopUtils::default_loop = Loop(uv_default_loop());
+Loop Loop::default_loop = Loop(uv_default_loop());
 
-Loop *LoopUtils::defaultLoop()
+Loop *Loop::defaultLoop()
 {
   return &default_loop;
 }

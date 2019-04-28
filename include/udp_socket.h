@@ -5,26 +5,14 @@
 #include "utils.h"
 
 P_NS_BEGIN
-class UdpSocketUtils;
-class UdpSocket;
-
-
-class UdpSocketUtils
-    : public PUvObject<uv_udp_t, UdpSocket>
-{
-public:
-  UdpSocketUtils(Loop *l);
-protected:
-  static void receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned);
-  static void writtenCb(uv_udp_send_t* req, int status);
-
-};
-
 
 class UdpSocket
     : public AbstractSocket
-    , private UdpSocketUtils
+    , public PUvObject<uv_udp_t, UdpSocket>
 {
+  static void receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned);
+  static void writtenCb(uv_udp_send_t* req, int status);
+
 public:
   CallbackHandler<void(std::string&, IPAddress&)> onReadyRead;
   CallbackHandler<void(const SocketDescriptor&)> onWritten;
@@ -38,6 +26,7 @@ public:
   void write(const char *ip, const int &port, const std::string &data);
   void setBroadcatEnabled(const bool &enabled = true);
 
+private:
 };
 
 P_NS_END

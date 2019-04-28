@@ -1,34 +1,28 @@
 #include "tcp_socket.h"
 
-
 using namespace Parsley;
 
-TcpSocketUtils::TcpSocketUtils(Loop *l)
-  : PUvObject(l)
-{
-}
 
-void TcpSocketUtils::writeCb(uv_write_t *handle, int status)
+void TcpSocket::writeCb(uv_write_t *handle, int status)
 {
   if(status)
-    {
       fprintf(stderr, "Write error %s\n", uv_strerror(status));
-    }
   freeWriteReq(handle);
 }
 
-void TcpSocketUtils::connectCb(uv_connect_t *handle, int status)
+void TcpSocket::connectCb(uv_connect_t *handle, int status)
 {
-//  getInstance((uv_tcp_t*) handle)->onConnected.call();
+  //! TODO: crash
+//  getInstance((uv_tcp_t*) handle)->onConnected();
 }
 
-void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
+void TcpSocket::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)
 {
   if(nread > 0)
     {
       TcpSocket *s = getInstance((uv_tcp_t*)handle);
       std::string data(buf->base, nread);
-      s->onReadyRead.call(data, s);
+      s->onReadyRead(data, s);
       return;
     }
   if(nread < 0)
@@ -43,7 +37,7 @@ void TcpSocketUtils::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_
 }
 
 
-void TcpSocketUtils::freeWriteReq(uv_write_t *handle)
+void TcpSocket::freeWriteReq(uv_write_t *handle)
 {
   write_req_t *req = (write_req_t*) handle;
   free(req);
@@ -53,7 +47,7 @@ void TcpSocketUtils::freeWriteReq(uv_write_t *handle)
 
 
 TcpSocket::TcpSocket(Loop *l)
-  : TcpSocketUtils(l)
+  : PUvObject(l)
 {
   regInstance(obj_, this);
   uv_tcp_init(loop_->uvHandle(), obj_);

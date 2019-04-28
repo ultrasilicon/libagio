@@ -2,29 +2,24 @@
 
 using namespace Parsley;
 
-TimerUtils::TimerUtils(Loop *l)
-  : PUvObject(l)
-{
-}
 
-void TimerUtils::timeoutCb(uv_timer_t *handle)
+void Timer::timeoutCb(uv_timer_t *handle)
 {
   Timer *t = getInstance(handle);
-  t->onTimedOut.call(t);
+  t->onTimedOut(t);
 }
-
 
 
 
 Timer::Timer(Loop *l)
-  : TimerUtils(l)
+  : PUvObject(l)
 {
   uv_timer_init(l->uvHandle(), obj_);
   regInstance(obj_, this);
 }
 
 Timer::Timer(const uint64_t &repeat, Loop *l)
-  : TimerUtils(l)
+  : PUvObject(l)
   , repeat_(repeat)
 {
   uv_timer_init(l->uvHandle(), obj_);
@@ -32,7 +27,7 @@ Timer::Timer(const uint64_t &repeat, Loop *l)
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
-  : TimerUtils(l)
+  : PUvObject(l)
   , timeout_(timeout)
   , repeat_(repeat)
 {

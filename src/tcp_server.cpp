@@ -1,16 +1,9 @@
 #include "tcp_server.h"
 
-#include <stdlib.h>
-
 using namespace Parsley;
 
 
-TcpServerUtils::TcpServerUtils(Loop *l)
-  : PUvObject(l)
-{
-}
-
-void TcpServerUtils::newConnectionCb(uv_stream_t *handle, int status)
+void TcpServer::newConnectionCb(uv_stream_t *handle, int status)
 {
   if(status < 0)
     {
@@ -18,11 +11,8 @@ void TcpServerUtils::newConnectionCb(uv_stream_t *handle, int status)
       return;
     }
   TcpServer* s = getInstance((uv_tcp_t*)handle);
-  s->onNewConnection.call(s);
+  s->onNewConnection(s);
 }
-
-
-
 
 TcpServer::TcpServer(Loop *l)
   : TcpServer({}, 0, 128, l)
@@ -35,7 +25,7 @@ TcpServer::TcpServer(char *ip, const int &port, Loop *l)
 }
 
 TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
-  : TcpServerUtils (l)
+  : PUvObject(l)
   , ip_(ip)
   , port_(port)
   , back_log_(backLog)
@@ -81,9 +71,9 @@ void TcpServer::close()
 int TcpServer::accept(TcpSocket *client)
 {
   int r = uv_accept((uv_stream_t*) obj_
-                    , (uv_stream_t*) client->getUvHandle());
+                    , (uv_stream_t*) client->getHandle());
   if(r < 0)
-    uv_close((uv_handle_t*) client->getUvHandle(), nullptr);
+    uv_close((uv_handle_t*) client->getHandle(), nullptr);
   else
     client->start();
   return r;

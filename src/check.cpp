@@ -2,19 +2,15 @@
 
 using namespace Parsley;
 
-CheckUtils::CheckUtils(Loop *l)
-  : PUvObject(l)
-{
-}
 
-void CheckUtils::checkCb(uv_check_t *r)
+void Check::checkCb(uv_check_t *r)
 {
-  getInstance(r)->onCalled.call();
+  getInstance(r)->onCalled();
 }
 
 
 Check::Check(Loop *l)
-  : CheckUtils(l)
+  : PUvObject(l)
 {
   uv_check_init(l->uvHandle(), obj_);
   regInstance(obj_, this);
@@ -26,8 +22,7 @@ Check::~Check()
 
 int Check::start()
 {
-  return uv_check_start(obj_
-                        , checkCb);
+  return uv_check_start(obj_, checkCb);
 }
 
 int Check::stop()

@@ -2,19 +2,13 @@
 
 using namespace Parsley;
 
-AsyncEventUtils::AsyncEventUtils(Loop *l)
-  : PUvObject(l)
+void AsyncEvent::executeCb(uv_async_t *r)
 {
+  getInstance(r)->onCalled();
 }
-
-void AsyncEventUtils::executeCb(uv_async_t *r)
-{
-  getInstance(r)->onCalled.call();
-}
-
 
 AsyncEvent::AsyncEvent(Loop *l)
-  : AsyncEventUtils(l)
+  : PUvObject(l)
 {
   uv_async_init(loop_->uvHandle(), obj_, executeCb);
   regInstance(obj_, this);

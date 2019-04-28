@@ -1,34 +1,18 @@
 #ifndef TCPSERVER_H
 #define TCPSERVER_H
 
-#define TCP_PORT 23232
-#define TCP_BACKLOG 128
-
 #include "tcp_socket.h"
 #include "utils.h"
 
-#include <unordered_map>
-#include <map>
-
-
 P_NS_BEGIN
-class TcpServerUtils;
 class TcpServer;
 
-class TcpServerUtils
-    : public PUvObject<uv_tcp_t, TcpServer>
-{
-public:
-  explicit TcpServerUtils(Loop *l);
-
-protected:
-  static void newConnectionCb(uv_stream_t *handle, int status);
-};
 
 class TcpServer
-    : private TcpServerUtils
+    : public PUvObject<uv_tcp_t, TcpServer>
 {
-  friend TcpServerUtils;
+  static void newConnectionCb(uv_stream_t *handle, int status);
+
 public:
   CallbackHandler<void(TcpServer*)> onNewConnection;
 

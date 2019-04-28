@@ -76,10 +76,9 @@ Functor<T, Ret, Args...> functor_wrap(T *obj , Ret (T::*func)(Args...))
 
 template<typename Ret, typename... Args>
 struct CallbackHandler<Ret(Args...)> {
-  using Func = std::function<Ret(Args...)>;
-  Func f_;
+  std::function<Ret(Args...)> f_;
 
-  Ret call(Args... args) noexcept
+  Ret operator()(Args... args) noexcept
   {
     if(f_)
       return f_(args ...);

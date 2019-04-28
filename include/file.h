@@ -8,28 +8,14 @@
 
 P_NS_BEGIN
 
-class FileUtils;
-class File;
-
-
-class FileUtils
+class File
     : public PUvObject<uv_fs_t, File>
 {
-public:
-  FileUtils(Loop *l);
-
-protected:
   static void openedCb(uv_fs_t* r);
   static void closedCb(uv_fs_t* r);
   static void readCb(uv_fs_t* r);
   static void writtenCb(uv_fs_t* r);
 
-};
-
-class File
-    : protected FileUtils
-{
-  friend FileUtils;
 public:
   CallbackHandler<void(Buffer*, const ssize_t&)> onReadyRead;
   CallbackHandler<void()> onOpened;

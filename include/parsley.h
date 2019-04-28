@@ -27,25 +27,21 @@ enum Mode {
   Sync = 1
 };
 
-class LoopUtils;
 class Loop;
 
+template <typename CType, typename PType>
+class PObject;
 template <typename UvT, typename PType>
 class PUvObject;
 
-class LoopUtils
+
+
+class Loop
 {
 public:
   static Loop *defaultLoop();
-
-private:
   static Loop default_loop;
-};
 
-class Loop
-    : public LoopUtils
-{
-public:
   Loop();
   Loop(uv_loop_t* l);
   ~Loop();
@@ -75,7 +71,8 @@ public:
   static void regInstance(CType *cHandle, PType *pHandle);
   static void removeInstance(CType *cHandle);
   static PType *getInstance(CType *cHandle);
-  CType *getUvHandle();
+  CType *getHandle();
+
 protected:
   CType *obj_;
 
@@ -119,13 +116,17 @@ PType* PObject<CType, PType>::getInstance(CType* cHandle)
 }
 
 template<typename CType, typename PType>
-CType* PObject<CType, PType>::getUvHandle()
+CType* PObject<CType, PType>::getHandle()
 {
   return obj_;
 }
 
-
-
+template <typename PType>
+struct PUvObjectData
+{
+  PType *pHandle;
+  // ...
+};
 
 template <typename UvType, typename PType>
 class PUvObject
@@ -145,6 +146,7 @@ PUvObject<UvType, PType>::PUvObject(Loop *l)
   : PObject<UvType, PType>()
   , loop_(l)
 {
+//  PObject<UvType, PType>::obj_->data = PUvObjectData<PType>{};
 }
 
 template<typename UvType, typename PType>

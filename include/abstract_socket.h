@@ -8,8 +8,6 @@
 
 P_NS_BEGIN
 
-class AbstractSocket;
-
 class AbstractSocket
 {
 public:
@@ -19,9 +17,9 @@ public:
 //  Callback<void, const SocketDescriptor&> onWritten;
 
   virtual ~AbstractSocket();
-  virtual void bind(const char* ipAddr, const int &port) = 0;
   virtual int start() = 0;
   virtual void stop() = 0;
+  virtual void close() = 0;
 
   static void allocCb(uv_handle_t *, size_t size, uv_buf_t *buf);
 

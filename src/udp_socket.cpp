@@ -52,8 +52,7 @@ UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
   setBroadcatEnabled(true);
 }
 
-void
-UdpSocket::bind(const char *ip, const int &port)
+void UdpSocket::bind(const char *ip, const int &port)
 {
   sockaddr_in addr;
   uv_ip4_addr(ip, port, &addr);
@@ -65,14 +64,18 @@ int UdpSocket::start()
   return uv_udp_recv_start(obj_, allocCb, receiveCb);
 }
 
-void
-UdpSocket::stop()
+void UdpSocket::stop()
 {
   uv_udp_recv_stop(obj_);
 }
 
-void
-UdpSocket::write(const char *ip, const int &port, const std::string &data)
+void UdpSocket::close()
+{
+  stop();
+  uv_close((uv_handle_t*) obj_, nullptr);
+}
+
+void UdpSocket::write(const char *ip, const int &port, const std::string &data)
 {
   auto *req = CXX_MALLOC(uv_udp_send_t);
   uv_buf_t buf = uv_buf_init((char*) data.c_str(), data.size());
@@ -81,8 +84,7 @@ UdpSocket::write(const char *ip, const int &port, const std::string &data)
   uv_udp_send(req, obj_, &buf, 1, (const struct sockaddr *)&addr, writtenCb);
 }
 
-void
-UdpSocket::setBroadcatEnabled(const bool &enabled)
+void UdpSocket::setBroadcatEnabled(const bool &enabled)
 {
   uv_udp_set_broadcast(obj_, enabled ? 1 : 0);
 }

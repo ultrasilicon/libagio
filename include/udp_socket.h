@@ -23,6 +23,7 @@ public:
   void bind(const char *ip, const int &port);
   int start();
   void stop();
+  void close();
   void write(const char *ip, const int &port, const std::string &data);
   void setBroadcatEnabled(const bool &enabled = true);
 

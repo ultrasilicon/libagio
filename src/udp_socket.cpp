@@ -35,14 +35,14 @@ void UdpSocket::writtenCb(uv_udp_send_t *req, int status)
 
 
 UdpSocket::UdpSocket(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   uv_udp_init(l->uvHandle(), obj_);
   regInstance(obj_, this);
 }
 
 UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   uv_udp_init(l->uvHandle(), obj_);
   regInstance(obj_, this);

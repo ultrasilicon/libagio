@@ -25,7 +25,7 @@ TcpServer::TcpServer(char *ip, const int &port, Loop *l)
 }
 
 TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
   , ip_(ip)
   , port_(port)
   , back_log_(backLog)

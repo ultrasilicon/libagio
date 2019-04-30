@@ -73,13 +73,13 @@ void File::writtenCb(uv_fs_t *r)
 
 
 File::File(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   regInstance(obj_, this);
 }
 
 File::File(const std::string &path, Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
   , path_(path)
 {
   regInstance(obj_, this);

@@ -12,14 +12,14 @@ void Timer::timeoutCb(uv_timer_t *handle)
 
 
 Timer::Timer(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   uv_timer_init(l->uvHandle(), obj_);
   regInstance(obj_, this);
 }
 
 Timer::Timer(const uint64_t &repeat, Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
   , repeat_(repeat)
 {
   uv_timer_init(l->uvHandle(), obj_);
@@ -27,7 +27,7 @@ Timer::Timer(const uint64_t &repeat, Loop *l)
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
   , timeout_(timeout)
   , repeat_(repeat)
 {

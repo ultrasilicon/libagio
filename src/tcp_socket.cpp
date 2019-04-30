@@ -47,7 +47,7 @@ void TcpSocket::freeWriteReq(uv_write_t *handle)
 
 
 TcpSocket::TcpSocket(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   regInstance(obj_, this);
   uv_tcp_init(loop_->uvHandle(), obj_);

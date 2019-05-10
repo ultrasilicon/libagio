@@ -19,7 +19,6 @@ public:
 //  Callback<void, const SocketDescriptor&> onWritten;
 
   virtual ~AbstractSocket();
-  virtual void bind(const char* ipAddr, const int &port) = 0;
   virtual int start() = 0;
   virtual void stop() = 0;
 

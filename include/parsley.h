@@ -148,7 +148,7 @@ protected:
 template<typename UvType, typename PType>
 PType* PUvObject<UvType, PType>::getPHandle(void* handle)
 {
-  return static_cast<PType*>(static_cast<uv_handle_t*>(handle)->data);
+  return static_cast<PType*>(static_cast<UvType*>(handle)->data);
 }
 
 template<typename UvType, typename PType>
@@ -157,7 +157,7 @@ PUvObject<UvType, PType>::PUvObject(Loop* l, PType* pHandle)
   , loop_(l)
   , data_(new PUvObjectData<PType>{pHandle})
 {
-  PObject<UvType, PType>::obj_->data = static_cast<void*>(data_);
+  PObject<UvType, PType>::obj_->data = data_;
 }
 
 template<typename UvType, typename PType>

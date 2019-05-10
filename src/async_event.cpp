@@ -2,11 +2,13 @@
 
 using namespace Parsley;
 
-void AsyncEvent::executeCb(uv_async_t *handle)
+void AsyncEvent::executeCb(uv_async_t* handle)
 {
-  auto newf = getPHandle(handle);
-  newf->onCalled();
   auto oldf = &getInstance(handle)->data_->pHandle;
+  static_cast<AsyncEvent*>(static_cast<uv_async_t*>(handle)->data)->onCalled();
+
+//  auto newf = getPHandle(handle);
+//  newf->onCalled();
 //  getPHandle(handle)->onCalled();
 //  getInstance(handle)->onCalled();
 }

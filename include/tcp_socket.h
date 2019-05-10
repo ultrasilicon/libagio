@@ -31,6 +31,7 @@ public:
   ~TcpSocket();
 
   int start();
+  void stop();
   void close();
   int connect(const char* addr, const int &port);
   int write(char* data);

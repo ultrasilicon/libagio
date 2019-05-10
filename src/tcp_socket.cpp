@@ -65,8 +65,14 @@ int TcpSocket::start()
   return uv_read_start((uv_stream_t*) obj_, allocCb, receiveCb);
 }
 
+void TcpSocket::stop()
+{
+  uv_read_stop((uv_stream_t*) obj_);
+}
+
 void TcpSocket::close()
 {
+  stop();
   uv_close((uv_handle_t*) obj_, nullptr);
 }
 

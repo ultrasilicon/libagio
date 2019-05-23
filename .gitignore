@@ -5,7 +5,9 @@ build*/
 *.usr
 *.user
 *.pro.user.*
-
+.idea/
+cmake-build-debug
+*.autosave
 
 # OS generated files
 .DS_Store
@@ -16,4 +18,3 @@ build*/
 ehthumbs.db
 Thumbs.db
 Icon
-*.autosave

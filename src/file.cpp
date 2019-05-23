@@ -147,7 +147,7 @@ std::string File::readAll()
   buffer_ = new Buffer(buffer_data_, sizeof(buffer_data_));
   int r;
 
-  while (true)
+  while(true)
     {
       r = uv_fs_read(loop_->uvHandle()
                      , obj_
@@ -238,7 +238,7 @@ Buffer *File::getBuffer()
   return buffer_;
 }
 
-void File::setFileDescriptor(const ssize_t &fd)
+void File::setFileDescriptor(const int &fd)
 {
   fd_ = fd;
 }

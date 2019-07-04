@@ -6,7 +6,7 @@ set(SRC ${PROJECT_SOURCE_DIR}/main.cpp)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(PkgConfig)
-pkg_check_modules(LIBPARSLEY REQUIRED libParsley)
+pkg_check_modules(LIBPARSLEY REQUIRED libagio)
 
 add_executable(${PROJECT_DIR_NAME} main.cpp)
-target_link_libraries(${PROJECT_DIR_NAME} parsley)
+target_link_libraries(${PROJECT_DIR_NAME} agio)

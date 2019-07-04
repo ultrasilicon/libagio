@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include <libparsley/async_event.h>
-#include <libparsley/timer.h>
+#include <libagio/async_event.h>
+#include <libagio/timer.h>
 
 using namespace std;
-using namespace Parsley;
+using namespace Agio;
 
 static Loop* loop;
 static AsyncEvent* event;

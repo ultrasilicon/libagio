@@ -5,12 +5,12 @@
 #include "abstract_socket.h"
 #include "address.h"
 
-P_NS_BEGIN
+A_NS_BEGIN
 
 class TcpSocket
     : public Stream
     , public AbstractSocket
-    , public PUvObject<uv_tcp_t, TcpSocket>
+    , public UvObject<uv_tcp_t, TcpSocket>
 {
   typedef struct {
     uv_write_t req;
@@ -46,5 +46,5 @@ protected:
 };
 
 
-P_NS_END
+A_NS_END
 #endif // TCPSOCKET_H

@@ -1,6 +1,6 @@
 #include "file.h"
 
-using namespace Parsley;
+using namespace Agio;
 
 
 void File::openedCb(uv_fs_t *r)
@@ -73,12 +73,12 @@ void File::writtenCb(uv_fs_t *r)
 
 
 File::File(Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
 {
 }
 
 File::File(const std::string &path, Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
   , path_(path)
 {
 }

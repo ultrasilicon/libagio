@@ -3,7 +3,7 @@
 
 #include <functional>
 
-namespace Parsley {
+namespace Agio {
 
 template<class T, typename Ret, typename... Args>
 struct Function;

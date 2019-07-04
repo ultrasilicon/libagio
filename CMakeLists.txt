@@ -22,7 +22,7 @@ set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/timer.h
 	${PROJECT_SOURCE_DIR}/include/udp_socket.h
 	${PROJECT_SOURCE_DIR}/include/utils.h
-	${PROJECT_SOURCE_DIR}/include/parsley.h
+	${PROJECT_SOURCE_DIR}/include/agio.h
 )
 
 set(SRC
@@ -39,7 +39,7 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/timer.cpp
 	${PROJECT_SOURCE_DIR}/src/udp_socket.cpp
 	${PROJECT_SOURCE_DIR}/src/utils.cpp
-	${PROJECT_SOURCE_DIR}/src/parsley.cpp
+	${PROJECT_SOURCE_DIR}/src/agio.cpp
 )
 
 include_directories(/usr/local/include)

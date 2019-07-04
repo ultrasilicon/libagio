@@ -1,6 +1,6 @@
 #include "check.h"
 
-using namespace Parsley;
+using namespace Agio;
 
 
 void Check::checkCb(uv_check_t *r)
@@ -10,7 +10,7 @@ void Check::checkCb(uv_check_t *r)
 
 
 Check::Check(Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
 {
   uv_check_init(l->uvHandle(), obj_);
 }

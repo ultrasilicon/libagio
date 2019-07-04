@@ -1,5 +1,5 @@
-#ifndef PARSLEY_H
-#define PARSLEY_H
+#ifndef AGIO_H
+#define AGIO_H
 
 #if defined(_WIN32)
 #include "../libuv/win32/include/uv.h"
@@ -14,13 +14,13 @@
 #include <string>
 #include <iostream>
 
-#define P_NS_BEGIN namespace Parsley {
-#define P_NS_END }
+#define A_NS_BEGIN namespace Agio {
+#define A_NS_END }
 #define CXX_MALLOC(type) static_cast<type*>(malloc(sizeof(type)))
 #define CXX_MALLOC_CSTR(size) static_cast<char*>(malloc(size * sizeof(char)))
-#define P_USED(var) (void)var
+#define A_USED(var) (void)var
 
-P_NS_BEGIN
+A_NS_BEGIN
 
 enum Mode {
   Async = 0,
@@ -29,11 +29,11 @@ enum Mode {
 
 class Loop;
 template <typename CType, typename PType>
-class PObject;
+class AgioObject;
 template <typename PType>
-struct PUvObjectData;
+struct UvObjectData;
 template <typename UvT, typename PType>
-class PUvObject;
+class UvObject;
 
 
 
@@ -60,17 +60,17 @@ private:
 
 /*!
  * \arg CType: typename of the c obj
- * \arg PType: typename of the parsley obj
+ * \arg PType: typename of the agio obj
  */
 template <typename CType, typename PType>
-class PObject
+class AgioObject
 {
 public:
-  PObject()
+  AgioObject()
     : obj_(new CType())
   { }
 
-  ~PObject()
+  ~AgioObject()
   {
     if(obj_)
       delete obj_;
@@ -89,7 +89,7 @@ protected:
 
 
 template <typename PType>
-struct PUvObjectData
+struct UvObjectData
 {
   PType* pHandle;
   // ...
@@ -99,24 +99,24 @@ struct PUvObjectData
 
 
 template <typename UvType, typename PType>
-class PUvObject
-    : public PObject<UvType, PType>
+class UvObject
+    : public AgioObject<UvType, PType>
 {
 public:
   static PType* getPHandle(UvType* handle)
   {
-    return static_cast<PUvObjectData<PType>*>(handle->data)->pHandle;
+    return static_cast<UvObjectData<PType>*>(handle->data)->pHandle;
   }
 
-  PUvObject(Loop* l, PType* pHandle)
-    : PObject<UvType, PType>()
+  UvObject(Loop* l, PType* pHandle)
+    : AgioObject<UvType, PType>()
     , loop_(l)
-    , data_(new PUvObjectData<PType>{pHandle})
+    , data_(new UvObjectData<PType>{pHandle})
   {
-    PObject<UvType, PType>::obj_->data = data_;
+    AgioObject<UvType, PType>::obj_->data = data_;
   }
 
-  ~PUvObject()
+  ~UvObject()
   {
     delete data_;
   }
@@ -128,7 +128,7 @@ public:
 
 protected:
   Loop* loop_;
-  PUvObjectData<PType>* data_;
+  UvObjectData<PType>* data_;
 };
 
 
@@ -140,5 +140,5 @@ protected:
 
 
 
-P_NS_END
-#endif // PARSLEY_H
+A_NS_END
+#endif // AGIO_H

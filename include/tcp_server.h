@@ -4,12 +4,12 @@
 #include "tcp_socket.h"
 #include "utils.h"
 
-P_NS_BEGIN
+A_NS_BEGIN
 class TcpServer;
 
 
 class TcpServer
-    : public PUvObject<uv_tcp_t, TcpServer>
+    : public UvObject<uv_tcp_t, TcpServer>
 {
   static void newConnectionCb(uv_stream_t *handle, int status);
 
@@ -32,5 +32,5 @@ private:
   int back_log_;
 };
 
-P_NS_END
+A_NS_END
 #endif // TCPSERVER_H

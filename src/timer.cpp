@@ -1,6 +1,6 @@
 #include "timer.h"
 
-using namespace Parsley;
+using namespace Agio;
 
 
 void Timer::timeoutCb(uv_timer_t *handle)
@@ -12,20 +12,20 @@ void Timer::timeoutCb(uv_timer_t *handle)
 
 
 Timer::Timer(Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
 {
   uv_timer_init(l->uvHandle(), obj_);
 }
 
 Timer::Timer(const uint64_t &repeat, Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
   , repeat_(repeat)
 {
   uv_timer_init(l->uvHandle(), obj_);
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
   , timeout_(timeout)
   , repeat_(repeat)
 {

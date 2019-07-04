@@ -1,12 +1,12 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include "parsley.h"
+#include "agio.h"
 
-P_NS_BEGIN
+A_NS_BEGIN
 
 class Timer
-    : public PUvObject<uv_timer_t, Timer>
+    : public UvObject<uv_timer_t, Timer>
 {
   static void timeoutCb(uv_timer_t *handle);
 
@@ -28,5 +28,5 @@ private:
 };
 
 
-P_NS_END
+A_NS_END
 #endif // TIMER_H

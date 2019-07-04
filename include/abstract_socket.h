@@ -2,11 +2,11 @@
 #define ABSTRACTSOCKET_H
 
 
-#include "parsley.h"
+#include "agio.h"
 #include "buffer.h"
 #include "address.h"
 
-P_NS_BEGIN
+A_NS_BEGIN
 
 class AbstractSocket
 {
@@ -27,5 +27,5 @@ protected:
 };
 
 
-P_NS_END
+A_NS_END
 #endif // ABSTRACTSOCKET_H

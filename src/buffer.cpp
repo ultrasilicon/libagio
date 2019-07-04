@@ -1,17 +1,17 @@
 #include "buffer.h"
 
-using namespace Parsley;
+using namespace Agio;
 
 
 
-Parsley::Buffer::Buffer(const std::string &data)
-  : PObject()
+Buffer::Buffer(const std::string &data)
+  : AgioObject()
 {
   *obj_ = uv_buf_init((char*)data.c_str(), data.size());
 }
 
 Buffer::Buffer(char *data, const size_t len)
-  : PObject()
+  : AgioObject()
 {
   *obj_ = uv_buf_init(data, len);
 }

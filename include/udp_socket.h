@@ -4,11 +4,11 @@
 #include "abstract_socket.h"
 #include "utils.h"
 
-P_NS_BEGIN
+A_NS_BEGIN
 
 class UdpSocket
     : public AbstractSocket
-    , public PUvObject<uv_udp_t, UdpSocket>
+    , public UvObject<uv_udp_t, UdpSocket>
 {
   static void receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned);
   static void writtenCb(uv_udp_send_t* req, int status);
@@ -30,5 +30,5 @@ public:
 private:
 };
 
-P_NS_END
+A_NS_END
 #endif // UDPSOCKET_H

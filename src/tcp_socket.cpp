@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-using namespace Parsley;
+using namespace Agio;
 
 
 void TcpSocket::writeCb(uv_write_t *handle, int status)
@@ -48,7 +48,7 @@ void TcpSocket::freeWriteReq(uv_write_t *handle)
 
 
 TcpSocket::TcpSocket(Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
 {
   uv_tcp_init(loop_->uvHandle(), obj_);
 }

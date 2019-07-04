@@ -1,16 +1,16 @@
 #ifndef PBUFFER_H
 #define PBUFFER_H
 
-#include "parsley.h"
+#include "agio.h"
 
 #include <string>
 
-P_NS_BEGIN
+A_NS_BEGIN
 
 class Buffer;
 
 class Buffer
-    : public PObject<uv_buf_t, Buffer>
+    : public AgioObject<uv_buf_t, Buffer>
 {
 public:
   Buffer(const std::string &data);
@@ -26,5 +26,5 @@ public:
 
 
 
-P_NS_END
+A_NS_END
 #endif // PBUFFER_H

@@ -2,7 +2,7 @@
 
 #include <map>
 
-using namespace Parsley;
+using namespace Agio;
 
 
 void UdpSocket::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned)
@@ -35,13 +35,13 @@ void UdpSocket::writtenCb(uv_udp_send_t *req, int status)
 
 
 UdpSocket::UdpSocket(Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
 {
   uv_udp_init(l->uvHandle(), obj_);
 }
 
 UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
 {
   uv_udp_init(l->uvHandle(), obj_);
 

@@ -1,6 +1,6 @@
 #include "async_event.h"
 
-using namespace Parsley;
+using namespace Agio;
 
 void AsyncEvent::executeCb(uv_async_t* handle)
 {
@@ -8,7 +8,7 @@ void AsyncEvent::executeCb(uv_async_t* handle)
 }
 
 AsyncEvent::AsyncEvent(Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
 {
   uv_async_init(loop_->uvHandle(), obj_, executeCb);
 }

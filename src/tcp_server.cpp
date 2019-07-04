@@ -1,6 +1,6 @@
 #include "tcp_server.h"
 
-using namespace Parsley;
+using namespace Agio;
 
 
 void TcpServer::newConnectionCb(uv_stream_t *handle, int status)
@@ -25,7 +25,7 @@ TcpServer::TcpServer(char *ip, const int &port, Loop *l)
 }
 
 TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
-  : PUvObject(l, this)
+  : UvObject(l, this)
   , ip_(ip)
   , port_(port)
   , back_log_(backLog)

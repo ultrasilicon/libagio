@@ -1,8 +1,5 @@
-#include <iostream>
 #include <libagio/tcp_socket.h>
 #include <libagio/timer.h>
-
-#include <uv.h>
 
 using namespace std;
 using namespace Agio;
@@ -25,12 +22,13 @@ int main()
   Loop loop;
 
   client = new TcpSocket(&loop);
-  on(&client->onConnected, &connected_cb);
   client->connect("127.0.0.1", 63773);
-  client->start();
+  on(&client->onConnected, &connected_cb);
 
   Timer *timer = new Timer(2000, 500, &loop);
   on(&timer->onTimedOut, &timeout_cb);
+
+  client->start();
   timer->start();
 
   return loop.run();

@@ -1,5 +1,3 @@
-#include <iostream>
-#include <string>
 #include <vector>
 #include <libagio/tcp_server.h>
 
@@ -17,8 +15,9 @@ void receive_cb(const Buffer* data, TcpSocket* sock)
 void new_connection_cb(TcpServer* s)
 {
   TcpSocket* sock = new TcpSocket(&loop);
-  clients.push_back(sock);
   on(&sock->onReadyRead, &receive_cb);
+
+  clients.push_back(sock);
   s->accept(sock);
 }
 
@@ -27,6 +26,7 @@ int main()
   TcpServer *server = new TcpServer(&loop);
   server->bind("0.0.0.0", 63773);
   server->listen();
+
   on(&server->onNewConnection, &new_connection_cb);
 
   return loop.run();

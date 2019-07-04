@@ -14,8 +14,7 @@ void TcpSocket::writeCb(uv_write_t *handle, int status)
 
 void TcpSocket::connectCb(uv_connect_t *handle, int status)
 {
-  //! TODO: crash
-//  getInstance((uv_tcp_t*) handle)->onConnected();
+  getPHandle((uv_tcp_t*)handle->handle)->onConnected();
 }
 
 void TcpSocket::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *buf)

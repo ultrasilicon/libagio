@@ -15,7 +15,6 @@ public:
 
   AsyncEvent(Loop *l);
   int send();
-  void print();
 
 private:
 };

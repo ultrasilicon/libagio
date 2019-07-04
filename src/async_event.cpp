@@ -17,8 +17,3 @@ int AsyncEvent::send()
 {
   return uv_async_send(obj_);
 }
-
-void AsyncEvent::print()
-{
-  std::cout << "TEST AsyncEvent in libparsley" << std::endl;
-}

@@ -108,7 +108,6 @@ public:
     return static_cast<PUvObjectData<PType>*>(handle->data)->pHandle;
   }
 
-
   PUvObject(Loop* l, PType* pHandle)
     : PObject<UvType, PType>()
     , loop_(l)
@@ -121,7 +120,6 @@ public:
   {
     delete data_;
   }
-
 
   Loop* getLoop()
   {

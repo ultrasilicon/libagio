@@ -2,33 +2,6 @@
 #include <iostream>
 using namespace Parsley;
 
-IPAddress::IPAddress()
-{
-}
-
-IPAddress::IPAddress(const sockaddr_storage &addr)
-{
-  setAddress(addr);
-}
-
-IPAddress::IPAddress(const sockaddr_in &addr)
-{
-  setAddress(addr);
-}
-
-IPAddress::IPAddress(const sockaddr_in6 &addr)
-{
-  setAddress(addr);
-}
-
-IPAddress::IPAddress(const std::string& ip, const uint16_t& port)
-{
-  setAddress(ip, port);
-}
-
-IPAddress::~IPAddress()
-{
-}
 
 std::string IPAddress::toString(sockaddr_storage &addr)
 {
@@ -58,6 +31,36 @@ std::string IPAddress::toIPString(in6_addr addr)
   if(!inet_ntop(AF_INET6, &addr, buf, sizeof(buf)))
     return {};
   return buf;
+}
+
+
+
+IPAddress::IPAddress()
+{
+}
+
+IPAddress::IPAddress(const sockaddr_storage &addr)
+{
+  setAddress(addr);
+}
+
+IPAddress::IPAddress(const sockaddr_in &addr)
+{
+  setAddress(addr);
+}
+
+IPAddress::IPAddress(const sockaddr_in6 &addr)
+{
+  setAddress(addr);
+}
+
+IPAddress::IPAddress(const std::string& ip, const uint16_t& port)
+{
+  setAddress(ip, port);
+}
+
+IPAddress::~IPAddress()
+{
 }
 
 void IPAddress::setAddress(const sockaddr_storage &addr)
@@ -119,6 +122,11 @@ void IPAddress::setAddress(const std::string &ip, const uint16_t &port)
 IPAddress::Version IPAddress::version() const
 {
   return version_;
+}
+
+bool IPAddress::isValid() const
+{
+  return version_ != None;
 }
 
 std::string IPAddress::toIPString() const

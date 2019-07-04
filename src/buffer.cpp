@@ -8,14 +8,12 @@ Parsley::Buffer::Buffer(const std::string &data)
   : PObject()
 {
   *obj_ = uv_buf_init((char*)data.c_str(), data.size());
-  regInstance(obj_, this);
 }
 
 Buffer::Buffer(char *data, const size_t len)
   : PObject()
 {
   *obj_ = uv_buf_init(data, len);
-  regInstance(obj_, this);
 }
 
 Buffer::~Buffer()

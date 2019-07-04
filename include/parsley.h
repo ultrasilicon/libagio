@@ -66,23 +66,6 @@ template <typename CType, typename PType>
 class PObject
 {
 public:
-  static void regInstance(CType* cHandle, PType* pHandle)
-  {
-    if(!instances_.count(cHandle))
-      instances_.insert({ cHandle, pHandle });
-  }
-
-  static void removeInstance(CType* cHandle)
-  {
-    instances_.erase(instances_.find(cHandle));
-  }
-
-  static PType* getInstance(CType* cHandle)
-  {
-    return instances_.at(cHandle);
-  }
-
-
   PObject()
     : obj_(new CType())
   { }
@@ -90,7 +73,7 @@ public:
   ~PObject()
   {
     if(obj_)
-      removeInstance(obj_);
+      delete obj_;
   }
 
   CType* getHandle()
@@ -100,13 +83,7 @@ public:
 
 protected:
   CType* obj_;
-
-private:
-  static std::unordered_map<CType*, PType*> instances_;
 };
-
-template <typename CType, typename PType>
-std::unordered_map<CType*, PType*> PObject<CType, PType>::instances_;
 
 
 
@@ -126,9 +103,9 @@ class PUvObject
     : public PObject<UvType, PType>
 {
 public:
-  static PType* getPHandle(void* handle)
+  static PType* getPHandle(UvType* handle)
   {
-    return static_cast<PType*>(static_cast<UvType*>(handle)->data);
+    return static_cast<PUvObjectData<PType>*>(handle->data)->pHandle;
   }
 
 

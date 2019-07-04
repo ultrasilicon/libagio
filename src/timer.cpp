@@ -5,7 +5,7 @@ using namespace Parsley;
 
 void Timer::timeoutCb(uv_timer_t *handle)
 {
-  Timer *t = getInstance(handle);
+  Timer *t = getPHandle(handle);
   t->onTimedOut(t);
 }
 
@@ -15,7 +15,6 @@ Timer::Timer(Loop *l)
   : PUvObject(l, this)
 {
   uv_timer_init(l->uvHandle(), obj_);
-  regInstance(obj_, this);
 }
 
 Timer::Timer(const uint64_t &repeat, Loop *l)
@@ -23,7 +22,6 @@ Timer::Timer(const uint64_t &repeat, Loop *l)
   , repeat_(repeat)
 {
   uv_timer_init(l->uvHandle(), obj_);
-  regInstance(obj_, this);
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
@@ -32,7 +30,6 @@ Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   , repeat_(repeat)
 {
   uv_timer_init(l->uvHandle(), obj_);
-  regInstance(obj_, this);
 }
 
 int Timer::start()

@@ -5,7 +5,7 @@ using namespace Parsley;
 
 void File::openedCb(uv_fs_t *r)
 {
-  File *f = getInstance(r);
+  File *f = getPHandle(r);
   if (r->result >= 0)
     {
       f->setFileDescriptor(r->result);
@@ -21,7 +21,7 @@ void File::openedCb(uv_fs_t *r)
 
 void File::closedCb(uv_fs_t *r)
 {
-  File *f = getInstance(r);
+  File *f = getPHandle(r);
   if (r->result != -1)
     {
       f->setFileDescriptor(0);
@@ -36,7 +36,7 @@ void File::closedCb(uv_fs_t *r)
 
 void File::readCb(uv_fs_t *r)
 {
-  File *f = getInstance(r);
+  File *f = getPHandle(r);
 
   if (r->result < 0)
     {
@@ -48,7 +48,7 @@ void File::readCb(uv_fs_t *r)
     }
   else
     {
-      getInstance(r)->onReadyRead(f->getBuffer(), r->result);
+      f->onReadyRead(f->getBuffer(), r->result);
     }
   uv_fs_req_cleanup(r);
 }
@@ -75,14 +75,12 @@ void File::writtenCb(uv_fs_t *r)
 File::File(Loop *l)
   : PUvObject(l, this)
 {
-  regInstance(obj_, this);
 }
 
 File::File(const std::string &path, Loop *l)
   : PUvObject(l, this)
   , path_(path)
 {
-  regInstance(obj_, this);
 }
 
 File::~File()

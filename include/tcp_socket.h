@@ -24,7 +24,7 @@ class TcpSocket
 
 public:
   CallbackHandler<void()> onConnected;
-  CallbackHandler<void(std::string&, TcpSocket*)> onReadyRead;
+  CallbackHandler<void(const Buffer*, TcpSocket*)> onReadyRead;
   CallbackHandler<void(const SocketDescriptor&)> onWritten;
 
   TcpSocket(Loop *l);

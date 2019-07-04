@@ -14,12 +14,12 @@ class Buffer
 {
 public:
   Buffer(const std::string &data);
-  Buffer(char* data, const int len);
+  Buffer(char* data, const size_t len);
   ~Buffer();
 
-  char* data();
-  int length();
-  std::string toString();
+  char* data() const;
+  int length() const;
+  std::string toString() const;
 };
 
 

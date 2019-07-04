@@ -5,7 +5,6 @@ using namespace Parsley;
 
 void Check::checkCb(uv_check_t *r)
 {
-//  getPHandle()
   getInstance(r)->onCalled();
 }
 

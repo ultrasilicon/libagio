@@ -11,7 +11,7 @@ Parsley::Buffer::Buffer(const std::string &data)
   regInstance(obj_, this);
 }
 
-Buffer::Buffer(char *data, const int len)
+Buffer::Buffer(char *data, const size_t len)
   : PObject()
 {
   *obj_ = uv_buf_init(data, len);
@@ -24,17 +24,17 @@ Buffer::~Buffer()
     free(obj_->base);
 }
 
-char *Buffer::data()
+char *Buffer::data() const
 {
   return obj_->base;
 }
 
-int Buffer::length()
+int Buffer::length() const
 {
   return obj_->len;
 }
 
-std::string Buffer::toString()
+std::string Buffer::toString() const
 {
   return std::string(obj_->base, obj_->len);
 }

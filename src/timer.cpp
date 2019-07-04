@@ -12,16 +12,13 @@ void Timer::timeoutCb(uv_timer_t *handle)
 
 
 Timer::Timer(Loop *l)
-  : UvObject(l, this)
+  : Timer(0, 0, l)
 {
-  uv_timer_init(l->uvHandle(), obj_);
 }
 
 Timer::Timer(const uint64_t &repeat, Loop *l)
-  : UvObject(l, this)
-  , repeat_(repeat)
+  : Timer(0, repeat, l)
 {
-  uv_timer_init(l->uvHandle(), obj_);
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)

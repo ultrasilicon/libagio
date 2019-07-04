@@ -5,9 +5,8 @@ using namespace Agio;
 
 
 Buffer::Buffer(const std::string &data)
-  : AgioObject()
+  : Buffer((char*)data.c_str(), data.size())
 {
-  *obj_ = uv_buf_init((char*)data.c_str(), data.size());
 }
 
 Buffer::Buffer(char *data, const size_t len)

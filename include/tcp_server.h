@@ -30,7 +30,6 @@ private:
   char *ip_;
   int port_;
   int back_log_;
-
 };
 
 P_NS_END

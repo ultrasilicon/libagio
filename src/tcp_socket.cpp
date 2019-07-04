@@ -22,9 +22,8 @@ void TcpSocket::receiveCb(uv_stream_t *handle, ssize_t nread, const uv_buf_t *bu
 {
   if(nread > 0)
     {
-      TcpSocket *s = getInstance((uv_tcp_t*)handle);
-      std::string data(buf->base, nread);
-      s->onReadyRead(data, s);
+      TcpSocket *s = getPHandle((uv_tcp_t*)handle);
+      s->onReadyRead(new Buffer(buf->base, buf->len), s);
       return;
     }
   if(nread < 0)
@@ -49,9 +48,8 @@ void TcpSocket::freeWriteReq(uv_write_t *handle)
 
 
 TcpSocket::TcpSocket(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
-  regInstance(obj_, this);
   uv_tcp_init(loop_->uvHandle(), obj_);
 }
 

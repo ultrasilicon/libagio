@@ -17,7 +17,7 @@ public:
 
   virtual int write(char* data);
   virtual int write(char* data, const size_t &len);
-
+  virtual int write(std::string);
 
 private:
 

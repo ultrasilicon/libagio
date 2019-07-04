@@ -10,7 +10,7 @@ void TcpServer::newConnectionCb(uv_stream_t *handle, int status)
       fprintf(stderr, "%s\n", uv_strerror(status));
       return;
     }
-  TcpServer* s = getInstance((uv_tcp_t*)handle);
+  TcpServer* s = getPHandle((uv_tcp_t*)handle);
   s->onNewConnection(s);
 }
 
@@ -25,12 +25,11 @@ TcpServer::TcpServer(char *ip, const int &port, Loop *l)
 }
 
 TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
   , ip_(ip)
   , port_(port)
   , back_log_(backLog)
 {
-  regInstance(obj_, this);
   uv_tcp_init(loop_->uvHandle(), obj_);
 }
 

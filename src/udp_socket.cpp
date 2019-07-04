@@ -18,7 +18,7 @@ void UdpSocket::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 //      std::string ip(senderAddr);
       std::string data(buf->base, nread);
       IPAddress ip((sockaddr_storage&) *addr);
-      getInstance(handle)->onReadyRead(data, ip);
+      getPHandle(handle)->onReadyRead(data, ip);
     }
 
   free(buf->base);
@@ -28,24 +28,22 @@ void UdpSocket::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 void UdpSocket::writtenCb(uv_udp_send_t *req, int status)
 {
   int socketDescriptor = Utils::getFd((uv_handle_t*) req->handle);
-  getInstance(req->handle)->onWritten(socketDescriptor);
+  getPHandle(req->handle)->onWritten(socketDescriptor);
   free(req->bufs);
   free(req);
 }
 
 
 UdpSocket::UdpSocket(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   uv_udp_init(l->uvHandle(), obj_);
-  regInstance(obj_, this);
 }
 
 UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   uv_udp_init(l->uvHandle(), obj_);
-  regInstance(obj_, this);
 
   bind(ip, port);
   start();

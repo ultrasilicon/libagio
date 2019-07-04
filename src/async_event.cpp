@@ -2,19 +2,23 @@
 
 using namespace Parsley;
 
-void AsyncEvent::executeCb(uv_async_t *r)
+void AsyncEvent::executeCb(uv_async_t* handle)
 {
-  getInstance(r)->onCalled();
+  getPHandle(handle)->onCalled();
 }
 
 AsyncEvent::AsyncEvent(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   uv_async_init(loop_->uvHandle(), obj_, executeCb);
-  regInstance(obj_, this);
 }
 
 int AsyncEvent::send()
 {
   return uv_async_send(obj_);
+}
+
+void AsyncEvent::print()
+{
+  std::cout << "TEST AsyncEvent in libparsley" << std::endl;
 }

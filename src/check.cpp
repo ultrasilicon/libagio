@@ -5,15 +5,14 @@ using namespace Parsley;
 
 void Check::checkCb(uv_check_t *r)
 {
-  getInstance(r)->onCalled();
+  getPHandle(r)->onCalled();
 }
 
 
 Check::Check(Loop *l)
-  : PUvObject(l)
+  : PUvObject(l, this)
 {
   uv_check_init(l->uvHandle(), obj_);
-  regInstance(obj_, this);
 }
 
 Check::~Check()

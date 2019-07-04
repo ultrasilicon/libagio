@@ -28,9 +28,10 @@ enum Mode {
 };
 
 class Loop;
-
 template <typename CType, typename PType>
 class PObject;
+template <typename PType>
+struct PUvObjectData;
 template <typename UvT, typename PType>
 class PUvObject;
 
@@ -39,7 +40,7 @@ class PUvObject;
 class Loop
 {
 public:
-  static Loop *defaultLoop();
+  static Loop* defaultLoop();
   static Loop default_loop;
 
   Loop();
@@ -65,95 +66,80 @@ template <typename CType, typename PType>
 class PObject
 {
 public:
-  PObject();
-  ~PObject();
+  PObject()
+    : obj_(new CType())
+  { }
 
-  static void regInstance(CType *cHandle, PType *pHandle);
-  static void removeInstance(CType *cHandle);
-  static PType *getInstance(CType *cHandle);
-  CType *getHandle();
+  ~PObject()
+  {
+    if(obj_)
+      delete obj_;
+  }
+
+  CType* getHandle()
+  {
+    return obj_;
+  }
 
 protected:
-  CType *obj_;
-
-private:
-  static std::unordered_map<CType*, PType*> instances_;
+  CType* obj_;
 };
 
-template <typename CType, typename PType>
-std::unordered_map<CType*, PType*> PObject<CType, PType>::instances_;
 
-template<typename CType, typename PType>
-PObject<CType, PType>::PObject()
-  : obj_(new CType())
-{
-}
 
-template<typename CType, typename PType>
-PObject<CType, PType>::~PObject()
-{
-  if(obj_)
-    removeInstance(obj_);
-}
-
-template<typename CType, typename PType>
-void PObject<CType, PType>::regInstance(CType* cHandle, PType* pHandle)
-{
-  if(!instances_.count(cHandle))
-    instances_.insert({ cHandle, pHandle });
-}
-
-template<typename CType, typename PType>
-void PObject<CType, PType>::removeInstance(CType* cHandle)
-{
-  instances_.erase(instances_.find(cHandle));
-}
-
-template<typename CType, typename PType>
-PType* PObject<CType, PType>::getInstance(CType* cHandle)
-{
-  return instances_.at(cHandle);
-}
-
-template<typename CType, typename PType>
-CType* PObject<CType, PType>::getHandle()
-{
-  return obj_;
-}
 
 template <typename PType>
 struct PUvObjectData
 {
-  PType *pHandle;
+  PType* pHandle;
   // ...
 };
+
+
+
 
 template <typename UvType, typename PType>
 class PUvObject
     : public PObject<UvType, PType>
 {
 public:
-  PUvObject(Loop *l);
+  static PType* getPHandle(UvType* handle)
+  {
+    return static_cast<PUvObjectData<PType>*>(handle->data)->pHandle;
+  }
 
-  Loop* getLoop();
+
+  PUvObject(Loop* l, PType* pHandle)
+    : PObject<UvType, PType>()
+    , loop_(l)
+    , data_(new PUvObjectData<PType>{pHandle})
+  {
+    PObject<UvType, PType>::obj_->data = data_;
+  }
+
+  ~PUvObject()
+  {
+    delete data_;
+  }
+
+
+  Loop* getLoop()
+  {
+    return loop_;
+  }
 
 protected:
   Loop* loop_;
+  PUvObjectData<PType>* data_;
 };
 
-template<typename UvType, typename PType>
-PUvObject<UvType, PType>::PUvObject(Loop *l)
-  : PObject<UvType, PType>()
-  , loop_(l)
-{
-//  PObject<UvType, PType>::obj_->data = PUvObjectData<PType>{};
-}
 
-template<typename UvType, typename PType>
-Loop *PUvObject<UvType, PType>::getLoop()
-{
-  return loop_;
-}
+
+
+
+
+
+
 
 
 P_NS_END

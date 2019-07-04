@@ -42,12 +42,12 @@ public:
   Buffer *getBuffer();
 
 private:
-  ssize_t fd_ = 0;
+  int fd_ = 0;
   std::string path_;
   char buffer_data_[4096];
   Buffer *buffer_ = nullptr;
 
-  void setFileDescriptor(const ssize_t& fd);
+  void setFileDescriptor(const int& fd);
 };
 
 

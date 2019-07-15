@@ -87,19 +87,19 @@ struct CallbackHandler<Ret(Args...)> {
 
   //! Member funtion
   template<class T>
-  void on(T *obj , Ret (T::*func)(Args...))
+  void connect(T *obj , Ret (T::*func)(Args...))
   {
     f_ = Functor<T, Ret, Args...>(obj, func);
   }
 
   //! Static funtion
-  void on(Ret (*func)(Args...))
+  void connect(Ret (*func)(Args...))
   {
     f_ = func;
   }
 
   //! Callback<>
-  void on(CallbackHandler<Ret, Args...> *handler)
+  void connect(CallbackHandler<Ret, Args...> *handler)
   {
     f_ = handler->f_;
   }
@@ -108,19 +108,22 @@ struct CallbackHandler<Ret(Args...)> {
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
 void on(CallbackHandler<Ret1(Args1...)> *handler, T *obj , Ret2 (T::*func)(Args2...))
 {
-  handler->on(obj, func);
+  static_assert (std::is_same<Ret1(Args1...), Ret2(Args2...)>::value, "binding callback functions of unmatched types.");
+  handler->connect(obj, func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
 void on(CallbackHandler<Ret1(Args1...)> *handler, Ret2 (*func)(Args2...))
 {
-  handler->on(func);
+  static_assert (std::is_same<Ret1(Args1...), Ret2(Args2...)>::value, "binding callback functions of unmatched types.");
+  handler->connect(func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
 void on(CallbackHandler<Ret1(Args1...)> *handler1, CallbackHandler<Ret2(Args2...)> *handler2)
 {
-  handler1->on(handler2);
+  static_assert (std::is_same<Ret1(Args1...), Ret2(Args2...)>::value, "binding callback functions of unmatched types.");
+  handler1->connect(handler2);
 }
 
 

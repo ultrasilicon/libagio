@@ -16,6 +16,7 @@ set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/check.h
 	${PROJECT_SOURCE_DIR}/include/file.h
 	${PROJECT_SOURCE_DIR}/include/function.h
+	${PROJECT_SOURCE_DIR}/include/promise.h
 	${PROJECT_SOURCE_DIR}/include/stream.h
 	${PROJECT_SOURCE_DIR}/include/tcp_server.h
 	${PROJECT_SOURCE_DIR}/include/tcp_socket.h
@@ -33,6 +34,7 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/check.cpp
 	${PROJECT_SOURCE_DIR}/src/file.cpp
 	${PROJECT_SOURCE_DIR}/src/function.cpp
+	${PROJECT_SOURCE_DIR}/src/promise.cpp
 	${PROJECT_SOURCE_DIR}/src/stream.cpp
 	${PROJECT_SOURCE_DIR}/src/tcp_server.cpp
 	${PROJECT_SOURCE_DIR}/src/tcp_socket.cpp

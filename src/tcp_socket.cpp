@@ -47,9 +47,9 @@ void TcpSocket::freeWriteReq(uv_write_t *handle)
 
 
 TcpSocket::TcpSocket(Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
 {
-  uv_tcp_init(loop_->uvHandle(), obj_);
+  uv_tcp_init(loop_->cObject(), obj_);
 }
 
 TcpSocket::~TcpSocket()

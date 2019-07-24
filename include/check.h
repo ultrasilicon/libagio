@@ -1,12 +1,12 @@
 #ifndef PCHECK_H
 #define PCHECK_H
 
-#include "agio.h"
+#include "service.h"
 
 A_NS_BEGIN
 
 class Check
-    : public UvObject<uv_check_t, Check>
+    : public AgioService<uv_check_t, Check>
 {
   static void checkCb(uv_check_t *r);
 

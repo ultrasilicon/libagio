@@ -1,15 +1,13 @@
 #ifndef PFILESYSTEM_H
 #define PFILESYSTEM_H
 
-#include "agio.h"
+#include "service.h"
 #include "buffer.h"
-#include <string>
-#include <iostream>
 
 A_NS_BEGIN
 
 class File
-    : public UvObject<uv_fs_t, File>
+    : public AgioService<uv_fs_t, File>
 {
   static void openedCb(uv_fs_t* r);
   static void closedCb(uv_fs_t* r);

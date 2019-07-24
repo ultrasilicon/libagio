@@ -9,7 +9,7 @@ class TcpServer;
 
 
 class TcpServer
-    : public UvObject<uv_tcp_t, TcpServer>
+    : public AgioService<uv_tcp_t, TcpServer>
 {
   static void newConnectionCb(uv_stream_t *handle, int status);
 

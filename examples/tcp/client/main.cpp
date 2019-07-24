@@ -1,6 +1,8 @@
 #include <libagio/tcp_socket.h>
 #include <libagio/timer.h>
 
+#include <iostream>
+
 using namespace std;
 using namespace Agio;
 

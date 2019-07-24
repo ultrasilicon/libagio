@@ -1,6 +1,7 @@
 #ifndef TCPSOCKET_H
 #define TCPSOCKET_H
 
+#include "service.h"
 #include "stream.h"
 #include "abstract_socket.h"
 #include "address.h"
@@ -10,7 +11,7 @@ A_NS_BEGIN
 class TcpSocket
     : public Stream
     , public AbstractSocket
-    , public UvObject<uv_tcp_t, TcpSocket>
+    , public AgioService<uv_tcp_t, TcpSocket>
 {
   typedef struct {
     uv_write_t req;

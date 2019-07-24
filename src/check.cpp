@@ -10,9 +10,9 @@ void Check::checkCb(uv_check_t *r)
 
 
 Check::Check(Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
 {
-  uv_check_init(l->uvHandle(), obj_);
+  uv_check_init(l->cObject(), obj_);
 }
 
 Check::~Check()

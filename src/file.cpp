@@ -58,7 +58,6 @@ void File::writtenCb(uv_fs_t *r)
   if (r->result == -1) {
       fprintf(stderr, "Error writting data to file: s.\n");
     }
-  std::cout<<"written";
 
   uv_fs_t closeReq;
   uv_fs_close(r->loop
@@ -73,12 +72,12 @@ void File::writtenCb(uv_fs_t *r)
 
 
 File::File(Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
 {
 }
 
 File::File(const std::string &path, Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
   , path_(path)
 {
 }
@@ -100,7 +99,7 @@ std::string File::getPath() const
 
 int File::open(const int &flags, const int &perm, const Mode &m)
 {
-  int r = fd_ = uv_fs_open(m == Mode::Async ? loop_->uvHandle() : nullptr
+  int r = fd_ = uv_fs_open(m == Mode::Async ? loop_->cObject() : nullptr
                     , obj_
                     , path_.data()
                     , flags
@@ -123,7 +122,7 @@ int File::open(char *path, const int &flags, const int &perm, const Mode &m)
 
 int File::close(const Mode &m)
 {
-  int r = uv_fs_close(loop_->uvHandle()
+  int r = uv_fs_close(loop_->cObject()
                      , obj_
                      , obj_->result
                      , m == Mode::Async ? closedCb : nullptr);
@@ -147,10 +146,10 @@ std::string File::readAll()
 
   while(true)
     {
-      r = uv_fs_read(loop_->uvHandle()
+      r = uv_fs_read(loop_->cObject()
                      , obj_
                      , fd_
-                     , buffer_->getHandle()
+                     , buffer_->cObject()
                      , 1
                      , contents.length()  // offset
                      , nullptr);
@@ -158,7 +157,7 @@ std::string File::readAll()
 
       if (r <= 0)
         break;
-      contents.append(buffer_->getHandle()->base, r);
+      contents.append(buffer_->cObject()->base, r);
     }
   return contents;
 }
@@ -166,22 +165,22 @@ std::string File::readAll()
 int File::read(Buffer *buf, const Mode &m)
 {
   buffer_ = buf;
-  return uv_fs_read(loop_->uvHandle()
+  return uv_fs_read(loop_->cObject()
                     , obj_
                     , fd_
-                    , buffer_->getHandle()
-                    , buffer_->getHandle()->len
+                    , buffer_->cObject()
+                    , buffer_->cObject()->len
                     , -1
                     , m == Mode::Async ? readCb : nullptr);
 }
 
 int File::write(Buffer *buf, const Mode &m)
 {
-  return uv_fs_write(loop_->uvHandle()
+  return uv_fs_write(loop_->cObject()
                      , obj_
                      , fd_
-                     , buf->getHandle()
-                     , buf->getHandle()->len
+                     , buf->cObject()
+                     , buf->cObject()->len
                      , -1
                      , m == Mode::Async ? writtenCb : nullptr);
 }
@@ -190,7 +189,7 @@ int File::write(const std::string &data, const Mode &syncMode)
 {
   //! This is the way Node.js source code does.
   uv_buf_t buf = uv_buf_init(const_cast<char*>(data.c_str()), data.length());
-  return uv_fs_write(loop_->uvHandle()
+  return uv_fs_write(loop_->cObject()
                      , obj_
                      , fd_
                      , &buf
@@ -201,7 +200,7 @@ int File::write(const std::string &data, const Mode &syncMode)
 
 int File::truncate(const int &size, const Mode &m)
 {
-  return uv_fs_ftruncate(loop_->uvHandle()
+  return uv_fs_ftruncate(loop_->cObject()
                      , obj_
                      , obj_->result
                      , size
@@ -211,7 +210,7 @@ int File::truncate(const int &size, const Mode &m)
 int File::mkdir(const std::string &dir, const int &perm, Loop *l, const Mode &m)
 {
   uv_fs_t r;
-  int ret = uv_fs_mkdir(l->uvHandle()
+  int ret = uv_fs_mkdir(l->cObject()
               , &r
               , dir.data()
               , perm
@@ -223,7 +222,7 @@ int File::mkdir(const std::string &dir, const int &perm, Loop *l, const Mode &m)
 int File::remove(const std::string &file, Loop *l)
 {
   uv_fs_t r;
-  int ret = uv_fs_unlink(l->uvHandle()
+  int ret = uv_fs_unlink(l->cObject()
               , &r
               , file.c_str()
               , nullptr); //! Add Aync Callback!

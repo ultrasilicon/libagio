@@ -8,9 +8,9 @@ void AsyncEvent::executeCb(uv_async_t* handle)
 }
 
 AsyncEvent::AsyncEvent(Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
 {
-  uv_async_init(loop_->uvHandle(), obj_, executeCb);
+  uv_async_init(loop_->cObject(), obj_, executeCb);
 }
 
 int AsyncEvent::send()

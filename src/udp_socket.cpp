@@ -35,15 +35,15 @@ void UdpSocket::writtenCb(uv_udp_send_t *req, int status)
 
 
 UdpSocket::UdpSocket(Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
 {
-  uv_udp_init(l->uvHandle(), obj_);
+  uv_udp_init(l->cObject(), obj_);
 }
 
 UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
 {
-  uv_udp_init(l->uvHandle(), obj_);
+  uv_udp_init(l->cObject(), obj_);
 
   bind(ip, port);
   start();

@@ -1,5 +1,8 @@
-#include <vector>
 #include <libagio/tcp_server.h>
+
+#include <vector>
+#include <iostream>
+
 
 using namespace std;
 using namespace Agio;

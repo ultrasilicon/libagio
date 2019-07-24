@@ -1,12 +1,12 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include "agio.h"
+#include "service.h"
 
 A_NS_BEGIN
 
 class Timer
-    : public UvObject<uv_timer_t, Timer>
+    : public AgioService<uv_timer_t, Timer>
 {
   static void timeoutCb(uv_timer_t *handle);
 

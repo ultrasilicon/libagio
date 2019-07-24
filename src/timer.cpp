@@ -22,11 +22,11 @@ Timer::Timer(const uint64_t &repeat, Loop *l)
 }
 
 Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
   , timeout_(timeout)
   , repeat_(repeat)
 {
-  uv_timer_init(l->uvHandle(), obj_);
+  uv_timer_init(l->cObject(), obj_);
 }
 
 int Timer::start()

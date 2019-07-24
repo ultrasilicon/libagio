@@ -25,12 +25,12 @@ TcpServer::TcpServer(char *ip, const int &port, Loop *l)
 }
 
 TcpServer::TcpServer(char *ip, const int &port, const int &backLog, Loop *l)
-  : UvObject(l, this)
+  : AgioService(l, this)
   , ip_(ip)
   , port_(port)
   , back_log_(backLog)
 {
-  uv_tcp_init(loop_->uvHandle(), obj_);
+  uv_tcp_init(loop_->cObject(), obj_);
 }
 
 int TcpServer::bind()
@@ -70,9 +70,9 @@ void TcpServer::close()
 int TcpServer::accept(TcpSocket *client)
 {
   int r = uv_accept((uv_stream_t*) obj_
-                    , (uv_stream_t*) client->getHandle());
+                    , (uv_stream_t*) client->cObject());
   if(r < 0)
-    uv_close((uv_handle_t*) client->getHandle(), nullptr);
+    uv_close((uv_handle_t*) client->cObject(), nullptr);
   else
     client->start();
   return r;

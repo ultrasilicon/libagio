@@ -15,8 +15,9 @@ set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/buffer.h
 	${PROJECT_SOURCE_DIR}/include/check.h
 	${PROJECT_SOURCE_DIR}/include/file.h
-	${PROJECT_SOURCE_DIR}/include/function.h
-	${PROJECT_SOURCE_DIR}/include/loop.h
+        ${PROJECT_SOURCE_DIR}/include/function.h
+        ${PROJECT_SOURCE_DIR}/include/lib.h
+        ${PROJECT_SOURCE_DIR}/include/loop.h
 	${PROJECT_SOURCE_DIR}/include/service.h
 	${PROJECT_SOURCE_DIR}/include/stream.h
 	${PROJECT_SOURCE_DIR}/include/tcp_server.h
@@ -34,8 +35,9 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/buffer.cpp
 	${PROJECT_SOURCE_DIR}/src/check.cpp
 	${PROJECT_SOURCE_DIR}/src/file.cpp
-	${PROJECT_SOURCE_DIR}/src/function.cpp
-	${PROJECT_SOURCE_DIR}/src/loop.cpp
+        ${PROJECT_SOURCE_DIR}/src/function.cpp
+        ${PROJECT_SOURCE_DIR}/src/lib.cpp
+        ${PROJECT_SOURCE_DIR}/src/loop.cpp
 	${PROJECT_SOURCE_DIR}/src/service.cpp
 	${PROJECT_SOURCE_DIR}/src/stream.cpp
 	${PROJECT_SOURCE_DIR}/src/tcp_server.cpp

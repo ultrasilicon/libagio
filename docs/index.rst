@@ -9,7 +9,8 @@ A cross-platform async I/O library for C++ agile development
 	:maxdepth: 2
 	:caption: Contents:
 
-	overview/introduction.rst
+	get_started/introduction.rst
+	examples/timer.rst
 	documentation/api_documentation.rst
 
 

@@ -43,7 +43,10 @@ void Loop::close()
       uv_walk_cb uvWalkCb = [](uv_handle_t* handle, void*) {
         uv_close_cb uvCloseCb = [](uv_handle_t* handle) {
           if (handle)
-            free(handle);
+            {
+              free(handle);
+              handle = nullptr;
+            }
         };
         uv_close(handle, uvCloseCb);
       };
@@ -61,7 +64,7 @@ void Loop::close()
       int result = tryClose();
       if (result)
         {
-//          std::cerr << "failed to close libuv loop: " << uv_err_name(result);
+          fprintf(stderr, "Failed to close libuv loop: %s\n", uv_err_name(result));
         }
     }
 }

@@ -70,13 +70,15 @@ endif(NOT CMAKE_BUILD_TYPE)
 if(UNIX)
 find_package(PkgConfig)
 pkg_check_modules(LIBUV REQUIRED libuv)
+message("--   Include directory: " ${LIBUV_INCLUDE_DIRS})
+message("--   Library directory: " ${LIBUV_LIBRARY_DIRS})
 endif(UNIX)
 
 add_library(${PROJECT_NAME} SHARED
 	${INCLUDE} ${SRC}
 )
 
-target_link_libraries(${PROJECT_NAME} uv)
+target_link_libraries(${PROJECT_NAME} ${LIBUV_LIBRARIES})
 
 # set_target_properties(${PROJECT_DIR_NAME} PROPERTIES SOVERSION 1)
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")

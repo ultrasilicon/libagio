@@ -6,6 +6,7 @@ _build/
 *.usr
 *.user
 *.pro.user.*
+CMakeLists.txt.user*
 .idea/
 cmake-build-debug
 *.autosave

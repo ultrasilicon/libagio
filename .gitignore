@@ -1,13 +1,16 @@
 # Personal files
 build/
 build*/
+_build/
 .qmake.stash
 *.usr
 *.user
 *.pro.user.*
+CMakeLists.txt.user*
 .idea/
 cmake-build-debug
 *.autosave
+
 
 # OS generated files
 .DS_Store

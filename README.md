@@ -109,11 +109,12 @@ int main()
 libuv | libParsley | Progress | Comments
 ------- | ------- | ------- | ------- 
 uv_check_t | Parsley::Check | 100% | Done 
+uv_lib_t | Parsley::lib | 100% | Done 
 uv_async_t | Parsley::Async | 100% | Done 
 \- | Parsley::AbstractSocket | 100% |Done
 uv_timer_t | Parsley::Timer | 100% | Done 
 uv_loop_t | Parsley::Loop | 80% | Good to use 
-uv_fs_t | Parsley::File | 60% | Good for basic use, some file & dir operatin not yet implemented 
+uv_fs_t | Parsley::File | 60% | Good for basic use, some file & dir operation not yet implemented 
 uv_udp_t | Parsley::UdpSocket | 80% | Good for basic use, multicast not yet implemented 
 uv_tcp_t | Parsley::TcpSocket | 90% |Good to use
 uv_tcp_t | Parsley::TcpServer | 100% |Done

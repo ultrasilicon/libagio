@@ -15,8 +15,9 @@ set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/buffer.h
 	${PROJECT_SOURCE_DIR}/include/check.h
 	${PROJECT_SOURCE_DIR}/include/file.h
-	${PROJECT_SOURCE_DIR}/include/function.h
-	${PROJECT_SOURCE_DIR}/include/loop.h
+    ${PROJECT_SOURCE_DIR}/include/function.h
+    ${PROJECT_SOURCE_DIR}/include/lib.h
+    ${PROJECT_SOURCE_DIR}/include/loop.h
 	${PROJECT_SOURCE_DIR}/include/promise.h
 	${PROJECT_SOURCE_DIR}/include/service.h
 	${PROJECT_SOURCE_DIR}/include/stream.h
@@ -35,8 +36,9 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/buffer.cpp
 	${PROJECT_SOURCE_DIR}/src/check.cpp
 	${PROJECT_SOURCE_DIR}/src/file.cpp
-	${PROJECT_SOURCE_DIR}/src/function.cpp
-	${PROJECT_SOURCE_DIR}/src/loop.cpp
+    ${PROJECT_SOURCE_DIR}/src/function.cpp
+    ${PROJECT_SOURCE_DIR}/src/lib.cpp
+    ${PROJECT_SOURCE_DIR}/src/loop.cpp
 	${PROJECT_SOURCE_DIR}/src/promise.cpp
 	${PROJECT_SOURCE_DIR}/src/service.cpp
 	${PROJECT_SOURCE_DIR}/src/stream.cpp
@@ -72,13 +74,15 @@ endif(NOT CMAKE_BUILD_TYPE)
 if(UNIX)
 find_package(PkgConfig)
 pkg_check_modules(LIBUV REQUIRED libuv)
+message("--   Include directory: " ${LIBUV_INCLUDE_DIRS})
+message("--   Library directory: " ${LIBUV_LIBRARY_DIRS})
 endif(UNIX)
 
 add_library(${PROJECT_NAME} SHARED
 	${INCLUDE} ${SRC}
 )
 
-target_link_libraries(${PROJECT_NAME} uv)
+target_link_libraries(${PROJECT_NAME} ${LIBUV_LIBRARIES})
 
 # set_target_properties(${PROJECT_DIR_NAME} PROPERTIES SOVERSION 1)
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")

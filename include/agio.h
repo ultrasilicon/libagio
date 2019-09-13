@@ -38,8 +38,9 @@ public:
 
   ~AgioObject()
   {
-    if(obj_)
-      delete obj_;
+    // TODO: find out which handles libuv frees
+//    if(obj_)
+//      delete obj_;
   }
 
   CType* cObject()

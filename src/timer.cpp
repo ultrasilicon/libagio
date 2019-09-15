@@ -29,29 +29,29 @@ Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
   uv_timer_init(l->cObject(), obj_);
 }
 
-int Timer::start()
+void Timer::stop() const
 {
-  return start(timeout_, repeat_);
+  uv_timer_stop(obj_);
+}
+
+int Timer::start() const
+{
+  return uv_timer_start(obj_
+                        , timeoutCb
+                        , timeout_
+                        , repeat_);
 }
 
 int Timer::start(const uint64_t &repeat)
 {
   repeat_ = repeat;
-  return start(timeout_, repeat);
+  return start();
 }
 
 int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
 {
   timeout_ = timeout;
   repeat_ = repeat;
-  return uv_timer_start(obj_
-                        , timeoutCb
-                        , timeout
-                        , repeat);
-}
-
-void Timer::stop()
-{
-  uv_timer_stop(obj_);
+  return start();
 }
 

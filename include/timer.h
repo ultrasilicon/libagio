@@ -16,10 +16,11 @@ public:
   Timer(Loop *l);
   Timer(const uint64_t &repeat, Loop *l);
   Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l);
-  int start();
+
+  void stop() const;
+  int start() const;
   int start(const uint64_t &repeat);
   int start(const uint64_t &timeout, const uint64_t &repeat);
-  void stop();
 
 
 private:

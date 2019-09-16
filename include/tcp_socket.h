@@ -38,11 +38,11 @@ public:
   int write(char* data);
   int write(const std::string &data);
   void setKeepAlive(const bool &enabled, const int &delay);
-  const IPAddress *peerAddress();
-  const IPAddress *retrievePeerAddress();
+  const HostAddress *peerAddress();
+  const HostAddress *retrievePeerAddress();
 
 protected:
-  IPAddress *peer_address_ = nullptr;
+  HostAddress *peer_address_ = nullptr;
 
 };
 

@@ -3,7 +3,7 @@
 using namespace Agio;
 
 
-std::string IP::toString(sockaddr_storage &addr)
+std::string HostAddress::toString(sockaddr_storage &addr)
 {
   char hoststr[NI_MAXHOST];
   char portstr[NI_MAXSERV];
@@ -17,7 +17,7 @@ std::string IP::toString(sockaddr_storage &addr)
   return std::string(hoststr) + ":" + portstr;
 }
 
-std::string IP::toIPString(in_addr addr)
+std::string HostAddress::toIPString(in_addr addr)
 {
   char buf[INET_ADDRSTRLEN];
   if(!inet_ntop(AF_INET, &addr, buf, sizeof(buf)))
@@ -25,7 +25,7 @@ std::string IP::toIPString(in_addr addr)
   return buf;
 }
 
-std::string IP::toIPString(in6_addr addr)
+std::string HostAddress::toIPString(in6_addr addr)
 {
   char buf[INET6_ADDRSTRLEN];
   if(!inet_ntop(AF_INET6, &addr, buf, sizeof(buf)))
@@ -35,35 +35,35 @@ std::string IP::toIPString(in6_addr addr)
 
 
 
-IP::IP()
+HostAddress::HostAddress()
 {
 }
 
-IP::IP(const sockaddr_storage &addr)
-{
-  setAddress(addr);
-}
-
-IP::IP(const sockaddr_in &addr)
+HostAddress::HostAddress(const sockaddr_storage &addr)
 {
   setAddress(addr);
 }
 
-IP::IP(const sockaddr_in6 &addr)
+HostAddress::HostAddress(const sockaddr_in &addr)
 {
   setAddress(addr);
 }
 
-IP::IP(const std::string& ip, const uint16_t& port)
+HostAddress::HostAddress(const sockaddr_in6 &addr)
+{
+  setAddress(addr);
+}
+
+HostAddress::HostAddress(const std::string& ip, const uint16_t& port)
 {
   setAddress(ip, port);
 }
 
-IP::~IP()
+HostAddress::~HostAddress()
 {
 }
 
-void IP::setAddress(const sockaddr_storage &addr)
+void HostAddress::setAddress(const sockaddr_storage &addr)
 {
   if(addr.ss_family == AF_INET)
     {
@@ -83,19 +83,19 @@ void IP::setAddress(const sockaddr_storage &addr)
     }
 }
 
-void IP::setAddress(const sockaddr_in &addr)
+void HostAddress::setAddress(const sockaddr_in &addr)
 {
   version_ = IPv4;
   ip4_ = addr;
 }
 
-void IP::setAddress(const sockaddr_in6 &addr)
+void HostAddress::setAddress(const sockaddr_in6 &addr)
 {
   version_ = IPv6;
   ip6_ = addr;
 }
 
-void IP::setAddress(const std::string &ip, const uint16_t &port)
+void HostAddress::setAddress(const std::string &ip, const uint16_t &port)
 {
   char buf[sizeof(in6_addr)];
   if(uv_inet_pton(AF_INET, ip.c_str(), buf) == 0)
@@ -119,22 +119,31 @@ void IP::setAddress(const std::string &ip, const uint16_t &port)
     }
 }
 
-IP::Version IP::version() const
+HostAddress::Version HostAddress::version() const
 {
   return version_;
 }
 
-bool IP::isValid() const
+bool HostAddress::isValid() const
 {
   return version_ != None;
 }
 
-std::string IP::toIPString() const
+std::string HostAddress::toIPString() const
 {
   if(version_ == IPv4)
     return toIPString(ip4_.sin_addr);
   else if(version_ == IPv6)
     return toIPString(ip6_.sin6_addr);
+  return "";
+}
+
+std::string HostAddress::toString() const
+{
+  if(version_ == IPv4)
+    return toIPString(ip4_.sin_addr) + ':' + std::to_string(ip4_.sin_port);
+  else if(version_ == IPv6)
+    return toIPString(ip6_.sin6_addr) + ':' + std::to_string(ip6_.sin6_port);
   return "";
 }
 

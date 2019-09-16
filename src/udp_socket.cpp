@@ -17,7 +17,7 @@ void UdpSocket::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
 //      uv_ip4_name((const struct sockaddr_in*)addr, senderAddr, 16);
 //      std::string ip(senderAddr);
       std::string data(buf->base, nread);
-      IP ip((sockaddr_storage&) *addr);
+      HostAddress ip((sockaddr_storage&) *addr);
       getPHandle(handle)->onReadyRead(data, ip);
     }
 

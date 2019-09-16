@@ -7,10 +7,10 @@
 
 A_NS_BEGIN
 
-class IP;
-class Address;
+class HostAddress;
 
-class IP
+
+class HostAddress
 {
 public:
   enum Version {
@@ -23,12 +23,12 @@ public:
   static std::string toIPString(in_addr addr);
   static std::string toIPString(in6_addr addr);
 
-  IP();
-  IP(const sockaddr_storage &addr);
-  IP(const sockaddr_in &addr);
-  IP(const sockaddr_in6 &addr);
-  IP(const std::string& ip, const uint16_t& port);
-  ~IP();
+  HostAddress();
+  HostAddress(const sockaddr_storage &addr);
+  HostAddress(const sockaddr_in &addr);
+  HostAddress(const sockaddr_in6 &addr);
+  HostAddress(const std::string& ip, const uint16_t& port);
+  ~HostAddress();
 
   void setAddress(const sockaddr_storage &addr);
   void setAddress(const sockaddr_in &addr);
@@ -37,6 +37,7 @@ public:
   Version version() const;
   bool isValid() const;
   std::string toIPString() const;
+  std::string toString() const;
 
 private:
   Version version_ = None;
@@ -44,11 +45,6 @@ private:
   sockaddr_in6 ip6_;
 };
 
-class Address
-{
-public:
-  Address() {}
-};
 
 A_NS_END
 #endif // PADDRESS_H

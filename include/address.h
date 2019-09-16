@@ -6,9 +6,11 @@
 #include <netinet/in.h>
 
 A_NS_BEGIN
-class IPAddress;
 
-class IPAddress
+class HostAddress;
+
+
+class HostAddress
 {
 public:
   enum Version {
@@ -21,12 +23,12 @@ public:
   static std::string toIPString(in_addr addr);
   static std::string toIPString(in6_addr addr);
 
-  IPAddress();
-  IPAddress(const sockaddr_storage &addr);
-  IPAddress(const sockaddr_in &addr);
-  IPAddress(const sockaddr_in6 &addr);
-  IPAddress(const std::string& ip, const uint16_t& port);
-  ~IPAddress();
+  HostAddress();
+  HostAddress(const sockaddr_storage &addr);
+  HostAddress(const sockaddr_in &addr);
+  HostAddress(const sockaddr_in6 &addr);
+  HostAddress(const std::string& ip, const uint16_t& port);
+  ~HostAddress();
 
   void setAddress(const sockaddr_storage &addr);
   void setAddress(const sockaddr_in &addr);
@@ -35,13 +37,13 @@ public:
   Version version() const;
   bool isValid() const;
   std::string toIPString() const;
+  std::string toString() const;
 
 private:
   Version version_ = None;
   sockaddr_in ip4_;
   sockaddr_in6 ip6_;
 };
-
 
 
 A_NS_END

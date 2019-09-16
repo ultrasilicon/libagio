@@ -118,20 +118,20 @@ void TcpSocket::setKeepAlive(const bool &enabled, const int &delay)
                    , delay);
 }
 
-const IPAddress* TcpSocket::peerAddress()
+const HostAddress* TcpSocket::peerAddress()
 {
-  if(!peer_address_ || peer_address_->version() == IPAddress::None)    
+  if(!peer_address_ || peer_address_->version() == HostAddress::None)
     return retrievePeerAddress();
   return retrievePeerAddress();
 }
 
-const IPAddress* TcpSocket::retrievePeerAddress()
+const HostAddress* TcpSocket::retrievePeerAddress()
 {
   sockaddr_storage addr;
   int addrLen;
   if(uv_tcp_getpeername((uv_tcp_t*)obj_, (sockaddr*) &addr, &addrLen) != 0)
     return nullptr;
-  peer_address_ = new IPAddress(addr);
+  peer_address_ = new HostAddress(addr);
 
   return peer_address_;
 }

@@ -1,8 +1,7 @@
-#ifndef PBUFFER_H
-#define PBUFFER_H
+#ifndef AGIO_BUFFER_H
+#define AGIO_BUFFER_H
 
 #include "agio.h"
-
 #include <string>
 
 A_NS_BEGIN
@@ -27,4 +26,4 @@ public:
 
 
 A_NS_END
-#endif // PBUFFER_H
+#endif // AGIO_BUFFER_H

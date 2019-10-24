@@ -21,13 +21,18 @@ struct tagger
   int value;
   tagger(size_t s) : value(s) {}
 };
+
 template<typename T, typename... Ts>
-struct tag_of_type: tagger<T>, tag_of_type<Ts...>
+struct tag_of_type
+    : tagger<T>
+    , tag_of_type<Ts...>
 {
     tag_of_type() : tagger<T>(sizeof...(Ts)) {}
 };
+
 template<typename T>
-struct tag_of_type<T> : tagger<T>
+struct tag_of_type<T>
+    : tagger<T>
 {
     tag_of_type() : tagger<T>(0) {}
 };
@@ -35,35 +40,40 @@ struct tag_of_type<T> : tagger<T>
 template<typename... Ts>
 struct Variant
 {
-    tag_of_type<Ts...> tagger_;
-    const size_t size_ = max_type_size<0, Ts...>::value;
-    int curr_tag_ = -1;
-    char* data_;
+  const size_t size_ = max_type_size<0,Ts...>::value;
+  tag_of_type<Ts...> tagger_;
+  int curr_tag_ = -1;
+  char* data_;
 
-    template<typename T>
-    Variant(const T& v)
-        : data_(new char[size_]{})
-    {
-        new (data_) T(v);
-        curr_tag_ = static_cast<tagger<T>&>(tagger_).value;
-    }
+  template<typename T>
+  Variant(const T& v)
+    : data_(new char[size_]{})
+  {
+    new (data_) T(v);
+    curr_tag_ = static_cast<tagger<T>&>(tagger_).value;
+  }
 
-    Variant()
-      : Variant(0)
-    {}
+  Variant()
+    : Variant(0)
+  {}
 
-    Variant(const Variant& that)
-        : data_(new char[size_]{})
-    {
-        for(int i = 0; i < size_; i++)
-            data_[i] = that.data_[i];
-        curr_tag_ = that.curr_tag_;
-    }
+  Variant(const Variant& that)
+    : data_(new char[size_]{})
+  {
+    for(int i = 0; i < size_; i++)
+        data_[i] = that.data_[i];
+    curr_tag_ = that.curr_tag_;
+  }
 
-    ~Variant() { if(data_) delete[] data_; data_ = nullptr; }
+  ~Variant()
+  {
+    if(data_)
+      delete[] data_;
+    data_ = nullptr;
+  }
 
-    template<typename T>
-    Variant& operator=(const T& v) = delete;
+  template<typename T>
+  Variant& operator=(const T& v) = delete;
 //    {
 ////        if(!std::is_same<T, std::string>::value
 ////                && std::is_base_of<tagger<std::string>, variant>::value
@@ -74,13 +84,13 @@ struct Variant
 //        return *this;
 //    }
 
-    template<typename T>
-    T& get()
-    {
-        if(curr_tag_ != static_cast<tagger<T>&>(tagger_).value)
-            throw std::bad_cast{};
-        return *(T*)data_;
-    }
+  template<typename T>
+  T& get()
+  {
+      if(curr_tag_ != static_cast<tagger<T>&>(tagger_).value)
+          throw std::bad_cast{};
+      return *(T*)data_;
+  }
 };
 
 

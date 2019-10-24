@@ -1,0 +1,72 @@
+#ifndef AGIO_PROTOCOL_UTILS_H
+#define AGIO_PROTOCOL_UTILS_H
+
+#include "agio.h"
+#include "variant.h"
+#include <string>
+
+A_NS_BEGIN
+
+
+namespace ProtocolUtils {
+
+  using variant_t = variant<
+      bool
+      , int8_t
+      , int16_t
+      , int32_t
+      , int64_t
+      , uint8_t
+      , uint16_t
+      , uint32_t
+      , uint64_t
+      , std::string
+  >;
+
+#pragma pack(1)
+  template <typename T>
+  struct SizedMask {
+    T header;
+    char* data;
+  };
+#pragma pack()
+
+  template <typename Header>
+  Header scopeLen(const char *stream)
+  {
+    return (reinterpret_cast<SizedMask<Header>*>(const_cast<char*>(stream)))->header;
+  }
+
+  template <typename Header>
+  char* scopeBegin(char *stream)
+  {
+    return stream + sizeof(Header);
+  }
+
+  template <typename Header>
+  const char* scopeEnd(char *stream)
+  {
+    return scopeBegin<Header>(stream) + scopeLen<Header>(stream);
+  }
+
+  template <typename Header>
+  std::pair<char*, char*> getScope(char *stream)
+  {
+    return std::make_pair(scopeBegin<Header>(stream), scopeEnd<Header>(stream));
+  }
+
+  template <typename T>
+  T redeemVal(char*& stream, const char* end)
+  {
+    if(stream == end)
+      return T();
+    SizedMask<T>* p = (reinterpret_cast<SizedMask<T>*>(stream));
+    T r = p->header;
+    stream += sizeof(T);
+    return r;
+  }
+}
+
+
+A_NS_END
+#endif // AGIO_PROTOCOL_UTILS_H

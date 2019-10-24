@@ -37,7 +37,6 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/buffer.cpp
 	${PROJECT_SOURCE_DIR}/src/check.cpp
 	${PROJECT_SOURCE_DIR}/src/file.cpp
-	${PROJECT_SOURCE_DIR}/src/function.cpp
 	${PROJECT_SOURCE_DIR}/src/lib.cpp
 	${PROJECT_SOURCE_DIR}/src/loop.cpp
 	${PROJECT_SOURCE_DIR}/src/protocol_utils.cpp
@@ -48,7 +47,6 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/timer.cpp
 	${PROJECT_SOURCE_DIR}/src/udp_socket.cpp
 	${PROJECT_SOURCE_DIR}/src/utils.cpp
-	${PROJECT_SOURCE_DIR}/src/variant.cpp
 	${PROJECT_SOURCE_DIR}/src/agio.cpp
 )
 

@@ -5,79 +5,81 @@
 
 A_NS_BEGIN
 
-template<size_t _MAX, typename _T, typename... _Ts>
-struct max_type_size : max_type_size<(_MAX <= sizeof(_T) ? sizeof(_T) : _MAX), _Ts...>
+template<size_t _MAX, typename T, typename... Ts>
+struct max_type_size : max_type_size<(_MAX <= sizeof(T) ? sizeof(T) : _MAX), Ts...>
 {
 };
-template<size_t _MAX, typename _T>
-struct max_type_size<_MAX, _T>
+template<size_t _MAX, typename T>
+struct max_type_size<_MAX, T>
 {
-    static constexpr size_t value = _MAX <= sizeof(_T) ? sizeof(_T) : _MAX;
+    static constexpr size_t value = _MAX <= sizeof(T) ? sizeof(T) : _MAX;
 };
 
-template<typename _T>
-struct tagger { int value; tagger(size_t s) : value(s) {} };
-template<typename _T, typename... _Ts>
-struct tag_of_type: tagger<_T>, tag_of_type<_Ts...>
+template<typename T>
+struct tagger
 {
-    tag_of_type() : tagger<_T>(sizeof...(_Ts)) {}
+  int value;
+  tagger(size_t s) : value(s) {}
 };
-template<typename _T>
-struct tag_of_type<_T> : tagger<_T>
+template<typename T, typename... Ts>
+struct tag_of_type: tagger<T>, tag_of_type<Ts...>
 {
-    tag_of_type() : tagger<_T>(0) {}
+    tag_of_type() : tagger<T>(sizeof...(Ts)) {}
+};
+template<typename T>
+struct tag_of_type<T> : tagger<T>
+{
+    tag_of_type() : tagger<T>(0) {}
 };
 
-template<typename... _Ts>
-struct variant
+template<typename... Ts>
+struct Variant
 {
-    tag_of_type<_Ts...> m_tagger;
+    tag_of_type<Ts...> tagger_;
+    const size_t size_ = max_type_size<0, Ts...>::value;
+    int curr_tag_ = -1;
+    char* data_;
 
-    const size_t m_size = max_type_size<0, _Ts...>::value;
-    int m_curr_tag = -1;
-
-    char* m_p;
-
-    template<typename _T>
-    variant(const _T& v)
-        : m_p(new char[m_size]{})
+    template<typename T>
+    Variant(const T& v)
+        : data_(new char[size_]{})
     {
-        new(m_p) _T(v);
-        m_curr_tag = static_cast<tagger<_T>&>(m_tagger).value;
+        new (data_) T(v);
+        curr_tag_ = static_cast<tagger<T>&>(tagger_).value;
     }
 
-    variant()
-      : variant(0)
+    Variant()
+      : Variant(0)
     {}
 
-    variant(const variant& that)
-        : m_p(new char[m_size]{})
+    Variant(const Variant& that)
+        : data_(new char[size_]{})
     {
-        for(int i = 0; i < m_size; i++)
-            m_p[i] = that.m_p[i];
-        m_curr_tag = that.m_curr_tag;
+        for(int i = 0; i < size_; i++)
+            data_[i] = that.data_[i];
+        curr_tag_ = that.curr_tag_;
     }
 
-    ~variant() { if(m_p) delete[] m_p; m_p = nullptr; }
+    ~Variant() { if(data_) delete[] data_; data_ = nullptr; }
 
-    template<typename _T>
-    variant& operator=(const _T& v) = delete;
+    template<typename T>
+    Variant& operator=(const T& v) = delete;
 //    {
-////        if(!std::is_same<_T, std::string>::value
+////        if(!std::is_same<T, std::string>::value
 ////                && std::is_base_of<tagger<std::string>, variant>::value
 ////                && m_curr_tag == static_cast<tagger<std::string>&>(m_tagger).value) // previous and now both strings?
 ////            ((std::string*)m_p)->~std::basic_string<char>();
-//        *(_T*)m_p = v;
-//        m_curr_tag = static_cast<tagger<_T>&>(m_tagger).value;
+//        *(T*)m_p = v;
+//        m_curr_tag = static_cast<tagger<T>&>(m_tagger).value;
 //        return *this;
 //    }
 
-    template<typename _T>
-    _T& get()
+    template<typename T>
+    T& get()
     {
-        if(m_curr_tag != static_cast<tagger<_T>&>(m_tagger).value)
+        if(curr_tag_ != static_cast<tagger<T>&>(tagger_).value)
             throw std::bad_cast{};
-        return *(_T*)m_p;
+        return *(T*)data_;
     }
 };
 

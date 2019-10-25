@@ -86,7 +86,7 @@ target_link_libraries(${PROJECT_NAME} ${LIBUV_LIBRARIES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
-# INSTALL
+# Install
 include(GNUInstallDirs)
 
 configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
@@ -104,5 +104,13 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
 	FILES_MATCHING PATTERN "${PROJECT_DIR_NAME}/include/*.h")
 
 
+# Google Test
+include(cmake/googletest.cmake)
+fetch_googletest(
+    ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_BINARY_DIR}/googletest
+)
 
+enable_testing()
+add_subdirectory(test)
 

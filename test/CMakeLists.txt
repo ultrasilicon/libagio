@@ -1,12 +1,12 @@
 add_executable(
-    unit_tests
-    example_add.cpp
+    tests
+    test_protocol_utils.cpp
 )
 
 target_link_libraries(
-    unit_tests
+    tests
     gtest_main
-    example
+    agio
 )
 
 add_test(

@@ -1,28 +1,11 @@
 #ifndef AGIO_PROTOCOL_UTILS_H
 #define AGIO_PROTOCOL_UTILS_H
 
-#include "agio.h"
 #include "variant.h"
-#include <string>
 
 A_NS_BEGIN
 
-
 namespace ProtocolUtils {
-
-  using variant_t = variant<
-      bool
-      , int8_t
-      , int16_t
-      , int32_t
-      , int64_t
-      , uint8_t
-      , uint16_t
-      , uint32_t
-      , uint64_t
-      , std::string
-  >;
-
 #pragma pack(1)
   template <typename T>
   struct SizedMask {

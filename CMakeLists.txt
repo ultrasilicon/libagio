@@ -94,6 +94,8 @@ include(GNUInstallDirs)
 configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
 	DESTINATION lib/pkgconfig)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+        DESTINATION /usr/lib/pkgconfig)
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION lib)

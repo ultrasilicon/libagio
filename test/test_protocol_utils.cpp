@@ -11,7 +11,7 @@ using namespace Agio::ProtocolUtils;
 TEST(TestRedeemVal, SingleLayerPacket)
 {
   //! [6:hello?]
-  char* s = "hello?";
+  char s[] = "hello?";
   char* stream = (char*) malloc( sizeof(uint32_t) + strlen(s) );
   char* pos = stream;
 
@@ -48,7 +48,7 @@ TEST(TestRedeemVal, OverRedeemVariable)
 TEST(TestRedeemVal, MultiLayerPacket)
 {
   //! [10:[6:hello?]]
-  char* s = "hello?";
+  char s[] = "hello?";
   char* stream = (char*) malloc( sizeof(uint32_t) + sizeof(uint32_t) + strlen(s) );
   char* pos = stream;
 
@@ -134,8 +134,8 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
 TEST(TestRedeemVal, MultiLayerOverRedeemString)
 {
   //! [19:[6:hello?][5:world]]
-  char* s1 = "hello?";
-  char* s2 = "world";
+  char s1[] = "hello?";
+  char s2[] = "world";
   char* stream = (char*) malloc(sizeof(uint32_t) // main header
                                 + sizeof(uint32_t) + strlen(s1) // cell1 total
                                 + sizeof(uint32_t) + strlen(s2) // cell2 total

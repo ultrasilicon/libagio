@@ -5,7 +5,7 @@ string(TOLOWER ${PROJECT_DIR_NAME} PROJECT_NAME)
 project(${PROJECT_NAME}
 	VERSION 0.1.0 # <major>.<minor>.<patch>.<tweak>
 	LANGUAGES CXX
-	DESCRIPTION "A cross-platform async C++ library with delicate OOP callback system.")
+	DESCRIPTION "A cross-platform async I/O library for C++ agile development")
 
 
 set(INCLUDE

@@ -3,6 +3,7 @@
 
 #include "variant.h"
 
+#include <cstring>
 #include <string>
 #include <vector>
 

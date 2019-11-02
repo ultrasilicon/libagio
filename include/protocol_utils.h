@@ -3,7 +3,6 @@
 
 #include "variant.h"
 
-#include <stdlib.h>
 #include <string>
 #include <vector>
 
@@ -82,7 +81,7 @@ namespace ProtocolUtils {
   void insertVal(std::vector<char>& stream, size_t& pos, const _ValT& v)
   {
     stream.resize(stream.size() + sizeof(_ValT));
-    memcpy(&((SizedMask<_ValT>*) &stream[pos])->header, &v, sizeof(_ValT));
+    std::memcpy(&((SizedMask<_ValT>*) &stream[pos])->header, &v, sizeof(_ValT));
     pos += sizeof(_ValT);
   }
 
@@ -96,9 +95,9 @@ namespace ProtocolUtils {
   {
     stream.resize(stream.size() + sizeof(pe_str_len_t) + s.length());
     auto len = s.length();
-    memcpy(&((SizedMask<std::string>*) &stream[pos])->header, &len, sizeof(pe_str_len_t));
+    std::memcpy(&((SizedMask<std::string>*) &stream[pos])->header, &len, sizeof(pe_str_len_t));
     pos += sizeof(pe_str_len_t);
-    memcpy(&stream[pos], s.c_str(), s.length());
+    std::memcpy(&stream[pos], s.c_str(), s.length());
     pos += s.length();
   }
 

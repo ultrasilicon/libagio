@@ -5,7 +5,7 @@ string(TOLOWER ${PROJECT_DIR_NAME} PROJECT_NAME)
 project(${PROJECT_NAME}
 	VERSION 0.1.0 # <major>.<minor>.<patch>.<tweak>
 	LANGUAGES CXX
-	DESCRIPTION "A cross-platform async C++ library with delicate OOP callback system.")
+	DESCRIPTION "A cross-platform async I/O library for C++ agile development")
 
 
 set(INCLUDE
@@ -18,6 +18,7 @@ set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/function.h
 	${PROJECT_SOURCE_DIR}/include/lib.h
 	${PROJECT_SOURCE_DIR}/include/loop.h
+	${PROJECT_SOURCE_DIR}/include/protocol_utils.h
 	${PROJECT_SOURCE_DIR}/include/service.h
 	${PROJECT_SOURCE_DIR}/include/stream.h
 	${PROJECT_SOURCE_DIR}/include/tcp_server.h
@@ -25,6 +26,7 @@ set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/timer.h
 	${PROJECT_SOURCE_DIR}/include/udp_socket.h
 	${PROJECT_SOURCE_DIR}/include/utils.h
+	${PROJECT_SOURCE_DIR}/include/variant.h
 	${PROJECT_SOURCE_DIR}/include/agio.h
 )
 
@@ -35,9 +37,9 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/buffer.cpp
 	${PROJECT_SOURCE_DIR}/src/check.cpp
 	${PROJECT_SOURCE_DIR}/src/file.cpp
-	${PROJECT_SOURCE_DIR}/src/function.cpp
 	${PROJECT_SOURCE_DIR}/src/lib.cpp
 	${PROJECT_SOURCE_DIR}/src/loop.cpp
+	${PROJECT_SOURCE_DIR}/src/protocol_utils.cpp
 	${PROJECT_SOURCE_DIR}/src/service.cpp
 	${PROJECT_SOURCE_DIR}/src/stream.cpp
 	${PROJECT_SOURCE_DIR}/src/tcp_server.cpp

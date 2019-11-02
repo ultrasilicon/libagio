@@ -23,3 +23,5 @@ RUN git clone https://github.com/ultrasilicon/libagio.git /root/libagio
 
 # Set working directory
 WORKDIR /root/libagio
+
+CMD git pull && /bin/bash

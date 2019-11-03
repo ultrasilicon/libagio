@@ -92,10 +92,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 include(GNUInstallDirs)
 
 configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
+if(UNIX)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
 	DESTINATION lib/pkgconfig)
+endif()
+if(LINUX)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
         DESTINATION /usr/lib/pkgconfig)
+endif()
 
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION lib)
@@ -105,14 +109,15 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
 	USE_SOURCE_PERMISSIONS
 	FILES_MATCHING PATTERN "${PROJECT_DIR_NAME}/include/*.h")
 
-
-# Google Test
-include(cmake/googletest.cmake)
-fetch_googletest(
-    ${PROJECT_SOURCE_DIR}/cmake
-    ${PROJECT_BINARY_DIR}/googletest
-)
-
-enable_testing()
-add_subdirectory(test)
-
+# Tests
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	include(cmake/googletest.cmake)
+	fetch_googletest(
+	    ${PROJECT_SOURCE_DIR}/cmake
+	    ${PROJECT_BINARY_DIR}/googletest
+	)
+	
+	enable_testing()
+	add_subdirectory(test)
+	add_test(NAME test COMMAND test)
+endif()

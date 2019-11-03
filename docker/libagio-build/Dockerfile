@@ -19,9 +19,9 @@ RUN apt install -y git cmake g++ pkg-config
 RUN apt install -y libuv1-dev
 
 # clone repo
-RUN git clone https://github.com/ultrasilicon/libagio.git /root/libagio
+# RUN git clone https://github.com/ultrasilicon/libagio.git /root/libagio
 
 # Set working directory
 WORKDIR /root/libagio
 
-CMD git pull && /bin/bash
+CMD git clone https://github.com/ultrasilicon/libagio.git /root/libagio && /bin/bash

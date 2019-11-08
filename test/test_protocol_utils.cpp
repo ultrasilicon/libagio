@@ -1,75 +1,181 @@
 #include "protocol_utils.h"
 #include "variant.h"
+#include "agio.h"
 #include "gtest/gtest.h"
 
 #include <string>
 #include <vector>
+#include <climits>
 
 using namespace std;
 using namespace Agio::ProtocolUtils;
 
-TEST(TestRedeemVal, SingleLayerPacket)
+//template<typename T, typename F>
+//T& enforceNarrow(F& arg)
+//{
+//  return
+//}
+
+namespace Helper
 {
-  //! [6:hello?]
-  char s[] = "hello?";
-  char* stream = (char*) malloc( sizeof(uint32_t) + strlen(s) );
-  char* pos = stream;
+  char* getScopedString()
+  {
+    //! [6:hello?]
+    char s[] = "hello?";
+    char* stream = CXX_MALLOC_CSTR(sizeof(uint32_t) + strlen(s));
+    char* pos = stream;
 
-  auto header = strlen(s);
-  memcpy(pos, (char*)&header, sizeof(uint32_t));
-  pos += sizeof(uint32_t);
+    auto header = strlen(s);
+    memcpy(pos, &header, sizeof(uint32_t));
+    pos += sizeof(uint32_t);
 
-  strcpy(pos, s);
-  pos += strlen(s);
+    strcpy(pos, s);
+    pos += strlen(s);
 
+    return stream;
+  }
+
+  char* getScopedInt()
+  {
+    //! [4:56636]
+    int v = 65535;
+    char* stream = CXX_MALLOC_CSTR(sizeof(uint32_t) + sizeof(v));
+    char* pos = stream;
+
+    auto header = sizeof(v);
+    memcpy(pos, &header, sizeof(uint32_t));
+    pos += sizeof(uint32_t);
+
+    memcpy(pos, &v, sizeof(v));
+    pos += sizeof(v);
+
+    return stream;
+  }
+
+  char* getMultiLayerPacket()
+  {
+    //! [10:[6:hello?]]
+    char s[] = "hello?";
+    char* stream = CXX_MALLOC_CSTR( sizeof(uint32_t) + sizeof(uint32_t) + strlen(s) );
+    char* pos = stream;
+
+    uint32_t header;
+
+    header =
+        sizeof(uint32_t) + strlen(s); // first cell
+    memcpy(pos, &header, sizeof(uint32_t));
+    pos += sizeof(uint32_t);
+
+    header = strlen(s);
+    memcpy(pos,  (char*)&header, sizeof(uint32_t));
+    pos += sizeof(uint32_t);
+
+    strcpy(pos, s);
+    pos += strlen(s);
+
+    return stream;
+  }
+
+  char* getMultiLayerMultiCellPacket()
+  {
+    //! [19:[6:hello?][5:world]]
+    char s1[] = "hello?";
+    char s2[] = "world";
+    char* stream = CXX_MALLOC_CSTR(sizeof(uint32_t) // main header
+                                  + sizeof(uint32_t) + strlen(s1) // cell1 total
+                                  + sizeof(uint32_t) + strlen(s2) // cell2 total
+                                  );
+    char* pos = stream;
+
+    uint32_t header;
+
+    header = // main header
+        sizeof(uint32_t) + strlen(s1) // cell1 total
+        + sizeof(uint32_t) + strlen(s2); // cell2 total
+    memcpy(pos, &header, sizeof(uint32_t));
+    pos += sizeof(header);
+
+    // cell1 header
+    header = strlen(s1);
+    memcpy(pos, &header, sizeof(uint32_t));
+    pos += sizeof(header);
+
+    // cell1 data
+    strcpy(pos, s1);
+    pos += strlen(s1);
+
+    // cell2 header
+    header = strlen(s2);
+    memcpy(pos, &header, sizeof(uint32_t));
+    pos += sizeof(header);
+
+    // cell1 data
+    strcpy(pos, s2);
+    pos += strlen(s2);
+
+    return stream;
+  }
+}
+
+
+TEST(RedeemStr, SingleLayer)
+{
+  char* stream = Helper::getScopedString();
   auto end = scopeEnd<uint32_t>(stream);
+
   EXPECT_EQ("hello?", string(redeemStr<uint32_t>(stream, end)));
 }
 
-TEST(TestRedeemVal, OverRedeemVariable)
+TEST(RedeemStr, SingleLayerOverRedeem)
 {
-  //! [6:hello?]
-  int s = 65535;
-  char* stream = (char*) malloc( sizeof(uint32_t) + sizeof(s) );
-  char* pos = stream;
-
-  auto header = sizeof(s);
-  memcpy(pos, (char*)&header, sizeof(uint32_t));
-  pos += sizeof(uint32_t);
-
-  memcpy(pos, (char*)&s, sizeof(s));
-  pos += sizeof(s);
-
-  auto begin = scopeBegin<uint32_t>(stream);
+  char* stream = Helper::getScopedString();
   auto end = scopeEnd<uint32_t>(stream);
-  EXPECT_EQ(65535, redeemVal<int>(begin, end));
+
+  EXPECT_EQ("hello?", string(redeemStr<uint32_t>(stream, end)));
+  for(int i = 0; i < 10; ++ i)
+    {
+      EXPECT_EQ("", string(redeemStr<uint32_t>(stream, end)));
+      EXPECT_EQ("", string(redeemStr<uint16_t>(stream, end)));
+      EXPECT_EQ("", string(redeemStr<uint8_t>(stream, end)));
+    }
 }
 
-TEST(TestRedeemVal, MultiLayerPacket)
+TEST(RedeemStr, MultiLayer)
 {
-  //! [10:[6:hello?]]
-  char s[] = "hello?";
-  char* stream = (char*) malloc( sizeof(uint32_t) + sizeof(uint32_t) + strlen(s) );
-  char* pos = stream;
-
-  uint32_t header;
-
-  header =
-      sizeof(uint32_t) + strlen(s) // first cell
-      ;
-  memcpy(pos, (char*)&header, sizeof(uint32_t));
-  pos += sizeof(uint32_t);
-
-  header = strlen(s);
-  memcpy(pos,  (char*)&header, sizeof(uint32_t));
-  pos += sizeof(uint32_t);
-
-  strcpy(pos, s);
-  pos += strlen(s);
-
+  char* stream = Helper::getMultiLayerPacket();
   auto begin = scopeBegin<uint32_t>(stream);
   auto end = scopeEnd<uint32_t>(stream);
+
   EXPECT_EQ(string("hello?"), string(redeemStr<uint32_t>(begin, end)));
+}
+
+TEST(RedeemStr, MultiLayerMultiCell)
+{
+  char* stream = Helper::getMultiLayerMultiCellPacket();
+  auto p = scopeBegin<uint32_t>(stream);
+  auto end = scopeEnd<uint32_t>(stream);
+
+  for(std::string s : {"hello?", "world"})
+    EXPECT_EQ(s, string(redeemStr<uint32_t>(p, end)));
+}
+
+TEST(RedeemStr, MultiLayerMultiCellOverRedeem)
+{
+  char* stream = Helper::getMultiLayerMultiCellPacket();
+  auto p = scopeBegin<uint32_t>(stream);
+  auto end = scopeEnd<uint32_t>(stream);
+
+  for(std::string s : {"hello?", "world", "", "", ""})
+    EXPECT_EQ(s, string(redeemStr<uint32_t>(p, end)));
+}
+
+TEST(RedeemVal, SingleLayer)
+{
+  char* stream = Helper::getScopedInt();
+  auto begin = scopeBegin<uint32_t>(stream);
+  auto end = scopeEnd<uint32_t>(stream);
+
+  EXPECT_EQ(65535, redeemVal<int>(begin, end));
 }
 
 using variant_t = Agio::Variant<
@@ -91,7 +197,7 @@ struct Packet
   uint8_t msgType;
 };
 
-TEST(TestRedeemVal, MultiLayerMultiCellPacket)
+TEST(RedeemVal, MultiLayerMultiCellPacket)
 {
   //! [20:[6:hello,][6:world!]]
     std::vector<char> stream(sizeof(uint32_t));
@@ -117,7 +223,7 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
     EXPECT_EQ(uint32_t{2019}, uint32_t(redeemVal<uint32_t>(p, end)));
 }
 
-//TEST(TestEncode, MultiLayerMultiCellPacket)
+//TEST(Encode, MultiLayerMultiCellPacket)
 //{
 //    Packet pk {{std::string{"hello,"}}, 1};
 
@@ -130,51 +236,5 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
 //    EXPECT_EQ(uint8_t{1}, uint8_t(redeemVal<uint8_t>(p, end)));
 //    EXPECT_EQ(string("hello,"), string(redeemStr<uint32_t>(p, end)));
 //}
-
-TEST(TestRedeemVal, MultiLayerOverRedeemString)
-{
-  //! [19:[6:hello?][5:world]]
-  char s1[] = "hello?";
-  char s2[] = "world";
-  char* stream = (char*) malloc(sizeof(uint32_t) // main header
-                                + sizeof(uint32_t) + strlen(s1) // cell1 total
-                                + sizeof(uint32_t) + strlen(s2) // cell2 total
-                                );
-  char* pos = stream;
-
-  uint32_t header;
-
-  header = // main header
-      sizeof(uint32_t) + strlen(s1) // cell1 total
-      + sizeof(uint32_t) + strlen(s2) // cell2 total
-      ;
-  memcpy(pos, (char*)&header, sizeof(uint32_t));
-  pos += sizeof(header);
-
-  // cell1 header
-  header = strlen(s1);
-  memcpy(pos, (char*)&header, sizeof(uint32_t));
-  pos += sizeof(header);
-
-  // cell1 data
-  strcpy(pos, s1);
-  pos += strlen(s1);
-
-  // cell2 header
-  header = strlen(s2);
-  memcpy(pos, (char*)&header, sizeof(uint32_t));
-  pos += sizeof(header);
-
-  // cell1 data
-  strcpy(pos, s2);
-  pos += strlen(s2);
-
-
-  auto p = scopeBegin<uint32_t>(stream);
-  auto end = scopeEnd<uint32_t>(stream);
-  for(std::string s : {"hello?", "world", "", "", ""})
-    EXPECT_EQ(s, string(redeemStr<uint32_t>(p, end)));
-
-}
 
 

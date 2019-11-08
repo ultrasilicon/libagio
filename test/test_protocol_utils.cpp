@@ -10,14 +10,28 @@
 using namespace std;
 using namespace Agio::ProtocolUtils;
 
-//template<typename T, typename F>
-//T& enforceNarrow(F& arg)
-//{
-//  return
-//}
-
 namespace Helper
 {
+  using variant_t = Agio::Variant<
+      bool
+      , int8_t
+      , int16_t
+      , int32_t
+      , int64_t
+      , uint8_t
+      , uint16_t
+      , uint32_t
+      , uint64_t
+      , std::string
+  >;
+
+  struct Packet
+  {
+    std::vector<variant_t> data;
+    uint8_t msgType;
+  };
+
+
   char* getScopedString()
   {
     //! [6:hello?]
@@ -76,7 +90,7 @@ namespace Helper
     return stream;
   }
 
-  char* getMultiLayerMultiCellPacket()
+  char* getMultiLayerMultiCellStrPacket()
   {
     //! [19:[6:hello?][5:world]]
     char s1[] = "hello?";
@@ -115,6 +129,25 @@ namespace Helper
 
     return stream;
   }
+
+  std::vector<char> getMultilayerMultiCellMixedPacket()
+  {
+    //! [20:[6:hello,][6:world!]]
+    std::vector<char> stream(sizeof(uint32_t));
+    size_t pos{};
+
+    Packet pk {{std::string{"hello,"}, std::string{"world!"}, std::string{"duckhacks"}, uint32_t{2019}}, 100};
+
+    *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4 + 1; // set main header
+    pos += sizeof(uint32_t); // skip main header
+
+    insertVal(stream, pos, pk.msgType);
+    insertStr(stream, pos, pk.data[0].get<std::string>());
+    insertStr(stream, pos, pk.data[1].get<std::string>());
+    insertStr(stream, pos, pk.data[2].get<std::string>());
+    insertVal(stream, pos, pk.data[3].get<uint32_t>());
+    return stream;
+  }
 }
 
 
@@ -151,7 +184,7 @@ TEST(RedeemStr, MultiLayer)
 
 TEST(RedeemStr, MultiLayerMultiCell)
 {
-  char* stream = Helper::getMultiLayerMultiCellPacket();
+  char* stream = Helper::getMultiLayerMultiCellStrPacket();
   auto p = scopeBegin<uint32_t>(stream);
   auto end = scopeEnd<uint32_t>(stream);
 
@@ -161,7 +194,7 @@ TEST(RedeemStr, MultiLayerMultiCell)
 
 TEST(RedeemStr, MultiLayerMultiCellOverRedeem)
 {
-  char* stream = Helper::getMultiLayerMultiCellPacket();
+  char* stream = Helper::getMultiLayerMultiCellStrPacket();
   auto p = scopeBegin<uint32_t>(stream);
   auto end = scopeEnd<uint32_t>(stream);
 
@@ -178,49 +211,17 @@ TEST(RedeemVal, SingleLayer)
   EXPECT_EQ(65535, redeemVal<int>(begin, end));
 }
 
-using variant_t = Agio::Variant<
-    bool
-    , int8_t
-    , int16_t
-    , int32_t
-    , int64_t
-    , uint8_t
-    , uint16_t
-    , uint32_t
-    , uint64_t
-    , std::string
->;
-
-struct Packet
+TEST(PacketMixedRedeem, MultiLayerMultiCellPacket)
 {
-  std::vector<variant_t> data;
-  uint8_t msgType;
-};
+  std::vector<char> stream = Helper::getMultilayerMultiCellMixedPacket();
+  auto p = scopeBegin<uint32_t>(stream.data());
+  auto end = scopeEnd<uint32_t>(stream.data());
 
-TEST(RedeemVal, MultiLayerMultiCellPacket)
-{
-  //! [20:[6:hello,][6:world!]]
-    std::vector<char> stream(sizeof(uint32_t));
-    size_t pos{};
-
-    Packet pk {{std::string{"hello,"}, std::string{"world!"}, std::string{"duckhacks"}, uint32_t{2019}}, 100};
-
-    *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4 + 1; // set main header
-    pos += sizeof(uint32_t); // skip main header
-
-    insertVal(stream, pos, pk.msgType);
-    insertStr(stream, pos, pk.data[0].get<std::string>());
-    insertStr(stream, pos, pk.data[1].get<std::string>());
-    insertStr(stream, pos, pk.data[2].get<std::string>());
-    insertVal(stream, pos, pk.data[3].get<uint32_t>());
-
-    auto p = scopeBegin<uint32_t>(stream.data());
-    auto end = scopeEnd<uint32_t>(stream.data());
-    EXPECT_EQ(uint8_t{100}, uint8_t(redeemVal<uint8_t>(p, end)));
-    EXPECT_EQ(string("hello,"), string(redeemStr<uint32_t>(p, end)));
-    EXPECT_EQ(string("world!"), string(redeemStr<uint32_t>(p, end)));
-    EXPECT_EQ(string("duckhacks"), string(redeemStr<uint32_t>(p, end)));
-    EXPECT_EQ(uint32_t{2019}, uint32_t(redeemVal<uint32_t>(p, end)));
+  EXPECT_EQ(uint8_t{100}, uint8_t(redeemVal<uint8_t>(p, end)));
+  EXPECT_EQ(string("hello,"), string(redeemStr<uint32_t>(p, end)));
+  EXPECT_EQ(string("world!"), string(redeemStr<uint32_t>(p, end)));
+  EXPECT_EQ(string("duckhacks"), string(redeemStr<uint32_t>(p, end)));
+  EXPECT_EQ(uint32_t{2019}, uint32_t(redeemVal<uint32_t>(p, end)));
 }
 
 //TEST(Encode, MultiLayerMultiCellPacket)

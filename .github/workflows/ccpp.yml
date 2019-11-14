@@ -1,0 +1,19 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: create build directory
+      run: mkdir build && cd build
+    - name: cmake
+      run: cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - name: make
+      run: make
+    - name: test
+      run: ./test/unit_tests

@@ -12,7 +12,7 @@ static vector<TcpSocket*> clients;
 
 void receive_cb(const Buffer* data, TcpSocket* sock)
 {
-  cout << sock->peerAddress()->toIPString() << ": " << data->toString() << endl;
+  cout << sock->peerAddress()->toIpString() << ": " << data->toString() << endl;
 }
 
 void new_connection_cb(TcpServer* s)

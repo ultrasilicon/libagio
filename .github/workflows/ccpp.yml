@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: install dependency
-      run: sudo apt install -y libuv1-dev
+      run: sudo apt install -y libuv1-dev libgtest-dev
     - name: create build directory
       run: mkdir build
     - name: cmake

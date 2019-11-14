@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: create build directory
-      run: mkdir build && cd build
+      run: ls && mkdir build && cd build
     - name: cmake
       run: ls .. && cmake -DCMAKE_BUILD_TYPE=Debug ..
     - name: make

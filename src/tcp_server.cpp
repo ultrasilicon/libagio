@@ -10,7 +10,7 @@ void TcpServer::newConnectionCb(uv_stream_t* handle, int status)
       fprintf(stderr, "%s\n", uv_strerror(status));
       return;
     }
-  TcpServer* s = getPHandle((uv_tcp_t*)handle);
+  TcpServer* s = getPHandle(reinterpret_cast<uv_tcp_t*>(handle));
   s->onNewConnection(s);
 }
 

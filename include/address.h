@@ -19,9 +19,9 @@ public:
     IPv6 = 2,
   };
 
-  static std::string toString(sockaddr_storage& addr);
-  static std::string toIPString(in_addr addr);
-  static std::string toIPString(in6_addr addr);
+  static std::string toString(const sockaddr_storage& addr);
+  static std::string toIpString(const in_addr& addr);
+  static std::string toIpString(const in6_addr& addr);
 
   HostAddress();
   HostAddress(const sockaddr_storage& addr);
@@ -36,7 +36,7 @@ public:
   void setAddress(const std::string& ip, const uint16_t& port);
   Version version() const;
   bool isValid() const;
-  std::string toIPString() const;
+  std::string toIpString() const;
   std::string toString() const;
 
 private:

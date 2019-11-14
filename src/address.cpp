@@ -3,11 +3,11 @@
 using namespace Agio;
 
 
-std::string HostAddress::toString(sockaddr_storage& addr)
+std::string HostAddress::toString(const sockaddr_storage& addr)
 {
   char hoststr[NI_MAXHOST];
   char portstr[NI_MAXSERV];
-  getnameinfo(reinterpret_cast<sockaddr *>(&addr)
+  getnameinfo(reinterpret_cast<const sockaddr*>(&addr)
               , sizeof(addr)
               , hoststr
               , sizeof(hoststr)
@@ -17,7 +17,7 @@ std::string HostAddress::toString(sockaddr_storage& addr)
   return std::string(hoststr) + ":" + portstr;
 }
 
-std::string HostAddress::toIPString(in_addr addr)
+std::string HostAddress::toIpString(const in_addr& addr)
 {
   char buf[INET_ADDRSTRLEN];
   if(!inet_ntop(AF_INET, &addr, buf, sizeof(buf)))
@@ -25,7 +25,7 @@ std::string HostAddress::toIPString(in_addr addr)
   return buf;
 }
 
-std::string HostAddress::toIPString(in6_addr addr)
+std::string HostAddress::toIpString(const in6_addr& addr)
 {
   char buf[INET6_ADDRSTRLEN];
   if(!inet_ntop(AF_INET6, &addr, buf, sizeof(buf)))
@@ -139,21 +139,21 @@ bool HostAddress::isValid() const
   return version_ != None;
 }
 
-std::string HostAddress::toIPString() const
+std::string HostAddress::toIpString() const
 {
   if(version_ == IPv4)
-    return toIPString(ip4_.sin_addr);
+    return toIpString(ip4_.sin_addr);
   else if(version_ == IPv6)
-    return toIPString(ip6_.sin6_addr);
+    return toIpString(ip6_.sin6_addr);
   return "";
 }
 
 std::string HostAddress::toString() const
 {
   if(version_ == IPv4)
-    return toIPString(ip4_.sin_addr) + ':' + std::to_string(ip4_.sin_port);
+    return toIpString(ip4_.sin_addr) + ':' + std::to_string(ip4_.sin_port);
   else if(version_ == IPv6)
-    return toIPString(ip6_.sin6_addr) + ':' + std::to_string(ip6_.sin6_port);
+    return toIpString(ip6_.sin6_addr) + ':' + std::to_string(ip6_.sin6_port);
   return "";
 }
 

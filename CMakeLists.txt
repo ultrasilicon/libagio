@@ -50,7 +50,11 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/agio.cpp
 )
 
-include_directories(/usr/local/include)
+# macOS mojave 10.14+ needs link dir and include dir
+if(APPLE)
+    link_directories(/usr/local/lib)
+    include_directories(/usr/local/include)
+endif(APPLE)
 include_directories(./include)
 
 

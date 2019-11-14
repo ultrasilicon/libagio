@@ -115,12 +115,6 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
 
 # Tests
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	include(cmake/googletest.cmake)
-	fetch_googletest(
-	    ${PROJECT_SOURCE_DIR}/cmake
-	    ${PROJECT_BINARY_DIR}/googletest
-	)
-	
 	enable_testing()
 	add_subdirectory(test)
 	add_test(NAME test COMMAND test)

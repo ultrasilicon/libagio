@@ -8,12 +8,12 @@ A_NS_BEGIN
 class AsyncEvent
   : public AgioService<uv_async_t, AsyncEvent>
 {
-  static void executeCb(uv_async_t *handle);
+  static void executeCb(uv_async_t* handle);
 
 public:
   CallbackHandler<void()> onCalled;
 
-  AsyncEvent(Loop *l);
+  AsyncEvent(Loop* l);
   int send();
 
 private:

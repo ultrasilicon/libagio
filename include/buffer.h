@@ -12,12 +12,12 @@ class Buffer
     : public AgioObject<uv_buf_t, Buffer>
 {
 public:
-  Buffer(const std::string &data);
-  Buffer(char* data, const size_t len);
+  Buffer(const std::string& data);
+  Buffer(char* data, const unsigned int& len);
   ~Buffer();
 
   char* data() const;
-  int length() const;
+  size_t length() const;
   std::string toString() const;
 };
 

@@ -5,7 +5,7 @@
 using namespace Agio;
 
 
-void UdpSocket::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, const sockaddr *addr, unsigned)
+void UdpSocket::receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t* buf, const sockaddr* addr, unsigned)
 {
   /*! DOC: libuv 1.18.1-dev
    *  - The receive callback will be called with nread == 0 and addr == NULL when there is nothing to read,
@@ -25,22 +25,22 @@ void UdpSocket::receiveCb(uv_udp_t *handle, ssize_t nread, const uv_buf_t *buf, 
   return;
 }
 
-void UdpSocket::writtenCb(uv_udp_send_t *req, int status)
+void UdpSocket::writtenCb(uv_udp_send_t* req, int status)
 {
-  int socketDescriptor = Utils::getFd((uv_handle_t*) req->handle);
+  int socketDescriptor = Utils::getFd(reinterpret_cast<uv_handle_t*>(req->handle));
   getPHandle(req->handle)->onWritten(socketDescriptor);
   free(req->bufs);
   free(req);
 }
 
 
-UdpSocket::UdpSocket(Loop *l)
+UdpSocket::UdpSocket(Loop* l)
   : AgioService(l, this)
 {
   uv_udp_init(l->cObject(), obj_);
 }
 
-UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
+UdpSocket::UdpSocket(const char* ip, const int& port, Loop* l)
   : AgioService(l, this)
 {
   uv_udp_init(l->cObject(), obj_);
@@ -50,11 +50,11 @@ UdpSocket::UdpSocket(const char *ip, const int &port, Loop *l)
   setBroadcatEnabled(true);
 }
 
-void UdpSocket::bind(const char *ip, const int &port)
+void UdpSocket::bind(const char* ip, const int& port)
 {
   sockaddr_in addr;
-  uv_ip4_addr(ip, port, &addr);
-  uv_udp_bind(obj_, (const sockaddr*) &addr, UV_UDP_REUSEADDR);
+  uv_ip4_addr(ip, port,& addr);
+  uv_udp_bind(obj_, reinterpret_cast<sockaddr*>(&addr), UV_UDP_REUSEADDR);
 }
 
 int UdpSocket::start()
@@ -70,19 +70,19 @@ void UdpSocket::stop()
 void UdpSocket::close()
 {
   stop();
-  uv_close((uv_handle_t*) obj_, nullptr);
+  uv_close(reinterpret_cast<uv_handle_t*>(obj_), nullptr);
 }
 
-void UdpSocket::write(const char *ip, const int &port, const std::string &data)
+void UdpSocket::write(const char* ip, const int& port, const std::string& data)
 {
-  auto *req = CXX_MALLOC(uv_udp_send_t);
+  auto* req = CXX_MALLOC(uv_udp_send_t);
   uv_buf_t buf = uv_buf_init((char*) data.c_str(), data.size());
   struct sockaddr_in addr;
-  uv_ip4_addr(ip, port, &addr);
-  uv_udp_send(req, obj_, &buf, 1, (const struct sockaddr *)&addr, writtenCb);
+  uv_ip4_addr(ip, port,& addr);
+  uv_udp_send(req, obj_,& buf, 1, reinterpret_cast<sockaddr*>(&addr), writtenCb);
 }
 
-void UdpSocket::setBroadcatEnabled(const bool &enabled)
+void UdpSocket::setBroadcatEnabled(const bool& enabled)
 {
   uv_udp_set_broadcast(obj_, enabled ? 1 : 0);
 }

@@ -6,7 +6,7 @@ using namespace Agio;
 
 Loop Loop::default_loop = Loop(uv_default_loop());
 
-Loop *Loop::defaultLoop()
+Loop* Loop::defaultLoop()
 {
   return &default_loop;
 }
@@ -17,7 +17,7 @@ Loop::Loop()
   uv_loop_init(obj_);
 }
 
-Loop::Loop(uv_loop_t *l)
+Loop::Loop(uv_loop_t* l)
   : AgioObject(l)
 {
 }
@@ -27,7 +27,7 @@ Loop::~Loop()
   close();
 }
 
-int Loop::run(const uv_run_mode &mode)
+int Loop::run(const uv_run_mode& mode)
 {
   return uv_run(obj_, mode);
 }

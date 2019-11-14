@@ -3,13 +3,13 @@
 using namespace Agio;
 
 
-void Check::checkCb(uv_check_t *r)
+void Check::checkCb(uv_check_t* r)
 {
   getPHandle(r)->onCalled();
 }
 
 
-Check::Check(Loop *l)
+Check::Check(Loop* l)
   : AgioService(l, this)
 {
   uv_check_init(l->cObject(), obj_);

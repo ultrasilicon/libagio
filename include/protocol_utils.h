@@ -21,19 +21,19 @@ namespace ProtocolUtils {
 #pragma pack()
 
   template <typename Header>
-  Header scopeLen(const char *stream)
+  Header scopeLen(const char* stream)
   {
     return (reinterpret_cast<SizedMask<Header>*>(const_cast<char*>(stream)))->header;
   }
 
   template <typename Header>
-  char* scopeBegin(char *stream)
+  char* scopeBegin(char* stream)
   {
     return stream + sizeof(Header);
   }
 
   template <typename Header>
-  const char* scopeEnd(char *stream)
+  const char* scopeEnd(char* stream)
   {
     return scopeBegin<Header>(stream) + scopeLen<Header>(stream);
   }
@@ -67,7 +67,7 @@ namespace ProtocolUtils {
   //}
 
   template <typename _HeaderT>
-  std::string redeemStr(char* &stream, const char* end)
+  std::string redeemStr(char*& stream, const char* end)
   {
     if(stream == end)
       return "";

@@ -4,12 +4,12 @@ using namespace Agio;
 
 
 
-Buffer::Buffer(const std::string &data)
+Buffer::Buffer(const std::string& data)
   : Buffer((char*)data.c_str(), data.size())
 {
 }
 
-Buffer::Buffer(char *data, const size_t len)
+Buffer::Buffer(char* data, const unsigned int& len)
   : AgioObject()
 {
   *obj_ = uv_buf_init(data, len);
@@ -26,7 +26,7 @@ char *Buffer::data() const
   return obj_->base;
 }
 
-int Buffer::length() const
+size_t Buffer::length() const
 {
   return obj_->len;
 }

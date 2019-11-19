@@ -16,12 +16,12 @@ Stream::~Stream()
 
 }
 
-int Stream::write(char *)
+int Stream::write(char*)
 {
   return 0;
 }
 
-int Stream::write(char *, const size_t &)
+int Stream::write(char*, const size_t&)
 {
   return 0;
 }

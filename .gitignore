@@ -1,4 +1,4 @@
-# Personal files
+# IDE files
 build/
 build*/
 _build/
@@ -12,7 +12,7 @@ cmake-build-debug
 *.autosave
 
 
-# OS generated files
+# OS files
 .DS_Store
 .DS_Store?
 ._*
@@ -21,3 +21,7 @@ cmake-build-debug
 ehthumbs.db
 Thumbs.db
 Icon
+
+
+
+

@@ -3,25 +3,25 @@
 using namespace Agio;
 
 
-void Timer::timeoutCb(uv_timer_t *handle)
+void Timer::timeoutCb(uv_timer_t* handle)
 {
-  Timer *t = getPHandle(handle);
+  Timer* t = getPHandle(handle);
   t->onTimedOut(t);
 }
 
 
 
-Timer::Timer(Loop *l)
+Timer::Timer(Loop* l)
   : Timer(0, 0, l)
 {
 }
 
-Timer::Timer(const uint64_t &repeat, Loop *l)
+Timer::Timer(const uint64_t& repeat, Loop* l)
   : Timer(0, repeat, l)
 {
 }
 
-Timer::Timer(const uint64_t &timeout, const uint64_t &repeat, Loop *l)
+Timer::Timer(const uint64_t& timeout, const uint64_t& repeat, Loop* l)
   : AgioService(l, this)
   , timeout_(timeout)
   , repeat_(repeat)
@@ -42,13 +42,13 @@ int Timer::start() const
                         , repeat_);
 }
 
-int Timer::start(const uint64_t &repeat)
+int Timer::start(const uint64_t& repeat)
 {
   repeat_ = repeat;
   return start();
 }
 
-int Timer::start(const uint64_t &timeout, const uint64_t &repeat)
+int Timer::start(const uint64_t& timeout, const uint64_t& repeat)
 {
   timeout_ = timeout;
   repeat_ = repeat;

@@ -21,7 +21,7 @@ public:
   Loop(uv_loop_t* l);
   ~Loop();
 
-  int run(const uv_run_mode &mode = UV_RUN_DEFAULT);
+  int run(const uv_run_mode& mode = UV_RUN_DEFAULT);
   void close();
   int tryClose();
 

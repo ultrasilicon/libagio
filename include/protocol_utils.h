@@ -23,19 +23,19 @@ namespace ProtocolUtils {
 #pragma pack()
 
   template <typename Header>
-  Header scopeLen(const char *stream)
+  Header scopeLen(const char* stream)
   {
     return (reinterpret_cast<SizedMask<Header>*>(const_cast<char*>(stream)))->header;
   }
 
   template <typename Header>
-  char* scopeBegin(char *stream)
+  char* scopeBegin(char* stream)
   {
     return stream + sizeof(Header);
   }
 
   template <typename Header>
-  const char* scopeEnd(char *stream)
+  const char* scopeEnd(char* stream)
   {
     return scopeBegin<Header>(stream) + scopeLen<Header>(stream);
   }
@@ -68,24 +68,24 @@ namespace ProtocolUtils {
   //  return r;
   //}
 
-  template <typename _HeaderT>
-  std::string redeemStr(char* &stream, const char* end)
+  template <typename Header>
+  std::string redeemStr(char*& stream, const char* end)
   {
     if(stream == end)
       return "";
-    auto ptr = stream + sizeof(_HeaderT);
-    auto size = scopeLen<_HeaderT>(stream);
+    auto ptr = stream + sizeof(Header);
+    auto size = scopeLen<Header>(stream);
     std::string r(ptr, size);
-    stream += sizeof(_HeaderT) + scopeLen<_HeaderT>(stream);
+    stream += sizeof(Header) + scopeLen<Header>(stream);
     return r;
   }
 
-  template <typename _ValT>
-  void insertVal(std::vector<char>& stream, size_t& pos, const _ValT& v)
+  template <typename T>
+  void insertVal(std::vector<char>& stream, size_t& pos, const T& v)
   {
-    stream.resize(stream.size() + sizeof(_ValT));
-    std::memcpy(&((SizedMask<_ValT>*) &stream[pos])->header, &v, sizeof(_ValT));
-    pos += sizeof(_ValT);
+    stream.resize(stream.size() + sizeof(T));
+    std::memcpy(&((SizedMask<T>*) &stream[pos])->header, &v, sizeof(T));
+    pos += sizeof(T);
   }
 
   /*!

@@ -6,6 +6,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <variant>
 #include <unordered_map>
 #include <cstdarg>
 
@@ -104,118 +105,125 @@ namespace ProtocolUtils {
     pos += s.length();
   }
 
+
+
+  using variant_t = Agio::Variant<
+      bool
+      , int8_t
+      , int16_t
+      , int32_t
+      , int64_t
+      , uint8_t
+      , uint16_t
+      , uint32_t
+      , uint64_t
+      , std::string
+  >;
+
+  template <typename... Ts>
+  struct MessageScheme {
+    int msg_type_ = 0;
+  };
+
+  struct Packet
+  {
+    std::vector<variant_t> data;
+    uint8_t msg_type_;
+  };
+
+  template <typename... Ts>
+  constexpr static int msgFieldCount(const MessageScheme<Ts...>&)
+  {
+    return std::tuple_size<std::tuple<Ts...>>::value;
+  }
+
+  template <typename Scheme, typename... Schema>
+  struct Parser {
+    std::unordered_map<int, std::variant<Scheme, Schema...>> schema_;
+
+    Parser(Scheme& h) {
+      schema_.insert({h.msg_type_, h});
+    }
+
+    Parser(Scheme& h, Schema&... t) {
+      schema_.insert({h.msg_type_, std::variant<Scheme, Schema...>(h)});
+      Parser(t...);
+    }
+
+    Packet* decode(char* stream) {
+      A_USED(stream);
+      return nullptr;
+    }
+
+    template<typename H>
+    H& messageSchemeHelper(const int& msgType, std::tuple<H>&)
+    {
+
+    }
+
+    template<typename R, typename H, typename... T>
+    R& messageSchemeHelper(const int& msgType, std::tuple<H, T...>&)
+    {
+
+      return messageScheme(msgType - 1, std::tuple<T...>());
+    }
+
+    template<typename R>
+    R& messageScheme(const int& msgType)
+    {
+
+      return messageScheme(msgType, std::tuple<Scheme, Schema...>());
+    }
+
+    template<typename H>
+    std::vector<char>& encode_helper(
+          const MessageScheme<H>&,
+          Packet* packet,
+          std::vector<char>& stream,
+          int& pos,
+          const int& index)
+    {
+      //! could be moved to compile-time with sfinae.
+      if(std::is_same<H, std::string>::value)
+          insertStr(stream, pos, std::get<H>(packet->data[index]));
+      else
+          insertVal(stream, pos, std::get<H>(packet->data[index]));
+      return stream;
+    }
+
+    template<typename H, typename... T>
+    std::vector<char>& encode_helper(
+          const MessageScheme<H, T...>&,
+          Packet* packet,
+          std::vector<char>& stream,
+          int& pos,
+          const int& index)
+    {
+      encode_helper(stream, pos, MessageScheme<H>{}, packet, index + 1);
+      return encode_helper(stream, pos, MessageScheme<T...>{}, packet, index + 1);
+    }
+
+    template<typename... Ts>
+    std::vector<char>& encode(Packet* packet) {
+      const MessageScheme<Ts...>& scheme = std::get<>(schema_.at(packet->msg_type_));
+
+      static_assert (msgFieldCount(scheme) == packet->data.size(), "char* Parser::encode(Packet* packet): packet data field count different from declared in MessageScheme");
+
+      std::vector<char> stream(sizeof(uint32_t) + 1); // vector as memory management helper
+      size_t pos = sizeof(uint32_t);
+      insertVal(stream, pos, packet->msg_type_);
+
+      return encode_helper(scheme, pos, scheme, packet, 0);
+    }
+  };
+
+  template <typename Scheme, typename... Schema>
+  Parser<Scheme, Schema...>* make_parser(Scheme scheme, Schema... schema) {
+    return new Parser<Scheme, Schema...>(scheme, schema...);
+  }
 }
 
 
-
-using variant_t = Agio::Variant<
-    bool
-    , int8_t
-    , int16_t
-    , int32_t
-    , int64_t
-    , uint8_t
-    , uint16_t
-    , uint32_t
-    , uint64_t
-    , std::string
->;
-
-
-struct Packet
-{
-  std::vector<variant_t> data;
-  uint8_t msg_type_;
-};
-
-template <typename... Seq>
-struct MessageScheme {
-  int msg_type_ = 0;
-};
-
-template <typename Scheme, typename... Schema>
-struct Parser {
-  std::unordered_map<int, Variant<Schema...>> schema_;
-
-  Parser(Scheme& scheme) {
-    schema_.insert({scheme.message_type_, scheme});
-  }
-
-  Parser(Scheme& scheme, Schema&... schema) {
-    schema_.insert({scheme.message_type_, scheme});
-    Parser(schema...);
-  }
-
-  Packet* decode(char* stream) {
-    A_USED(stream);
-    return nullptr;
-  }
-
-
-  template<typename T>
-  char* encode_helper(char* pos, T& t) {
-    A_USED(pos);
-    A_USED(t);
-    return pos;
-  }
-
-  template<typename T, typename... Ts>
-  char* encode_helper(char* pos, T& t, Ts&... ts) {
-    A_USED(pos);
-    A_USED(t);
-    return pos;
-  }
-
-  char* encode(Packet* packet) {
-    auto scheme = schema_.at(packet->msg_type_);
-
-
-    return encode_helper(scheme);
-  }
-};
-
-template <typename Scheme, typename... Schema>
-Parser<Scheme, Schema...>* make_parser(Scheme scheme, Schema... schema) {
-  return new Parser<Scheme, Schema...>(scheme, schema...);
-}
-
-template<typename T>
-void expected()
-{
-  MessageScheme<
-      int32_t
-      > schemeHeartbeat{0};
-
-  MessageScheme<
-      std::string
-      > schemeAuthReq{1};
-
-  MessageScheme<
-      std::string
-      > schemeAuthRes{2};
-
-  MessageScheme<
-      std::string
-      > schemeLoginReq{3};
-
-  MessageScheme<
-      bool,
-      std::string
-      > schemeLoginRes{4};
-
-  MessageScheme<
-      std::string,
-      int32_t,
-      std::string
-      > schemeMsgTxt{5};
-
-  auto* parser = make_parser(schemeHeartbeat,
-                        schemeAuthReq,
-                        schemeAuthRes,
-                        schemeLoginReq,
-                        schemeLoginRes,
-                        schemeMsgTxt);
-}
 
 
 

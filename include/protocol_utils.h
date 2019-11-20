@@ -141,13 +141,19 @@ namespace ProtocolUtils {
   struct Parser {
     std::unordered_map<int, std::variant<Scheme, Schema...>> schema_;
 
-    Parser(Scheme& h) {
+    Parser(Scheme& h, Schema&... t) {
+      constructHelper(h, t...);
+    }
+
+    template<typename H>
+    void constructHelper(H& h) {
       schema_.insert({h.msg_type_, h});
     }
 
-    Parser(Scheme& h, Schema&... t) {
+    template<typename H, typename... T>
+    void constructHelper(H& h, T&... t) {
       schema_.insert({h.msg_type_, std::variant<Scheme, Schema...>(h)});
-      Parser(t...);
+      constructHelper(t...);
     }
 
     Packet* decode(char* stream) {
@@ -156,23 +162,25 @@ namespace ProtocolUtils {
     }
 
     template<typename H>
-    H& messageSchemeHelper(const int& msgType, std::tuple<H>&)
+    H& messageSchemeHelper(const int& index, std::tuple<H>&)
     {
-
+      //! Fail if msgType is larger than given number of schema
+      assert(index == 0);
+      return std::tuple<H>();
     }
 
     template<typename R, typename H, typename... T>
-    R& messageSchemeHelper(const int& msgType, std::tuple<H, T...>&)
+    R& messageSchemeHelper(const int& index, std::tuple<H, T...>&)
     {
-
-      return messageScheme(msgType - 1, std::tuple<T...>());
+      if(index == 0)
+        return std::tuple<H>();
+      return messageSchemeHelper(index - 1, std::tuple<T...>());
     }
 
     template<typename R>
     R& messageScheme(const int& msgType)
     {
-
-      return messageScheme(msgType, std::tuple<Scheme, Schema...>());
+      return messageSchemeHelper(msgType + 1, std::tuple<Scheme, Schema...>());
     }
 
     template<typename H>
@@ -205,7 +213,8 @@ namespace ProtocolUtils {
 
     template<typename... Ts>
     std::vector<char>& encode(Packet* packet) {
-      const MessageScheme<Ts...>& scheme = std::get<>(schema_.at(packet->msg_type_));
+      using MessageSchemeType = decltype (messageScheme(packet->msg_type_));
+      const MessageSchemeType& scheme = std::get<MessageSchemeType>(schema_.at(packet->msg_type_));
 
       static_assert (msgFieldCount(scheme) == packet->data.size(), "char* Parser::encode(Packet* packet): packet data field count different from declared in MessageScheme");
 

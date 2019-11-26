@@ -111,6 +111,17 @@ int TcpSocket::write(const std::string& data)
            , writeCb);
 }
 
+int TcpSocket::write(Buffer* data)
+{
+  auto* req = CXX_MALLOC(write_req_t);
+  req->buf = *data->uvBuffer(); //! TODO: veryfy copied
+  return uv_write(reinterpret_cast<uv_write_t*>(req)
+           , reinterpret_cast<uv_stream_t*>(obj_)
+           , &req->buf
+           , 1
+           , writeCb);
+}
+
 void TcpSocket::setKeepAlive(const bool& enabled, const unsigned int& delay)
 {
   uv_tcp_keepalive(obj_

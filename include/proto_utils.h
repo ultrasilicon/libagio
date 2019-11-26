@@ -2,6 +2,7 @@
 #define AGIO_PROTOCOL_UTILS_H
 
 #include "variant.h"
+#include "buffer.h"
 
 #include <cstring>
 #include <string>
@@ -12,7 +13,7 @@
 
 A_NS_BEGIN
 
-namespace ProtocolUtils {
+namespace ProtoUtils {
   using pe_str_len_t = uint32_t;
 
 #pragma pack(1)

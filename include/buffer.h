@@ -19,6 +19,7 @@ public:
   char* data() const;
   size_t length() const;
   std::string toString() const;
+  uv_buf_t* uvBuffer();
 };
 
 

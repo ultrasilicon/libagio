@@ -35,3 +35,8 @@ std::string Buffer::toString() const
 {
   return std::string(obj_->base, obj_->len);
 }
+
+uv_buf_t* Buffer::uvBuffer()
+{
+  return obj_;
+}

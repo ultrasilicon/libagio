@@ -227,32 +227,36 @@ TEST(PacketMixedRedeem, MultiLayerMultiCellPacket)
 
 TEST(MessageParser, Experiment)
 {
-//  MessageScheme<
-//      int32_t
-//      > schemeHeartbeat{0};
+  MessageScheme<
+      int32_t
+      > schemeHeartbeat{0};
 
-//  MessageScheme<
-//      std::string
-//      > schemeAuthReq{1};
+  MessageScheme<
+      std::string
+      > schemeAuthReq{1};
 
-//  MessageScheme<
-//      std::string
-//      > schemeAuthRes{2};
+  MessageScheme<
+      std::string
+      > schemeAuthRes{2};
 
-//  MessageScheme<
-//      std::string
-//      > schemeLoginReq{3};
+  MessageScheme<
+      std::string
+      > schemeLoginReq{3};
 
-//  MessageScheme<
-//      bool,
-//      std::string
-//      > schemeLoginRes{4};
+  MessageScheme<
+      bool,
+      std::string
+      > schemeLoginRes{4};
 
-//  MessageScheme<
-//      std::string,
-//      int32_t,
-//      std::string
-//      > schemeMsgTxt{5};
+  MessageScheme<
+      std::string,
+      int32_t,
+      std::string
+      > schemeMsgTxt{5};
+
+  Parser *p = new Parser();
+  p->encode()
+
 
 //  auto* parser = make_parser(schemeHeartbeat,
 //                        schemeAuthReq,

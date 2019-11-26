@@ -137,99 +137,99 @@ namespace ProtocolUtils {
     return std::tuple_size<std::tuple<Ts...>>::value;
   }
 
-  template <typename Scheme, typename... Schema>
-  struct Parser {
-    std::unordered_map<int, std::variant<Scheme, Schema...>> schema_;
+//  template <typename Scheme, typename... Schema>
+//  struct Parser {
+//    std::unordered_map<int, std::variant<Scheme, Schema...>> schema_;
 
-    Parser(Scheme& h, Schema&... t) {
-      constructHelper(h, t...);
-    }
+//    Parser(Scheme& h, Schema&... t) {
+//      constructHelper(h, t...);
+//    }
 
-    template<typename H>
-    void constructHelper(H& h) {
-      schema_.insert({h.msg_type_, h});
-    }
+//    template<typename H>
+//    void constructHelper(H& h) {
+//      schema_.insert({h.msg_type_, h});
+//    }
 
-    template<typename H, typename... T>
-    void constructHelper(H& h, T&... t) {
-      schema_.insert({h.msg_type_, std::variant<Scheme, Schema...>(h)});
-      constructHelper(t...);
-    }
+//    template<typename H, typename... T>
+//    void constructHelper(H& h, T&... t) {
+//      schema_.insert({h.msg_type_, std::variant<Scheme, Schema...>(h)});
+//      constructHelper(t...);
+//    }
 
-    Packet* decode(char* stream) {
-      A_USED(stream);
-      return nullptr;
-    }
+//    Packet* decode(char* stream) {
+//      A_USED(stream);
+//      return nullptr;
+//    }
 
-    template<typename H>
-    H& messageSchemeHelper(const int& index, std::tuple<H>&)
-    {
-      //! Fail if msgType is larger than given number of schema
-      assert(index == 0);
-      return std::tuple<H>();
-    }
+//    template<typename H>
+//    H& messageSchemeHelper(const int& index, std::tuple<H>&)
+//    {
+//      //! Fail if msgType is larger than given number of schema
+//      assert(index == 0);
+//      return std::tuple<H>();
+//    }
 
-    template<typename R, typename H, typename... T>
-    R& messageSchemeHelper(const int& index, std::tuple<H, T...>&)
-    {
-      if(index == 0)
-        return std::tuple<H>();
-      return messageSchemeHelper(index - 1, std::tuple<T...>());
-    }
+//    template<typename R, typename H, typename... T>
+//    R& messageSchemeHelper(const int& index, std::tuple<H, T...>&)
+//    {
+//      if(index == 0)
+//        return std::tuple<H>();
+//      return messageSchemeHelper(index - 1, std::tuple<T...>());
+//    }
 
-    template<typename R>
-    R& messageScheme(const int& msgType)
-    {
-      return messageSchemeHelper(msgType + 1, std::tuple<Scheme, Schema...>());
-    }
+//    template<typename R>
+//    R& messageScheme(const int& msgType)
+//    {
+//      return messageSchemeHelper(msgType + 1, std::tuple<Scheme, Schema...>());
+//    }
 
-    template<typename H>
-    std::vector<char>& encode_helper(
-          const MessageScheme<H>&,
-          Packet* packet,
-          std::vector<char>& stream,
-          int& pos,
-          const int& index)
-    {
-      //! could be moved to compile-time with sfinae.
-      if(std::is_same<H, std::string>::value)
-          insertStr(stream, pos, std::get<H>(packet->data[index]));
-      else
-          insertVal(stream, pos, std::get<H>(packet->data[index]));
-      return stream;
-    }
+//    template<typename H>
+//    std::vector<char>& encode_helper(
+//          const MessageScheme<H>&,
+//          Packet* packet,
+//          std::vector<char>& stream,
+//          int& pos,
+//          const int& index)
+//    {
+//      //! could be moved to compile-time with sfinae.
+//      if(std::is_same<H, std::string>::value)
+//          insertStr(stream, pos, std::get<H>(packet->data[index]));
+//      else
+//          insertVal(stream, pos, std::get<H>(packet->data[index]));
+//      return stream;
+//    }
 
-    template<typename H, typename... T>
-    std::vector<char>& encode_helper(
-          const MessageScheme<H, T...>&,
-          Packet* packet,
-          std::vector<char>& stream,
-          int& pos,
-          const int& index)
-    {
-      encode_helper(stream, pos, MessageScheme<H>{}, packet, index + 1);
-      return encode_helper(stream, pos, MessageScheme<T...>{}, packet, index + 1);
-    }
+//    template<typename H, typename... T>
+//    std::vector<char>& encode_helper(
+//          const MessageScheme<H, T...>&,
+//          Packet* packet,
+//          std::vector<char>& stream,
+//          int& pos,
+//          const int& index)
+//    {
+//      encode_helper(stream, pos, MessageScheme<H>{}, packet, index + 1);
+//      return encode_helper(stream, pos, MessageScheme<T...>{}, packet, index + 1);
+//    }
 
-    template<typename... Ts>
-    std::vector<char>& encode(Packet* packet) {
-      using MessageSchemeType = decltype (messageScheme(packet->msg_type_));
-      const MessageSchemeType& scheme = std::get<MessageSchemeType>(schema_.at(packet->msg_type_));
+//    template<typename... Ts>
+//    std::vector<char>& encode(Packet* packet) {
+//      using MessageSchemeType = decltype (messageScheme(packet->msg_type_));
+//      const MessageSchemeType& scheme = std::get<MessageSchemeType>(schema_.at(packet->msg_type_));
 
-      static_assert (msgFieldCount(scheme) == packet->data.size(), "char* Parser::encode(Packet* packet): packet data field count different from declared in MessageScheme");
+//      static_assert (msgFieldCount(scheme) == packet->data.size(), "char* Parser::encode(Packet* packet): packet data field count different from declared in MessageScheme");
 
-      std::vector<char> stream(sizeof(uint32_t) + 1); // vector as memory management helper
-      size_t pos = sizeof(uint32_t);
-      insertVal(stream, pos, packet->msg_type_);
+//      std::vector<char> stream(sizeof(uint32_t) + 1); // vector as memory management helper
+//      size_t pos = sizeof(uint32_t);
+//      insertVal(stream, pos, packet->msg_type_);
 
-      return encode_helper(scheme, pos, scheme, packet, 0);
-    }
-  };
+//      return encode_helper(scheme, pos, scheme, packet, 0);
+//    }
+//  };
 
-  template <typename Scheme, typename... Schema>
-  Parser<Scheme, Schema...>* make_parser(Scheme scheme, Schema... schema) {
-    return new Parser<Scheme, Schema...>(scheme, schema...);
-  }
+//  template <typename Scheme, typename... Schema>
+//  Parser<Scheme, Schema...>* make_parser(Scheme scheme, Schema... schema) {
+//    return new Parser<Scheme, Schema...>(scheme, schema...);
+//  }
 }
 
 

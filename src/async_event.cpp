@@ -4,7 +4,8 @@ using namespace Agio;
 
 void AsyncEvent::executeCb(uv_async_t* handle)
 {
-  getPHandle(handle)->onCalled();
+  AsyncEvent* ev = getPHandle(handle);
+  ev->onCalled(ev);
 }
 
 AsyncEvent::AsyncEvent(Loop* l)
@@ -16,4 +17,9 @@ AsyncEvent::AsyncEvent(Loop* l)
 int AsyncEvent::send()
 {
   return uv_async_send(obj_);
+}
+
+void AsyncEvent::operator()()
+{
+  send();
 }

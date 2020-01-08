@@ -37,7 +37,7 @@ namespace ProtoUtils {
   }
 
   template <typename Header>
-  const char* scopeEnd(char* stream)
+  char* scopeEnd(char* stream)
   {
     return scopeBegin<Header>(stream) + scopeLen<Header>(stream);
   }

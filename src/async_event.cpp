@@ -14,12 +14,13 @@ AsyncEvent::AsyncEvent(Loop* l)
   uv_async_init(loop_->cObject(), obj_, executeCb);
 }
 
+void AsyncEvent::operator()()
+{
+  send();
+}
+
 int AsyncEvent::send()
 {
   return uv_async_send(obj_);
 }
 
-void AsyncEvent::operator()()
-{
-  send();
-}

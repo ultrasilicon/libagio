@@ -37,6 +37,7 @@ public:
   int connect(const char* addr, const int& port);
   int write(char* data);
   int write(const std::string& data);
+  int write(Buffer* data);
   void setKeepAlive(const bool& enabled, const unsigned int& delay);
   const HostAddress* peerAddress();
   const HostAddress* retrievePeerAddress();

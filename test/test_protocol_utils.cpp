@@ -1,8 +1,8 @@
 #include "proto_utils.h"
 #include "variant.h"
 #include "agio.h"
-#include "gtest/gtest.h"
 
+#include <gtest/gtest.h>
 #include <string>
 #include <vector>
 #include <climits>

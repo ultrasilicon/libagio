@@ -4,6 +4,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 add_executable(
     unit_tests
     test_protocol_utils.cpp
+    test_buffer.cpp
 )
 
 target_link_libraries(

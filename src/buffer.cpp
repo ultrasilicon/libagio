@@ -37,6 +37,21 @@ const char& Buffer::operator[](const std::size_t &idx) const
   return obj_->base[idx];
 }
 
+void Buffer::copy(char* dest, const unsigned int& len) const
+{
+  memcpy(dest, obj_->base, len);
+}
+
+void Buffer::copy(char* dest, char* fromPos, char* toPos) const
+{
+  memcpy(dest, fromPos, static_cast<unsigned int>(toPos - fromPos));
+}
+
+void Buffer::copy(char* dest, char* fromPos, const unsigned int& len) const
+{
+  memcpy(dest, fromPos, len);
+}
+
 char* Buffer::front() const
 {
   return obj_->base;
@@ -62,12 +77,12 @@ size_t Buffer::size() const
   return length();
 }
 
+uv_buf_t* Buffer::uvBuffer() const
+{
+  return obj_;
+}
+
 std::string Buffer::toString() const
 {
   return std::string(obj_->base, obj_->len);
-}
-
-uv_buf_t* Buffer::uvBuffer()
-{
-  return obj_;
 }

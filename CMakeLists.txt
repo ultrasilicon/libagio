@@ -102,13 +102,13 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
 
 ##### Install ####################################################################
-configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
+configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc @ONLY)
 if(UNIX)
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
-	DESTINATION lib/pkgconfig)
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc
+		DESTINATION lib/pkgconfig)
 endif()
 if(LINUX)
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc
         DESTINATION /usr/lib/pkgconfig)
 endif()
 

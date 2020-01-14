@@ -21,8 +21,8 @@ template <typename CType, typename PType>
 class AgioObject;
 
 /*!
- * \arg CType: typename of the c obj
- * \arg PType: typename of the agio obj
+ * \arg CType: type of the c obj
+ * \arg PType: type of the agio obj
  */
 template <typename CType, typename PType>
 class AgioObject

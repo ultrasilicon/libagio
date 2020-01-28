@@ -19,6 +19,7 @@ class Buffer
 public:
   Buffer(const std::string& data);
   Buffer(const unsigned int& len);
+  Buffer(uv_buf_t* buf);
   Buffer(char* data, const unsigned int& len);
   ~Buffer();
 

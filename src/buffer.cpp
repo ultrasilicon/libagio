@@ -12,7 +12,11 @@ Buffer::Buffer(const std::string& data)
 Buffer::Buffer(const unsigned int& len)
   : Buffer(CXX_MALLOC_CSTR(len), len)
 {
+}
 
+Buffer::Buffer(uv_buf_t* buf)
+  : AgioObject(buf)
+{
 }
 
 Buffer::Buffer(char* data, const unsigned int& len)

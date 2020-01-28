@@ -43,7 +43,7 @@ public:
 //      delete obj_;
   }
 
-  CType* cObject()
+  constexpr CType* cObject() const
   {
     return obj_;
   }

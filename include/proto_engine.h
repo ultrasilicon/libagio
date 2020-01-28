@@ -47,6 +47,8 @@ class StreamProtoEngine
 {  
 public:
   StreamProtoEngine(TcpSocket* sock, Loop* l);
+  ~StreamProtoEngine();
+
   void message(Packet* pkt);
 
 private:

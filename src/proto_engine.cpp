@@ -9,6 +9,16 @@ ProtoEngine::ProtoEngine(TcpSocket* socket, Loop* l)
   on(&try_parse_->onCalled, this, &ProtoEngine::decode);
 }
 
+ProtoEngine::~ProtoEngine()
+{
+
+}
+
+StreamProtoEngine::~StreamProtoEngine()
+{
+
+}
+
 void StreamProtoEngine::message(Packet* packet)
 {
   write(packet);
@@ -26,11 +36,11 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
 
         states_.msg_len = scopeLen<MsgSizeT>(buffers_.front()->data()); // read header
         states_.wbuf = new Buffer(states_.msg_len); // allocate sufficient buffer
-        states_.wptr = states_.wbuf->data(); //! TODO apply [] operator?
+        states_.wptr = &(*states_.wbuf)[0];
         Buffer* rbuf = buffers_.front();
         if(rbuf->length() < states_.msg_len + sizeof(MsgSizeT))
           {
-            // read the whole first buffer and destroy
+            //! read the whole first buffer and destroy
             MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
             memcpy(states_.wptr,
                    scopeBegin<MsgSizeT>(rbuf->data()),
@@ -44,7 +54,7 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
           }
         else
           {
-            // read part of the buffer
+            //! read part of the buffer
             memcpy(states_.wptr,
                    scopeBegin<MsgSizeT>(rbuf->data()),
                    states_.msg_len);
@@ -66,12 +76,12 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
       {
         if(buffers_.size() == 0 || !states_.rptr || !states_.wptr)
           return;
-        while (buffers_.size() != 0 && states_.read_len < states_.msg_len) {
+        while (states_.read_len < states_.msg_len && buffers_.size() != 0) {
             Buffer* rbuf = buffers_.front();
             MsgSizeT distance = rbuf->back() - states_.rptr;
-            if(states_.read_len + distance < states_.msg_len)
+            if(states_.read_len + distance < states_.msg_len) // Should switch clauses for better performance
               {
-                // read the whole buffer
+                //! The rest of this buf is a part of the message, read the whole buffer
                 MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
                 memcpy(states_.wptr,
                        scopeBegin<MsgSizeT>(rbuf->data()),
@@ -85,7 +95,7 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
               }
             else
               {
-                // read part of the buffer
+                //! Part of this buf is a part of the message, read part of the buffer
                 //! TODO
               }
           }

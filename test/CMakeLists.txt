@@ -5,6 +5,7 @@ add_executable(
     unit_tests
     test_protocol_utils.cpp
     test_buffer.cpp
+    test_file.cpp
 )
 
 target_link_libraries(

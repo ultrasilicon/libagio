@@ -1,6 +1,8 @@
 #ifndef PFILESYSTEM_H
 #define PFILESYSTEM_H
 
+#define ASIO_FILE_READ_BUF_SIZE 2
+
 #include "service.h"
 #include "buffer.h"
 
@@ -9,9 +11,7 @@ A_NS_BEGIN
 class File
     : public AgioService<uv_fs_t, File>
 {
-  static void openedCb(uv_fs_t* r);
-  static void closedCb(uv_fs_t* r);
-  static void readCb(uv_fs_t* r);
+  static void fileCb(uv_fs_t* r);
   static void writtenCb(uv_fs_t* r);
 
 public:
@@ -42,8 +42,6 @@ public:
 private:
   int fd_ = 0;
   std::string path_;
-  char buffer_data_[4096];
-  Buffer* buffer_ = nullptr;
 
   void setFileDescriptor(const int& fd);
 };

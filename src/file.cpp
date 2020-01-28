@@ -3,54 +3,163 @@
 using namespace Agio;
 
 
-void File::openedCb(uv_fs_t* r)
+void File::fileCb(uv_fs_t* r)
 {
   File* f = getPHandle(r);
+
   if (r->result >= 0)
     {
-      f->setFileDescriptor(static_cast<int>(r->result));
+      switch (r->fs_type) {
+        case UV_FS_OPEN:
+          {
+            f->setFileDescriptor(static_cast<int>(r->result));
+            f->onOpened();
+            break;
+          }
+        case UV_FS_CLOSE:
+          {
+            f->setFileDescriptor(-1);
+            f->onClosed();
+            break;
+          }
+        case UV_FS_READ:
+          {
+//            f->onReadyRead(r->bufs, r->result == 0 ? UV_EOF : r->result);
+            break;
+          }
+        case UV_FS_WRITE:
+          {
+            break;
+          }
+        case UV_FS_SENDFILE:
+          {
+            break;
+          }
+        case UV_FS_STAT:
+          {
+            break;
+          }
+        case UV_FS_LSTAT:
+          {
+            break;
+          }
+        case UV_FS_FSTAT:
+          {
+            break;
+          }
+        case UV_FS_FTRUNCATE:
+          {
+            break;
+          }
+        case UV_FS_UTIME:
+          {
+            break;
+          }
+        case UV_FS_FUTIME:
+          {
+            break;
+          }
+        case UV_FS_ACCESS:
+          {
+            break;
+          }
+        case UV_FS_CHMOD:
+          {
+            break;
+          }
+        case UV_FS_FCHMOD:
+          {
+            break;
+          }
+        case UV_FS_FSYNC:
+          {
+            break;
+          }
+        case UV_FS_FDATASYNC:
+          {
+            break;
+          }
+        case UV_FS_UNLINK:
+          {
+            break;
+          }
+        case UV_FS_RMDIR:
+          {
+            break;
+          }
+        case UV_FS_MKDIR:
+          {
+            break;
+          }
+        case UV_FS_MKDTEMP:
+          {
+            break;
+          }
+        case UV_FS_RENAME:
+          {
+            break;
+          }
+        case UV_FS_SCANDIR:
+          {
+            break;
+          }
+        case UV_FS_LINK:
+          {
+            break;
+          }
+        case UV_FS_SYMLINK:
+          {
+            break;
+          }
+        case UV_FS_READLINK:
+          {
+            break;
+          }
+        case UV_FS_CHOWN:
+          {
+            break;
+          }
+        case UV_FS_FCHOWN:
+          {
+            break;
+          }
+        case UV_FS_REALPATH:
+          {
+            break;
+          }
+        case UV_FS_COPYFILE:
+          {
+            break;
+          }
+        case UV_FS_LCHOWN:
+          {
+            break;
+          }
+        case UV_FS_OPENDIR:
+          {
+            break;
+          }
+        case UV_FS_READDIR:
+          {
+            break;
+          }
+        case UV_FS_CLOSEDIR:
+          {
+            break;
+          }
+        case UV_FS_STATFS:
+          {
+            break;
+          }
+        default:
+          break;
+        }
       uv_fs_req_cleanup(r);
-
-      f->onOpened();
     }
   else
     {
-      fprintf(stderr, "error opening file: %s\n", uv_strerror(static_cast<int>(r->result)));
+      fprintf(stderr, "fs error: %s\n", uv_strerror(static_cast<int>(r->result)));
     }
-}
-
-void File::closedCb(uv_fs_t* r)
-{
-  File *f = getPHandle(r);
-  if (r->result != -1)
-    {
-      f->setFileDescriptor(0);
-      uv_fs_req_cleanup(r);
-      f->onClosed();
-    }
-  else
-    {
-      fprintf(stderr, "Error at closing file: %s.\n", uv_strerror(static_cast<int>(r->result)));
-    }
-}
-
-void File::readCb(uv_fs_t* r)
-{
-  File* f = getPHandle(r);
-
-  if (r->result < 0)
-    {
-      fprintf(stderr, "Read error!");
-    }
-  else if (r->result == 0)
-    {
-      uv_fs_req_cleanup(r);
-    }
-  else
-    {
-      f->onReadyRead(f->getBuffer(), r->result);
-    }
-  uv_fs_req_cleanup(r);
 }
 
 void File::writtenCb(uv_fs_t* r)
@@ -105,7 +214,7 @@ int File::open(const int& flags, const int& perm, const Mode& m)
                     , path_.data()
                     , flags
                     , perm
-                    , m == Mode::Async ? openedCb : nullptr);
+                    , m == Mode::Async ? fileCb : nullptr);
 
   if(m == Mode::Sync)
     {
@@ -126,13 +235,7 @@ int File::close(const Mode& m)
   int r = uv_fs_close(loop_->cObject()
                      , obj_
                      , static_cast<uv_file>(obj_->result)
-                     , m == Mode::Async ? closedCb : nullptr);
-
-  if(m == Mode::Sync)
-    {
-//      callFileClosed();
-    }
-
+                     , m == Mode::Async ? fileCb : nullptr);
   return r;
 }
 
@@ -140,17 +243,14 @@ std::string File::readAll()
 {
   //! Implementation borrowed from Node.js source code
   std::string data;
-  if(buffer_)
-    delete buffer_;
-  buffer_ = new Buffer(buffer_data_, sizeof(buffer_data_));
-  int r;
+  Buffer* buf = new Buffer(ASIO_FILE_READ_BUF_SIZE);
 
   while(true)
     {
-      r = uv_fs_read(loop_->cObject()
+      int r = uv_fs_read(loop_->cObject()
                      , obj_
                      , fd_
-                     , buffer_->cObject()
+                     , buf->cObject()
                      , 1
                      , static_cast<int64_t>(data.length())  // offset
                      , nullptr);
@@ -158,21 +258,20 @@ std::string File::readAll()
 
       if (r <= 0)
         break;
-      data.append(buffer_->cObject()->base, static_cast<std::string::size_type>(r));
+      data.append(buf->cObject()->base, static_cast<std::string::size_type>(r));
     }
   return data;
 }
 
 int File::read(Buffer* buf, const Mode& m)
 {
-  buffer_ = buf;
   return uv_fs_read(loop_->cObject()
                     , obj_
                     , fd_
-                    , buffer_->cObject()
-                    , static_cast<unsigned int>(buffer_->cObject()->len)
+                    , buf->cObject()
+                    , 1
                     , -1
-                    , m == Mode::Async ? readCb : nullptr);
+                    , /*m == Mode::Async ? fileCb :*/ nullptr);
 }
 
 int File::write(Buffer* buf, const Mode& m)
@@ -181,12 +280,12 @@ int File::write(Buffer* buf, const Mode& m)
                      , obj_
                      , fd_
                      , buf->cObject()
-                     , static_cast<unsigned int>(buf->cObject()->len)
+                     , 1
                      , -1
                      , m == Mode::Async ? writtenCb : nullptr);
 }
 
-int File::write(const std::string& data, const Mode& syncMode)
+int File::write(const std::string& data, const Mode& m)
 {
   //! This is the way Node.js source code does.
   uv_buf_t buf = uv_buf_init(const_cast<char*>(data.c_str()), data.length());
@@ -196,7 +295,7 @@ int File::write(const std::string& data, const Mode& syncMode)
                      , &buf
                      , 1
                      , -1
-                     , syncMode == Mode::Async ? writtenCb : nullptr);
+                     , m == Mode::Async ? writtenCb : nullptr);
 }
 
 int File::truncate(const int& size, const Mode& m)
@@ -229,11 +328,6 @@ int File::remove(const std::string& file, Loop* l)
               , nullptr); //! Add Aync Callback!
   uv_fs_req_cleanup(&r);
   return ret;
-}
-
-Buffer *File::getBuffer()
-{
-  return buffer_;
 }
 
 void File::setFileDescriptor(const int& fd)

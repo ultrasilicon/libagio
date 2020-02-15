@@ -1,4 +1,6 @@
 #include "file.h"
+#include <iostream> //! TODO: remove
+
 
 using namespace Agio;
 
@@ -259,6 +261,7 @@ std::string File::readAll()
       if (r <= 0)
         break;
       data.append(buf->cObject()->base, static_cast<std::string::size_type>(r));
+      std::cout << "readAll(): " << buf->cObject()->base << std::endl;
     }
   return data;
 }

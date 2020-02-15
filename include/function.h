@@ -78,7 +78,25 @@ template<typename Ret, typename... Args>
 struct CallbackHandler<Ret(Args...)> {
   std::function<Ret(Args...)> f_;
 
-  Ret operator()(Args... args) noexcept
+  CallbackHandler()
+  {}
+
+  template<class T>
+  CallbackHandler(T *obj , Ret (T::*func)(Args...))
+    : f_(Functor<T, Ret, Args...>(obj, func))
+  {}
+
+  template<class T>
+  CallbackHandler(Ret (*func)(Args...))
+    : f_(func)
+  {}
+
+  template<class T>
+  CallbackHandler(CallbackHandler<Ret, Args...> *handler)
+    : f_(handler)
+  {}
+
+  Ret operator()(Args... args) const noexcept
   {
     if(f_)
       return f_(args ...);

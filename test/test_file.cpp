@@ -79,15 +79,19 @@ TEST(FileSync, ReadAll)
 {
   using namespace FileTestHelper;
 
-  for(int i : {0, 1, 3/*, 32, 33, 128, 1023, 65536, 1000000*/})
+  for(int i : { 1, 3/*, 32, 33, 128, 1023, 65536, 1000000*/})
     {
       TestFile* stlFile = new TestFile(testName(), i);
       File* agioFile = new File(stlFile->getDir(), Loop::defaultLoop());
 
       printf("STL Read: %s\n", stlFile->readAll().c_str());
       printf("Agio Read: %s\n", agioFile->readAll().c_str());
-      EXPECT_EQ(stlFile->readAll(), agioFile->readAll());
-    }}
+
+      string stlContent = stlFile->readAll();
+      string agioContent = agioFile->readAll();
+      EXPECT_EQ(stlContent, agioContent);
+    }
+}
 
 TEST(FileSync, Write)
 {

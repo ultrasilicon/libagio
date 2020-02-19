@@ -24,6 +24,16 @@ namespace FileTestHelper
   {
       string str(length,0);
       generate_n(str.begin(), length,  []() {
+          const char charset[] = " 0123456789abcdefghijklmnopqrstuvwxyz\0\n\t";
+          return charset[ static_cast<unsigned long>(rand()) % (sizeof(charset) - 1) ];
+      });
+      return str;
+  }
+
+  static string randomName(const size_t& length)
+  {
+      string str(length,0);
+      generate_n(str.begin(), length,  []() {
           const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyz";
           return charset[ static_cast<unsigned long>(rand()) % (sizeof(charset) - 1) ];
       });
@@ -35,10 +45,11 @@ namespace FileTestHelper
   public:
     TestFile(const string& name, const size_t& size)
       : size_(size)
-      , name_(name + '_' + randomStr(TEST_FILE_RAND_POSTFIX_SIZE))
+      , name_(name + '_' + randomName(TEST_FILE_RAND_POSTFIX_SIZE))
     {
       ofstream file;
       file.open(getDir());
+      string s;
       for(size_t i = size_ / TEST_FILE_BUFFER_SIZE; i > 0; -- i)
         file << randomStr(TEST_FILE_BUFFER_SIZE);
       file << randomStr(size_ % TEST_FILE_BUFFER_SIZE);
@@ -47,16 +58,10 @@ namespace FileTestHelper
 
     string readAll()
     {
-      ifstream file;
-      file.open(getDir());
-      string buffer;
-      string line;
-      while(file){
-        getline(file, line);
-        buffer += line;
-      }
-      file.close();
-      return buffer;
+      std::ifstream ifs(getDir());
+      std::string content((std::istreambuf_iterator<char>(ifs)),
+                          std::istreambuf_iterator<char>());
+      return content;
     }
 
     string getDir() const
@@ -79,17 +84,16 @@ TEST(FileSync, ReadAll)
 {
   using namespace FileTestHelper;
 
-  for(int i : { 1, 3/*, 32, 33, 128, 1023, 65536, 1000000*/})
+  for(size_t i : { 0ul, 3ul, 32ul, 33ul, 128ul, 1023ul, 65536ul, 100000000ul })
     {
       TestFile* stlFile = new TestFile(testName(), i);
       File* agioFile = new File(stlFile->getDir(), Loop::defaultLoop());
 
-      printf("STL Read: %s\n", stlFile->readAll().c_str());
-      printf("Agio Read: %s\n", agioFile->readAll().c_str());
+      char* stlData = stlFile->readAll().data();
+      char* agioData = agioFile->readAll().data();
 
-      string stlContent = stlFile->readAll();
-      string agioContent = agioFile->readAll();
-      EXPECT_EQ(stlContent, agioContent);
+      int r = memcmp(stlData, agioData, i);
+      EXPECT_EQ(0, r);
     }
 }
 

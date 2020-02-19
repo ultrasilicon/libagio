@@ -1,6 +1,6 @@
 #include "file.h"
 #include <iostream> //! TODO: remove
-
+#include <vector>
 
 using namespace Agio;
 
@@ -16,12 +16,14 @@ void File::fileCb(uv_fs_t* r)
           {
             f->setFileDescriptor(static_cast<int>(r->result));
             f->onOpened();
+            uv_fs_req_cleanup(r);
             break;
           }
         case UV_FS_CLOSE:
           {
             f->setFileDescriptor(-1);
             f->onClosed();
+            uv_fs_req_cleanup(r);
             break;
           }
         case UV_FS_READ:
@@ -39,6 +41,9 @@ void File::fileCb(uv_fs_t* r)
           }
         case UV_FS_STAT:
           {
+            f->onInfo(*static_cast<uv_stat_t*>(r->ptr));
+            uv_fs_req_cleanup(r);
+            delete r;
             break;
           }
         case UV_FS_LSTAT:
@@ -156,7 +161,6 @@ void File::fileCb(uv_fs_t* r)
         default:
           break;
         }
-      uv_fs_req_cleanup(r);
     }
   else
     {
@@ -211,7 +215,7 @@ std::string File::getPath() const
 
 int File::open(const int& flags, const int& perm, const Mode& m)
 {
-  int r = fd_ = uv_fs_open(m == Mode::Async ? loop_->cObject() : nullptr
+  fd_ = uv_fs_open(m == Mode::Async ? loop_->cObject() : nullptr
                     , obj_
                     , path_.data()
                     , flags
@@ -223,7 +227,7 @@ int File::open(const int& flags, const int& perm, const Mode& m)
 //      callFileOpened();
     }
 
-  return r;
+  return fd_;
 }
 
 int File::open(char* path, const int& flags, const int& perm, const Mode& m)
@@ -241,10 +245,13 @@ int File::close(const Mode& m)
   return r;
 }
 
-std::string File::readAll()
+std::vector<char> File::readAll()
 {
+  if(fd_ == -1)
+    this->open(O_RDONLY, 0755, Sync);
+
   //! Implementation borrowed from Node.js source code
-  std::string data;
+  std::vector<char> data;
   Buffer* buf = new Buffer(ASIO_FILE_READ_BUF_SIZE);
 
   while(true)
@@ -254,16 +261,15 @@ std::string File::readAll()
                      , fd_
                      , buf->cObject()
                      , 1
-                     , static_cast<int64_t>(data.length())  // offset
+                     , static_cast<int64_t>(data.size())  // offset
                      , nullptr);
-      uv_fs_req_cleanup(obj_);
 
+      uv_fs_req_cleanup(obj_);
       if (r <= 0)
         break;
-      data.append(buf->cObject()->base, static_cast<std::string::size_type>(r));
-      std::cout << "readAll(): " << buf->cObject()->base << std::endl;
+      data.insert(data.begin(), buf->front(), buf->back());
     }
-  return data;
+  return data.size() == 0 ? std::vector<char>{'\0'} : data;
 }
 
 int File::read(Buffer* buf, const Mode& m)
@@ -299,6 +305,16 @@ int File::write(const std::string& data, const Mode& m)
                      , 1
                      , -1
                      , m == Mode::Async ? writtenCb : nullptr);
+}
+
+FileInfo File::stat(const std::string& dir, const Mode& m)
+{
+  uv_fs_t* req = new uv_fs_t();
+  uv_fs_stat(loop_->cObject()
+                    , req
+                    , dir.c_str()
+                    , m == Mode::Async ? fileCb : nullptr);
+  return m == Mode::Async ? FileInfo() : *static_cast<uv_stat_t*>(req->ptr);
 }
 
 int File::truncate(const int& size, const Mode& m)

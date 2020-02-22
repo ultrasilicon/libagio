@@ -77,6 +77,8 @@ private:
     wptr_ = &(*wbuf_)[0];
   }
 
+//  void readAll(const char* rptr, )
+
   void readBuf(const char* src, const MsgSizeT& size) {
     memcpy(wptr_, src, size);
     read_len_ += size;

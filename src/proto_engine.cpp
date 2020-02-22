@@ -42,7 +42,6 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
             MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
             readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
             buffers_.pop();
-            delete rbuf;
 
             rptr_ = buffers_.front()->data();
             state_ = ParsingState::ReadingHeader;
@@ -56,6 +55,9 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
             state_ = ParsingState::ReadingBody;
           }
 
+        state_ = ParsingState::ReadingBody;
+
+
         decode(ev);
         return;
       }
@@ -68,16 +70,18 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
       {
         if(buffers_.size() == 0 || !rptr_ || !wptr_)
           return;
-        while (read_len_ < msg_len_ && buffers_.size() != 0) {
+        while (read_len_ != msg_len_ && buffers_.size() != 0) {
+            //! REMOVE: Debug only
+            assert(read_len_ <= msg_len_);
+
             Buffer* rbuf = buffers_.front();
             MsgSizeT distance = rbuf->back() - rptr_;
             if(read_len_ + distance < msg_len_) // Should switch clauses for better performance
               {
                 //! The rest of this buf is a part of the message, read the whole buffer
-                MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
+                MsgSizeT readLen = rbuf->length();
                 readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
                 buffers_.pop();
-                delete rbuf;
 
                 rptr_ = buffers_.front()->data();
                 state_ = ParsingState::ReadingHeader;
@@ -85,7 +89,6 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
             else
               {
                 //! Part of this buf is a part of the message, read part of the buffer
-                //! TODO not finished
                 readBuf(scopeBegin<MsgSizeT>(rbuf->data()), msg_len_ - read_len_);
 
                 rptr_ = scopeEnd<MsgSizeT>(rbuf->data());

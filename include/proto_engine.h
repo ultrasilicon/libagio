@@ -16,6 +16,7 @@ A_NS_BEGIN
 
 using namespace ProtoUtils;
 
+
 class ProtoEngine;
 class StreamProtoEngine;
 
@@ -45,6 +46,12 @@ protected:
 class StreamProtoEngine
     : public ProtoEngine
 {  
+  enum ParsingState : unsigned char {
+    Start = 0,
+    ReadingHeader,
+    ReadingBody,
+  };
+
 public:
   StreamProtoEngine(TcpSocket* sock, Loop* l);
   ~StreamProtoEngine();
@@ -52,26 +59,39 @@ public:
   void message(Packet* pkt);
 
 private:
-  struct ParsingStates {
-    enum Identifier : unsigned char {
-      Start = 0,
-      ReadingHeader,
-      ReadingBody,
-    };
+//  ParsingStates states_;
 
-    char* rptr = nullptr;   //! pointer to a buffer in ProtoEngine::buffers_ for reading
-    char* wptr = nullptr;   //! pointer to ParsingStates::wbuf for writing
-    Buffer* wbuf;           //! parsing buffer with length equal to the message length
-    MsgSizeT msg_len = 0;  //! message length
-    MsgSizeT read_len = 0; //! read message length
-    Identifier id = Start;  //! state name identifier
-  };
+  char* rptr_ = nullptr;   //! pointer to a buffer in ProtoEngine::buffers_ for reading
+  char* wptr_ = nullptr;   //! pointer to ParsingStates::wbuf for writing
+  Buffer* wbuf_;           //! parsing buffer with length equal to the message length
+  MsgSizeT msg_len_ = 0;  //! message length
+  MsgSizeT read_len_ = 0; //! read message length
+  ParsingState state_ = Start;  //! state name identifier
 
-  ParsingStates states_;
+  void initStates(const MsgSizeT& len) {
+    read_len_ = 0;
+    msg_len_ = len;
+    if(wbuf_)
+      delete wbuf_;
+    wbuf_ = new Buffer(msg_len_);
+    wptr_ = &(*wbuf_)[0];
+  }
+
+  void readBuf(const char* src, const MsgSizeT& size) {
+    memcpy(wptr_, src, size);
+    read_len_ += size;
+  }
+
+  constexpr MsgSizeT totalLength() const {
+    return msg_len_ + sizeof(MsgSizeT);
+  }
+
+  constexpr const ParsingState& getId() const {
+    return state_;
+  }
 
   void read(Buffer* stream, TcpSocket* sock);
   void write(Packet* pkt);
-//  void bufcpy(char* dst, char* src, const size_t& len);
   void encode(AsyncEvent* ev);
   void decode(AsyncEvent* ev);
 };

@@ -26,77 +26,70 @@ void StreamProtoEngine::message(Packet* packet)
 
 void StreamProtoEngine::decode(AsyncEvent* ev)
 {
-  switch (states_.id) {
-    case ParsingStates::Start:
+  switch (state_) {
+    case ParsingState::Start:
       {
         if(buffers_.size() == 0)
           return;
         if(buffers_.front()->length() < sizeof(MsgSizeT)) // header incomplete
           return;
 
-        states_.msg_len = scopeLen<MsgSizeT>(buffers_.front()->data()); // read header
-        states_.wbuf = new Buffer(states_.msg_len); // allocate sufficient buffer
-        states_.wptr = &(*states_.wbuf)[0];
+        initStates(scopeLen<MsgSizeT>(buffers_.front()->data()));
         Buffer* rbuf = buffers_.front();
-        if(rbuf->length() < states_.msg_len + sizeof(MsgSizeT))
+        if(rbuf->length() < totalLength())
           {
             //! read the whole first buffer and destroy
             MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
-            memcpy(states_.wptr,
-                   scopeBegin<MsgSizeT>(rbuf->data()),
-                   readLen);
+            readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
             buffers_.pop();
             delete rbuf;
 
-            states_.read_len = readLen;
-            states_.rptr = buffers_.front()->data();
-            states_.id = ParsingStates::ReadingHeader;
+            rptr_ = buffers_.front()->data();
+            state_ = ParsingState::ReadingHeader;
           }
         else
           {
             //! read part of the buffer
-            memcpy(states_.wptr,
-                   scopeBegin<MsgSizeT>(rbuf->data()),
-                   states_.msg_len);
+            readBuf(scopeBegin<MsgSizeT>(rbuf->data()), msg_len_ - read_len_);
 
-            states_.read_len = states_.msg_len;
-            states_.rptr = scopeEnd<MsgSizeT>(rbuf->data());
-            states_.id = ParsingStates::ReadingBody;
+            rptr_ = scopeEnd<MsgSizeT>(rbuf->data());
+            state_ = ParsingState::ReadingBody;
           }
 
         decode(ev);
         return;
       }
-    case ParsingStates::ReadingHeader:
+    case ParsingState::ReadingHeader:
       {
 
         return;
       }
-    case ParsingStates::ReadingBody:
+    case ParsingState::ReadingBody:
       {
-        if(buffers_.size() == 0 || !states_.rptr || !states_.wptr)
+        if(buffers_.size() == 0 || !rptr_ || !wptr_)
           return;
-        while (states_.read_len < states_.msg_len && buffers_.size() != 0) {
+        while (read_len_ < msg_len_ && buffers_.size() != 0) {
             Buffer* rbuf = buffers_.front();
-            MsgSizeT distance = rbuf->back() - states_.rptr;
-            if(states_.read_len + distance < states_.msg_len) // Should switch clauses for better performance
+            MsgSizeT distance = rbuf->back() - rptr_;
+            if(read_len_ + distance < msg_len_) // Should switch clauses for better performance
               {
                 //! The rest of this buf is a part of the message, read the whole buffer
                 MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
-                memcpy(states_.wptr,
-                       scopeBegin<MsgSizeT>(rbuf->data()),
-                       readLen);
+                readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
                 buffers_.pop();
                 delete rbuf;
 
-                states_.read_len = readLen;
-                states_.rptr = buffers_.front()->data();
-                states_.id = ParsingStates::ReadingHeader;
+                rptr_ = buffers_.front()->data();
+                state_ = ParsingState::ReadingHeader;
               }
             else
               {
                 //! Part of this buf is a part of the message, read part of the buffer
-                //! TODO
+                //! TODO not finished
+                readBuf(scopeBegin<MsgSizeT>(rbuf->data()), msg_len_ - read_len_);
+
+                rptr_ = scopeEnd<MsgSizeT>(rbuf->data());
+                state_ = ParsingState::ReadingHeader; // ok
               }
           }
         return;

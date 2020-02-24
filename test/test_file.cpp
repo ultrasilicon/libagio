@@ -4,8 +4,12 @@
 #include <string>
 #include <vector>
 #include <climits>
+#include <cstdlib>
 #include <fstream>
 #include <filesystem>
+#include <stdio.h>
+#include <exception>
+
 
 #define TEST_FILE_RAND_POSTFIX_SIZE 16
 #define TEST_FILE_BUFFER_SIZE 65536
@@ -56,12 +60,25 @@ namespace FileTestHelper
       file.close();
     }
 
-    string readAll()
+    char* readAll()
     {
-      std::ifstream ifs(getDir());
-      std::string content((std::istreambuf_iterator<char>(ifs)),
-                          std::istreambuf_iterator<char>());
-      return content;
+      FILE *f;
+      f = fopen(getDir().data(), "r");
+      if(f == nullptr)
+        throw ios_base::failure("failed to open file " + getDir() + " for read");
+
+      fseek(f, 0L, SEEK_END);
+      long fileSize = ftell(f);
+      fseek(f, 0L, SEEK_SET);
+
+      char *buffer;
+      buffer = (char*)calloc(fileSize, sizeof(char));
+      if(buffer == nullptr)
+        throw bad_alloc();
+      fread(buffer, sizeof(char), fileSize, f);
+      fclose(f);
+
+      return buffer;
     }
 
     string getDir() const
@@ -83,14 +100,20 @@ TEST(FileSync, Read)
 TEST(FileSync, ReadAll)
 {
   using namespace FileTestHelper;
+  srand(time(nullptr));
 
-  for(size_t i : { 0ul, 3ul, 32ul, 33ul, 128ul, 1023ul, 65536ul, 100000000ul })
+
+//  for(size_t i : { 0ul, 3ul, 32ul, 33ul, 128ul, 1023ul, 65536ul, 100000000ul })
+  for(size_t i : { 1023ul })
     {
       TestFile* stlFile = new TestFile(testName(), i);
-      File* agioFile = new File(stlFile->getDir(), Loop::defaultLoop());
+      cout << stlFile->getDir() << "  " << i << endl;
+      char* stlData = stlFile->readAll();
 
-      char* stlData = stlFile->readAll().data();
+      File* agioFile = new File(stlFile->getDir(), Loop::defaultLoop());
       char* agioData = agioFile->readAll().data();
+      agioFile->close(Mode::Sync);
+
 
       int r = memcmp(stlData, agioData, i);
       EXPECT_EQ(0, r);

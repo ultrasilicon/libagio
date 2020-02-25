@@ -4,7 +4,7 @@ using namespace Agio;
 
 void AsyncEvent::executeCb(uv_async_t* handle)
 {
-  AsyncEvent* ev = getPHandle(handle);
+  AsyncEvent* ev = getAgioService(handle);
   ev->onCalled(ev);
 }
 

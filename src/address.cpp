@@ -1,5 +1,6 @@
 #include "address.h"
 #include <iostream>
+
 using namespace Agio;
 
 
@@ -32,7 +33,6 @@ std::string HostAddress::toIpString(const in6_addr& addr)
     return {};
   return buf;
 }
-
 
 
 HostAddress::HostAddress()
@@ -157,4 +157,6 @@ std::string HostAddress::toString() const
   return "";
 }
 
-
+std::ostream& operator<<(std::ostream& out, const HostAddress& addr) {
+  return out << addr.toIpString();
+}

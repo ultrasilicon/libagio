@@ -18,7 +18,7 @@ void UdpSocket::receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t* buf, 
 //      std::string ip(senderAddr);
       std::string data(buf->base, nread);
       HostAddress ip((sockaddr_storage&) *addr);
-      getPHandle(handle)->onReadyRead(data, ip);
+      getAgioService(handle)->onReadyRead(data, ip);
     }
 
   free(buf->base);
@@ -28,7 +28,7 @@ void UdpSocket::receiveCb(uv_udp_t* handle, ssize_t nread, const uv_buf_t* buf, 
 void UdpSocket::writtenCb(uv_udp_send_t* req, int status)
 {
   int socketDescriptor = Utils::getFd(reinterpret_cast<uv_handle_t*>(req->handle));
-  getPHandle(req->handle)->onWritten(socketDescriptor);
+  getAgioService(req->handle)->onWritten(socketDescriptor);
   free(req->bufs);
   free(req);
 }

@@ -7,7 +7,7 @@ using namespace Agio;
 
 void File::fileCb(uv_fs_t* r)
 {
-  File* f = getPHandle(r);
+  File* f = getAgioService(r);
 
   if (r->result >= 0)
     {

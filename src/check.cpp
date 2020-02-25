@@ -5,7 +5,7 @@ using namespace Agio;
 
 void Check::checkCb(uv_check_t* r)
 {
-  getPHandle(r)->onCalled();
+  getAgioService(r)->onCalled();
 }
 
 

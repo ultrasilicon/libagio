@@ -134,7 +134,6 @@ void on(Callback<Ret1(Args1...)> *handler1, Callback<Ret2(Args2...)> *handler2)
 template<typename Ret, typename... Args, typename Lambda>
 void on(Callback<Ret(Args...)> *handler, Lambda&& lambda)
 {
-  static_assert (std::is_same<Ret(Args...), Lambda>::value, "binding callback functions of unmatched types.");
   handler->connect(lambda);
 }
 

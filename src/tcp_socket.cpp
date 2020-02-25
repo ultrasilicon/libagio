@@ -14,14 +14,14 @@ void TcpSocket::writeCb(uv_write_t* handle, int status)
 
 void TcpSocket::connectCb(uv_connect_t* handle, int status)
 {
-  getPHandle(reinterpret_cast<uv_tcp_t*>(handle->handle))->onConnected();
+  getAgioService(reinterpret_cast<uv_tcp_t*>(handle->handle))->onConnected();
 }
 
 void TcpSocket::receiveCb(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf)
 {
   if(nread > 0)
     {
-      TcpSocket* s = getPHandle(reinterpret_cast<uv_tcp_t*>(handle));
+      TcpSocket* s = getAgioService(reinterpret_cast<uv_tcp_t*>(handle));
       s->onReadyRead(new Buffer(buf->base, buf->len), s);
       return;
     }

@@ -17,14 +17,14 @@
 
 A_NS_BEGIN
 
-template <typename CType, typename PType>
+template <typename CType, typename AType>
 class AgioObject;
 
 /*!
  * \arg CType: type of the c obj
- * \arg PType: type of the agio obj
+ * \arg AType: type of the agio obj
  */
-template <typename CType, typename PType>
+template <typename CType, typename AType>
 class AgioObject
 {
 public:

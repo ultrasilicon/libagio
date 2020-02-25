@@ -18,7 +18,7 @@ class AgioService
     : public AgioObject<UvType, AType>
 {
 public:
-  static AType* getPHandle(UvType* handle)
+  static AType* getAgioService(UvType* handle)
   {
     return static_cast<AgioServiceData<AType>*>(handle->data)->agioObj;
   }
@@ -38,12 +38,12 @@ public:
   }
 
   template<typename T>
-  T getServiceData()
+  T serviceData()
   {
     return this->obj_->data;
   }
 
-  Loop* getLoop()
+  Loop* loop()
   {
     return loop_;
   }

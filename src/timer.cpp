@@ -5,7 +5,7 @@ using namespace Agio;
 
 void Timer::timeoutCb(uv_timer_t* handle)
 {
-  Timer* t = getPHandle(handle);
+  Timer* t = getAgioService(handle);
   t->onTimedOut(t);
 }
 

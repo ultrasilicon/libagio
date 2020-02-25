@@ -15,9 +15,9 @@ public:
   Stream();
   virtual ~Stream();
 
-  virtual int write(char* data);
-  virtual int write(char* data, const size_t& len);
-  virtual int write(const std::string&);
+//  virtual int write(char* data);
+//  virtual int write(char* data, const size_t& len);
+//  virtual int write(const std::string&);
 
 private:
 

@@ -30,6 +30,8 @@ public:
   HostAddress(const std::string& ip, const uint16_t& port);
   ~HostAddress();
 
+  friend std::ostream& operator<<(std::ostream& out, const HostAddress& addr);
+
   void setAddress(const sockaddr_storage& addr);
   void setAddress(const sockaddr_in& addr);
   void setAddress(const sockaddr_in6& addr);

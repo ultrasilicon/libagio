@@ -3,7 +3,7 @@
 
 #include "agio.h"
 
-#include <netinet/in.h>
+#include <string>
 
 A_NS_BEGIN
 
@@ -27,7 +27,7 @@ public:
   HostAddress(const sockaddr_storage& addr);
   HostAddress(const sockaddr_in& addr);
   HostAddress(const sockaddr_in6& addr);
-  HostAddress(const std::string& ip, const uint16_t& port);
+  HostAddress(const std::string& ip, const int& port);
   ~HostAddress();
 
   friend std::ostream& operator<<(std::ostream& out, const HostAddress& addr);
@@ -35,10 +35,11 @@ public:
   void setAddress(const sockaddr_storage& addr);
   void setAddress(const sockaddr_in& addr);
   void setAddress(const sockaddr_in6& addr);
-  void setAddress(const std::string& ip, const uint16_t& port);
+  void setAddress(const std::string& ip, const int& port);
   Version version() const;
   bool isValid() const;
-  std::string toIpString() const;
+  std::string ipString() const;
+  uint16_t port() const;
   std::string toString() const;
 
 private:
@@ -47,6 +48,10 @@ private:
   sockaddr_in6 ip6_;
 };
 
+
+inline std::ostream& operator<<(std::ostream& out, const HostAddress& addr) {
+  return out << addr.toString();
+}
 
 A_NS_END
 #endif // PADDRESS_H

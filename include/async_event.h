@@ -11,7 +11,7 @@ class AsyncEvent
   static void executeCb(uv_async_t* handle);
 
 public:
-  CallbackHandler<void(AsyncEvent*)> onCalled;
+  Callback<void(AsyncEvent*)> onCalled;
 
   AsyncEvent(Loop* l);
   void operator()();

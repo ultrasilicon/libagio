@@ -14,7 +14,7 @@ class TcpServer
   static void newConnectionCb(uv_stream_t* handle, int status);
 
 public:
-  CallbackHandler<void(TcpServer*)> onNewConnection;
+  Callback<void(TcpServer*)> onNewConnection;
 
   TcpServer(Loop* l);
   TcpServer(char* ip, const int& port, Loop* l);

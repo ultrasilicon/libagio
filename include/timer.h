@@ -11,7 +11,7 @@ class Timer
   static void timeoutCb(uv_timer_t* handle);
 
 public:
-  CallbackHandler<void(Timer*)> onTimedOut;
+  Callback<void(Timer*)> onTimedOut;
 
   Timer(Loop* l);
   Timer(const uint64_t& repeat, Loop* l);

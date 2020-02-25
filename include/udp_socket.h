@@ -15,8 +15,8 @@ class UdpSocket
   static void writtenCb(uv_udp_send_t* req, int status);
 
 public:
-  CallbackHandler<void(std::string&, HostAddress&)> onReadyRead;
-  CallbackHandler<void(const SocketDescriptor&)> onWritten;
+  Callback<void(std::string&, HostAddress&)> onReadyRead;
+  Callback<void(const SocketDescriptor&)> onWritten;
 
   UdpSocket(Loop* l);
   UdpSocket(const char* ip, const int& port, Loop* l);

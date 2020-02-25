@@ -24,9 +24,9 @@ class TcpSocket
   static void freeWriteReq(uv_write_t* handle);
 
 public:
-  CallbackHandler<void()> onConnected;
-  CallbackHandler<void(Buffer*, TcpSocket*)> onReadyRead;
-  CallbackHandler<void(const SocketDescriptor&)> onWritten;
+  Callback<void()> onConnected;
+  Callback<void(Buffer*, TcpSocket*)> onReadyRead;
+  Callback<void(const SocketDescriptor&)> onWritten;
 
   TcpSocket(Loop* l);
   ~TcpSocket();

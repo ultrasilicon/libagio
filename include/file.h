@@ -20,11 +20,11 @@ class File
   static void writtenCb(uv_fs_t* r);
 
 public:
-  CallbackHandler<void(Buffer*, const ssize_t&)> onReadyRead;
-  CallbackHandler<void()> onOpened;
-  CallbackHandler<void()> onClosed;
-  CallbackHandler<void()> onWritten;
-  CallbackHandler<void(FileInfo)> onInfo;
+  Callback<void(Buffer*, const ssize_t&)> onReadyRead;
+  Callback<void()> onOpened;
+  Callback<void()> onClosed;
+  Callback<void()> onWritten;
+  Callback<void(FileInfo)> onInfo;
 
   File(Loop* l = Loop::defaultLoop());
   File(const std::string& path, Loop* l);

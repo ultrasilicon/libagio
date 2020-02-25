@@ -25,7 +25,7 @@ class ProtoEngine
 {
 public:
   using MsgSizeT = A_PROTO_ENGINE_HEADER_TYPE;
-  CallbackHandler<void(Packet* packet)> onMessage;
+  Callback<void(Packet* packet)> onMessage;
 
   ProtoEngine(TcpSocket* sock, Loop* l);
   virtual ~ProtoEngine();

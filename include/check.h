@@ -11,7 +11,7 @@ class Check
   static void checkCb(uv_check_t* r);
 
 public:
-  CallbackHandler<void()> onCalled;
+  Callback<void()> onCalled;
 
   Check(Loop* l);
   ~Check();

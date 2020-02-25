@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -g -DDEBUG")
 
 add_executable(
     unit_tests
+    test_host_address.cpp
     test_protocol_utils.cpp
     test_buffer.cpp
     test_file.cpp

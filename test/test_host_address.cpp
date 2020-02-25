@@ -15,7 +15,7 @@ namespace HostAddressTestHelper
 
 TEST(HostAddress, PortOverflow)
 {
-  for(u_long i = 0; i < 300000; ++ i) {
+  for(u_long i = 0; i < UINT16_MAX * 4; ++ i) {
       HostAddress addr("0.0.0.0", i);
       EXPECT_EQ(addr.port(), i % (UINT16_MAX + 1));
     }
@@ -23,7 +23,7 @@ TEST(HostAddress, PortOverflow)
 
 TEST(StreamOperator, OStream)
 {
-  for(int i = 0; i < 300000; ++ i) {
+  for(int i = 0; i < UINT16_MAX * 4; ++ i) {
       stringstream ss;
       HostAddress addr("127.0.0.1", i);
       ss << addr;

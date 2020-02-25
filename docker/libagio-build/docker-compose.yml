@@ -1,0 +1,11 @@
+version: '3'
+services:
+  ubuntu:
+    container_name: libagio-build
+    image: ultrasilicon/libagio-build:v0.0.1
+    ports:
+      - 8888:8888
+    build:
+      context: ./
+      dockerfile: Dockerfile
+  

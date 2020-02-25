@@ -27,36 +27,28 @@ $ make install
 ### TCP Server
 
 ```c++
-#include <vector>
 #include <libagio/tcp_server.h>
+#include <iostream>
 
 using namespace std;
 using namespace Agio;
 
-static Loop loop;
-static vector<TcpSocket*> clients;
-
-void receive_cb(const Buffer* data, TcpSocket* sock)
-{
-  cout << sock->peerAddress()->toIPString() << ": " << data->toString() << endl;
-}
-
-void new_connection_cb(TcpServer* s)
-{
-  TcpSocket* sock = new TcpSocket(&loop);
-  on(&sock->onReadyRead, &receive_cb);
-
-  clients.push_back(sock);
-  s->accept(sock);
-}
-
 int main()
 {
+  Loop loop;
+  
   TcpServer *server = new TcpServer(&loop);
   server->bind("0.0.0.0", 63773);
   server->listen();
-
-  on(&server->onNewConnection, &new_connection_cb);
+  
+  on(&server->onNewConnection, [&](TcpServer* server){
+      TcpSocket* sock = new TcpSocket(&loop);
+      on(&sock->onReadyRead, [](Buffer* data, TcpSocket* sock){
+          cout << sock->peerAddress() << ": " << data->toString() << endl;
+        });
+      
+      server->accept(sock);
+    });
 
   return loop.run();
 }
@@ -67,34 +59,27 @@ int main()
 ```c++
 #include <libagio/tcp_socket.h>
 #include <libagio/timer.h>
+#include <iostream>
 
 using namespace std;
 using namespace Agio;
-
-static TcpSocket *client;
-
-void timeout_cb(Timer *)
-{  
-  if(client->write("hello") == 0)
-    cout << "written" << endl;
-}
-
-void connected_cb()
-{
-  cout << "connected." << endl;
-}
 
 int main()
 {
   Loop loop;
 
-  client = new TcpSocket(&loop);
-  client->connect("127.0.0.1", 63773);
-  on(&client->onConnected, &connected_cb);
+  TcpSocket *client = new TcpSocket(&loop);
+  on(&client->onConnected, [](){
+      cout << "connected." << endl;
+    });
 
   Timer *timer = new Timer(2000, 500, &loop);
-  on(&timer->onTimedOut, &timeout_cb);
+  on(&timer->onTimedOut, [&](Timer*){
+      if(client->write("hello") == 0)
+        cout << "written" << endl;
+    });
 
+  client->connect("127.0.0.1", 63773);
   client->start();
   timer->start();
 

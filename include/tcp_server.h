@@ -11,19 +11,19 @@ class TcpServer;
 class TcpServer
     : public AgioService<uv_tcp_t, TcpServer>
 {
-  static void newConnectionCb(uv_stream_t *handle, int status);
+  static void newConnectionCb(uv_stream_t* handle, int status);
 
 public:
-  CallbackHandler<void(TcpServer*)> onNewConnection;
+  Callback<void(TcpServer*)> onNewConnection;
 
-  TcpServer(Loop *l);
-  TcpServer(char *ip, const int &port, Loop *l);
-  TcpServer(char *ip, const int &port, const int &backLog, Loop *l);
+  TcpServer(Loop* l);
+  TcpServer(char* ip, const int& port, Loop* l);
+  TcpServer(char* ip, const int& port, const int& backLog, Loop* l);
   int bind();
-  int bind(char *ip, const int &port);
+  int bind(char* ip, const int& port);
   int listen();
-  int listen(const int &backLog);
-  int accept(TcpSocket *client);
+  int listen(const int& backLog);
+  int accept(TcpSocket* client);
   void close();
 
 private:

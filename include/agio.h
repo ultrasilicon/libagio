@@ -17,14 +17,14 @@
 
 A_NS_BEGIN
 
-template <typename CType, typename PType>
+template <typename CType, typename AType>
 class AgioObject;
 
 /*!
- * \arg CType: typename of the c obj
- * \arg PType: typename of the agio obj
+ * \arg CType: type of the c obj
+ * \arg AType: type of the agio obj
  */
-template <typename CType, typename PType>
+template <typename CType, typename AType>
 class AgioObject
 {
 public:
@@ -43,7 +43,7 @@ public:
 //      delete obj_;
   }
 
-  CType* cObject()
+  constexpr CType* cObject() const
   {
     return obj_;
   }

@@ -3,7 +3,7 @@
 
 #include "agio.h"
 
-#include <netinet/in.h>
+#include <string>
 
 A_NS_BEGIN
 
@@ -19,24 +19,28 @@ public:
     IPv6 = 2,
   };
 
-  static std::string toString(sockaddr_storage &addr);
-  static std::string toIPString(in_addr addr);
-  static std::string toIPString(in6_addr addr);
+  static std::string toString(const sockaddr_storage& addr);
+  static std::string toIpString(const in_addr& addr);
+  static std::string toIpString(const in6_addr& addr);
 
   HostAddress();
-  HostAddress(const sockaddr_storage &addr);
-  HostAddress(const sockaddr_in &addr);
-  HostAddress(const sockaddr_in6 &addr);
+  HostAddress(const sockaddr_storage& addr);
+  HostAddress(const sockaddr_in& addr);
+  HostAddress(const sockaddr_in6& addr);
   HostAddress(const std::string& ip, const uint16_t& port);
   ~HostAddress();
 
-  void setAddress(const sockaddr_storage &addr);
-  void setAddress(const sockaddr_in &addr);
-  void setAddress(const sockaddr_in6 &addr);
+  friend std::ostream& operator<<(std::ostream& out, const HostAddress& addr);
+  friend std::ostream& operator<<(std::ostream& out, const HostAddress* addr);
+
+  void setAddress(const sockaddr_storage& addr);
+  void setAddress(const sockaddr_in& addr);
+  void setAddress(const sockaddr_in6& addr);
   void setAddress(const std::string& ip, const uint16_t& port);
   Version version() const;
   bool isValid() const;
-  std::string toIPString() const;
+  std::string ipString() const;
+  uint16_t port() const;
   std::string toString() const;
 
 private:
@@ -45,6 +49,14 @@ private:
   sockaddr_in6 ip6_;
 };
 
+
+inline std::ostream& operator<<(std::ostream& out, const HostAddress& addr) {
+  return out << addr.toString();
+}
+
+inline std::ostream& operator<<(std::ostream& out, const HostAddress* addr) {
+  return out << addr->toString();
+}
 
 A_NS_END
 #endif // PADDRESS_H

@@ -1,27 +1,21 @@
 #include <libagio/tcp_server.h>
-
 #include <vector>
 #include <iostream>
-
 
 using namespace std;
 using namespace Agio;
 
 static Loop loop;
-static vector<TcpSocket*> clients;
 
-void receive_cb(const Buffer* data, TcpSocket* sock)
-{
-  cout << sock->peerAddress()->toIPString() << ": " << data->toString() << endl;
-}
 
-void new_connection_cb(TcpServer* s)
+void new_connection_cb(TcpServer* server)
 {
   TcpSocket* sock = new TcpSocket(&loop);
-  on(&sock->onReadyRead, &receive_cb);
+  on(&sock->onReadyRead, [](Buffer* data, TcpSocket* sock){
+      cout << sock->peerAddress() << ": " << data->toString() << endl;
+    });
 
-  clients.push_back(sock);
-  s->accept(sock);
+  server->accept(sock);
 }
 
 int main()

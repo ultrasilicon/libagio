@@ -15,9 +15,9 @@ void send_cb(Timer*)
   server->write("255.255.255.255", 44444, "hello");
 }
 
-void receive_cb(string& data, IP& ip)
+void receive_cb(string& data, HostAddress& ip)
 {
-  cout << ip.toIPString() << ": " << data << endl;
+  cout << ip.toIpString() << ": " << data << endl;
 }
 
 int main()

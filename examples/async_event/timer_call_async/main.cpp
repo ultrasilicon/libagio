@@ -15,7 +15,7 @@ void timeout(Timer*)
   event->send();
 }
 
-void hello()
+void hello(AsyncEvent*)
 {
   cout << "hello" << endl;
 }

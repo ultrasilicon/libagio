@@ -2,53 +2,30 @@
 #define PFUNCTION_H
 
 #include <functional>
+#include <utility>
 
 namespace Agio {
 
-template<class T, typename Ret, typename... Args>
-struct Function;
+
 template<class T, typename Ret, typename... Args>
 struct Functor;
 template<typename Ret, typename... Args>
-struct CallbackHandler;
+struct Callback;
 template<typename Ret, typename... Args>
-struct CallbackHandler<Ret(Args...)>;
-
-//template <class T, typename std::enable_if<std::is_member_function_pointer<T>::value, T>::type* = nullptr>
-//void do_stuff(T& t) {
-//  std::cout << "do_stuff integral\n";
-//    // an implementation for integral types (int, char, unsigned, etc.)
-//}
-
-//template <class T, >
-//void do_stuff(T& t) {
-//    // an implementation for class types
-//}
+struct Callback<Ret(Args...)>;
 
 
-template<class T, typename Ret, typename... Args>
-struct Function {
-  using F = Ret(T::*)(Args...);
-  T* o_;
-  F f_;
 
-  Function(T* obj, F func)
-    : o_(obj)
-    , f_(func)
-  {}
 
-  Ret call(Args... args)
-  {
-    return (o_->*f_)(args...);
-  }
+template<typename Ret, typename... Args>
+struct function_ptr;
+template<typename Ret, typename... Args>
+struct function_ptr<Ret(Args...)> {
+  using type = void (*)(void *, Args... args);
 };
+template<typename T>
+using Function =  typename function_ptr<T>::type;
 
-template<class T, typename Ret, typename... Args>
-static Function<T, Ret, Args...> function_wrap(T *t, Ret(T::*f)(Args...))
-{
-    Function<T, Ret, Args...> fp(t, f);
-    return fp;
-}
 
 template<class T, typename Ret, typename... Args>
 struct Functor {
@@ -75,10 +52,31 @@ Functor<T, Ret, Args...> functor_wrap(T *obj , Ret (T::*func)(Args...))
 
 
 template<typename Ret, typename... Args>
-struct CallbackHandler<Ret(Args...)> {
+struct Callback<Ret(Args...)> {
   std::function<Ret(Args...)> f_;
 
-  Ret operator()(Args... args) noexcept
+  Callback()
+  {}
+
+  template<class T>
+  Callback(T *obj , Ret (T::*func)(Args...))
+    : f_(Functor<T, Ret, Args...>(obj, func))
+  {}
+
+  Callback(Function<Ret(Args...)> func)
+    : f_(func)
+  {}
+
+  Callback(Callback<Ret, Args...> *handler)
+    : f_(handler)
+  {}
+
+  template<class Lambda>
+  Callback(Lambda&& handler)
+    : f_(handler)
+  {}
+
+  Ret operator()(Args... args) const noexcept
   {
     if(f_)
       return f_(args ...);
@@ -99,31 +97,44 @@ struct CallbackHandler<Ret(Args...)> {
   }
 
   //! Callback<>
-  void connect(CallbackHandler<Ret, Args...> *handler)
+  void connect(Callback<Ret, Args...> *handler)
   {
     f_ = handler->f_;
+  }
+
+  //! Lambda
+  template<typename Lambda>
+  void connect(Lambda&& handler)
+  {
+    f_ = handler;
   }
 };
 
 template<typename Ret1, typename... Args1, class T, typename Ret2, typename... Args2>
-void on(CallbackHandler<Ret1(Args1...)> *handler, T *obj , Ret2 (T::*func)(Args2...))
+void on(Callback<Ret1(Args1...)> *handler, T *obj , Ret2 (T::*func)(Args2...))
 {
   static_assert (std::is_same<Ret1(Args1...), Ret2(Args2...)>::value, "binding callback functions of unmatched types.");
   handler->connect(obj, func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void on(CallbackHandler<Ret1(Args1...)> *handler, Ret2 (*func)(Args2...))
+void on(Callback<Ret1(Args1...)> *handler, Ret2 (*func)(Args2...))
 {
   static_assert (std::is_same<Ret1(Args1...), Ret2(Args2...)>::value, "binding callback functions of unmatched types.");
   handler->connect(func);
 }
 
 template<typename Ret1, typename... Args1, typename Ret2, typename... Args2>
-void on(CallbackHandler<Ret1(Args1...)> *handler1, CallbackHandler<Ret2(Args2...)> *handler2)
+void on(Callback<Ret1(Args1...)> *handler1, Callback<Ret2(Args2...)> *handler2)
 {
   static_assert (std::is_same<Ret1(Args1...), Ret2(Args2...)>::value, "binding callback functions of unmatched types.");
   handler1->connect(handler2);
+}
+
+template<typename Ret, typename... Args, typename Lambda>
+void on(Callback<Ret(Args...)> *handler, Lambda&& lambda)
+{
+  handler->connect(lambda);
 }
 
 

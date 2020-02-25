@@ -55,7 +55,7 @@ HostAddress::HostAddress(const sockaddr_in6& addr)
   setAddress(addr);
 }
 
-HostAddress::HostAddress(const std::string& ip, const int& port)
+HostAddress::HostAddress(const std::string& ip, const uint16_t& port)
 {
   setAddress(ip, port);
 }
@@ -102,7 +102,7 @@ void HostAddress::setAddress(const sockaddr_in6& addr)
   ip6_ = addr;
 }
 
-void HostAddress::setAddress(const std::string& ip, const int& port)
+void HostAddress::setAddress(const std::string& ip, const uint16_t& port)
 {
   char buf[sizeof(in6_addr)];
   if(uv_inet_pton(AF_INET, ip.c_str(), buf) == 0)

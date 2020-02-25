@@ -13,18 +13,17 @@ namespace HostAddressTestHelper
 }
 
 
-TEST(HostAddress, OStreamPortOverflow)
+TEST(HostAddress, PortOverflow)
 {
-  for(int i = 0; i < 32768; ++ i) {
-      stringstream ss;
-      ss << HostAddress("0.0.0.0", i);
-      EXPECT_EQ("0.0.0.0:" + to_string(i % UINT16_MAX), ss.str());
+  for(u_long i = 0; i < 300000; ++ i) {
+      HostAddress addr("0.0.0.0", i);
+      EXPECT_EQ(addr.port(), i % (UINT16_MAX + 1));
     }
 }
 
 TEST(StreamOperator, OStream)
 {
-  for(int i = 0; i < 32768; ++ i) {
+  for(int i = 0; i < 300000; ++ i) {
       stringstream ss;
       HostAddress addr("127.0.0.1", i);
       ss << addr;

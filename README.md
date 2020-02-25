@@ -74,7 +74,7 @@ int main()
     });
 
   Timer *timer = new Timer(2000, 500, &loop);
-  on(&timer->onTimedOut, [&](){
+  on(&timer->onTimedOut, [&](Timer*){
       if(client->write("hello") == 0)
         cout << "written" << endl;
     });

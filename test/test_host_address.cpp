@@ -21,12 +21,22 @@ TEST(HostAddress, PortOverflow)
     }
 }
 
-TEST(StreamOperator, OStream)
+TEST(StreamOperator, OStreamRef)
 {
-  for(int i = 0; i < UINT16_MAX * 4; ++ i) {
+  for(int i = 0; i < UINT16_MAX; ++ i) {
       stringstream ss;
       HostAddress addr("127.0.0.1", i);
       ss << addr;
+      EXPECT_EQ(addr.toString(), ss.str());
+    }
+}
+
+TEST(StreamOperator, OStreamPtr)
+{
+  for(int i = 0; i < UINT16_MAX; ++ i) {
+      stringstream ss;
+      HostAddress addr("127.0.0.1", i);
+      ss << &addr;
       EXPECT_EQ(addr.toString(), ss.str());
     }
 }

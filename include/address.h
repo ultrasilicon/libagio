@@ -31,6 +31,7 @@ public:
   ~HostAddress();
 
   friend std::ostream& operator<<(std::ostream& out, const HostAddress& addr);
+  friend std::ostream& operator<<(std::ostream& out, const HostAddress* addr);
 
   void setAddress(const sockaddr_storage& addr);
   void setAddress(const sockaddr_in& addr);
@@ -51,6 +52,10 @@ private:
 
 inline std::ostream& operator<<(std::ostream& out, const HostAddress& addr) {
   return out << addr.toString();
+}
+
+inline std::ostream& operator<<(std::ostream& out, const HostAddress* addr) {
+  return out << addr->toString();
 }
 
 A_NS_END

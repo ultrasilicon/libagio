@@ -5,6 +5,7 @@
 #include "stream.h"
 #include "abstract_socket.h"
 #include "address.h"
+#include "callback.h"
 
 A_NS_BEGIN
 

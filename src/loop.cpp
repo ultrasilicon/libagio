@@ -1,6 +1,6 @@
 #include "loop.h"
 
-#include <uv.h>
+#include <stdlib.h>
 
 using namespace Agio;
 

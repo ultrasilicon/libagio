@@ -16,7 +16,6 @@ struct Callback<Ret(Args...)>;
 
 
 
-
 template<typename Ret, typename... Args>
 struct function_ptr;
 template<typename Ret, typename... Args>

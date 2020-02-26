@@ -2,6 +2,7 @@
 #define AGIO_VARIANT_H
 
 #include "agio.h"
+#include <typeinfo>
 
 A_NS_BEGIN
 

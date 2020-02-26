@@ -1,7 +1,8 @@
-#ifndef PASYNC_H
-#define PASYNC_H
+#ifndef AGIO_ASYNC_EVENT_H
+#define AGIO_ASYNC_EVENT_H
 
 #include "service.h"
+#include "callback.h"
 
 A_NS_BEGIN
 
@@ -21,4 +22,4 @@ private:
 };
 
 A_NS_END
-#endif // PASYNC_H
+#endif // AGIO_ASYNC_EVENT_H

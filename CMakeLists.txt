@@ -16,9 +16,10 @@ set(INCLUDE
 	${PROJECT_SOURCE_DIR}/include/address.h
 	${PROJECT_SOURCE_DIR}/include/async_event.h
 	${PROJECT_SOURCE_DIR}/include/buffer.h
+	${PROJECT_SOURCE_DIR}/include/callback.h
+	${PROJECT_SOURCE_DIR}/include/callback_async.h
 	${PROJECT_SOURCE_DIR}/include/check.h
 	${PROJECT_SOURCE_DIR}/include/file.h
-	${PROJECT_SOURCE_DIR}/include/function.h
 	${PROJECT_SOURCE_DIR}/include/lib.h
 	${PROJECT_SOURCE_DIR}/include/loop.h
 	${PROJECT_SOURCE_DIR}/include/proto_engine.h

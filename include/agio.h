@@ -7,7 +7,6 @@
 #include <uv.h>
 #endif
 
-#include "function.h"
 
 #define A_NS_BEGIN namespace Agio {
 #define A_NS_END }

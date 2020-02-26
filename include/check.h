@@ -1,6 +1,7 @@
 #ifndef PCHECK_H
 #define PCHECK_H
 
+#include "callback.h"
 #include "service.h"
 
 A_NS_BEGIN

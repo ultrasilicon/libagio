@@ -59,8 +59,6 @@ public:
   void message(Packet* pkt);
 
 private:
-//  ParsingStates states_;
-
   char* rptr_ = nullptr;   //! pointer to a buffer in ProtoEngine::buffers_ for reading
   char* wptr_ = nullptr;   //! pointer to ParsingStates::wbuf for writing
   Buffer* wbuf_;           //! parsing buffer with length equal to the message length
@@ -68,29 +66,10 @@ private:
   MsgSizeT read_len_ = 0; //! read message length
   ParsingState state_ = Start;  //! state name identifier
 
-  void initStates(const MsgSizeT& len) {
-    read_len_ = 0;
-    msg_len_ = len;
-    if(wbuf_)
-      delete wbuf_;
-    wbuf_ = new Buffer(msg_len_);
-    wptr_ = &(*wbuf_)[0];
-  }
-
-//  void readAll(const char* rptr, )
-
-  void readBuf(const char* src, const MsgSizeT& size) {
-    memcpy(wptr_, src, size);
-    read_len_ += size;
-  }
-
-  constexpr MsgSizeT totalLength() const {
-    return msg_len_ + sizeof(MsgSizeT);
-  }
-
-  constexpr const ParsingState& getId() const {
-    return state_;
-  }
+  void initStates(const MsgSizeT& len);
+  void readBuf(const char* src, const MsgSizeT& size);
+  MsgSizeT totalLength() const;
+  const ParsingState& getId() const;
 
   void read(Buffer* stream, TcpSocket* sock);
   void write(Packet* pkt);

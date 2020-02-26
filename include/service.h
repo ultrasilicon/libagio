@@ -18,17 +18,20 @@ class AgioService
     : public AgioObject<UvType, AType>
 {
 public:
+  using AgioObjectT = AgioObject<UvType, AType>;
+  using AgioServiceDataT = AgioServiceData<AType>;
+
   static AType* getAgioService(UvType* handle)
   {
-    return static_cast<AgioServiceData<AType>*>(handle->data)->agioObj;
+    return static_cast<AgioServiceDataT*>(handle->data)->agioObj;
   }
 
   AgioService(Loop* loop, AType* agioObj)
-    : AgioObject<UvType, AType>()
+    : AgioObjectT()
     , loop_(loop)
-    , service_data_(new AgioServiceData<AType>{agioObj})
+    , service_data_(new AgioServiceDataT{agioObj})
   {
-    AgioObject<UvType, AType>::obj_->data = service_data_;
+    this->obj_->data = service_data_;
   }
 
   ~AgioService()
@@ -37,8 +40,8 @@ public:
       delete service_data_;
   }
 
-  template<typename T>
-  T serviceData()
+  template<typename AgioServiceDataT>
+  AgioServiceDataT* serviceData()
   {
     return this->obj_->data;
   }
@@ -49,11 +52,11 @@ public:
   }
 
 protected:
-  Loop* loop_;
   //! This class keeps a pointer to AgioObject<UvType, AType>::obj_->data.
   //! Because uv_loop might not free the data pointer when destructing objects.
   //! Above is not proved, if crash on destruct happens, try removing the delete in ~AgioService().
-  AgioServiceData<AType>* service_data_;
+  AgioServiceDataT* service_data_;
+  Loop* loop_;
 };
 
 

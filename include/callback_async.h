@@ -1,27 +1,36 @@
 #ifndef AGIO_CALLBACK_ASYNC_H
 #define AGIO_CALLBACK_ASYNC_H
 
-#include "service.h"
-#include "callback.h"
+#include "async_event.h"
 
 A_NS_BEGIN
 
-class AsyncEvent
-  : public AgioService<uv_async_t, AsyncEvent>
+template<typename Ret, typename... Args>
+class CallbackAsync;
+template<typename Ret, typename... Args>
+class CallbackAsync<Ret(Args...)>;
+
+
+template<typename Ret, typename... Args>
+class CallbackAsync<Ret(Args...)>
+  : public AgioService<uv_async_t, CallbackAsync<Ret(Args...)>>
+  , public Callback<Ret(Args...)>
 {
+  using AgioServiceT = AgioService<uv_async_t, CallbackAsync<Ret(Args...)>>;
+
   static void executeCb(uv_async_t* handle)
   {
-    AsyncEvent* ev = getAgioService(handle);
+    AsyncEvent* ev = AgioServiceT::getAgioService(handle);
     ev->onCalled(ev);
   }
 
 public:
   Callback<void(AsyncEvent*)> onCalled;
 
-  AsyncEvent(Loop* l)
-    : AgioService(l, this)
+  CallbackAsync(Loop* l)
+    : AgioServiceT(l, this)
   {
-    uv_async_init(loop_->cObject(), obj_, executeCb);
+    uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
   }
 
   void operator()()
@@ -31,7 +40,7 @@ public:
 
   int send()
   {
-    return uv_async_send(obj_);
+    return uv_async_send(AgioServiceT::obj_);
   }
 
 private:

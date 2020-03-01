@@ -1,5 +1,5 @@
-#ifndef PFUNCTION_H
-#define PFUNCTION_H
+#ifndef AGIO_CALLBACK_H
+#define AGIO_CALLBACK_H
 
 #include <functional>
 #include <utility>
@@ -141,4 +141,4 @@ void on(Callback<Ret(Args...)> *handler, Lambda&& lambda)
 
 }
 
-#endif // PFUNCTION_H
+#endif // AGIO_CALLBACK_H

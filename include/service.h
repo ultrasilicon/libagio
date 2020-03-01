@@ -28,8 +28,8 @@ public:
 
   AgioService(Loop* loop, AType* agioObj)
     : AgioObjectT()
-    , loop_(loop)
     , service_data_(new AgioServiceDataT{agioObj})
+    , loop_(loop)
   {
     this->obj_->data = service_data_;
   }
@@ -40,10 +40,9 @@ public:
       delete service_data_;
   }
 
-  template<typename AgioServiceDataT>
   AgioServiceDataT* serviceData()
   {
-    return this->obj_->data;
+    return static_cast<AgioServiceDataT*>(AgioObjectT::obj_->data);
   }
 
   Loop* loop()

@@ -72,14 +72,25 @@ public:
     uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
   }
 
-  Ret operator()(Args&... args) noexcept
+  Ret operator()(Args... args) noexcept
   {
     if(!getArgsTuple() || *getArgsTuple() != ArgsTupleT(args...)) {
+        if(getArgsTuple())
+          delete getArgsTuple();
         ArgsTupleT* argsTuple = new ArgsTupleT(args...);
         AgioServiceT::serviceData()->data = argsTuple;
       }
     uv_async_send(AgioServiceT::obj_);
   }
+
+//! TODO: not working
+//  template<class Lambda>
+//  CallbackAsync<Ret(Args...)>& operator=(Lambda&& lambda) noexcept
+//    {
+//      if(getArgsTuple())
+//          delete getArgsTuple();
+//      this->f_ = lambda;
+//    }
 
 private:
   constexpr ArgsTupleT* getArgsTuple() {

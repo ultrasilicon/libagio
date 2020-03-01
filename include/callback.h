@@ -82,6 +82,17 @@ struct Callback<Ret(Args...)> {
     return Ret();
   }
 
+  void operator=(const Callback<Ret, Args...>& handler) noexcept
+  {
+    f_ = handler->f_;
+  }
+
+  template<typename Lambda>
+  void operator=(Lambda&& handler) noexcept
+  {
+    f_ = handler;
+  }
+
   //! Member funtion
   template<class T>
   void connect(T *obj , Ret (T::*func)(Args...))
@@ -96,7 +107,7 @@ struct Callback<Ret(Args...)> {
   }
 
   //! Callback<>
-  void connect(Callback<Ret, Args...> *handler)
+  void connect(const Callback<Ret, Args...>& handler)
   {
     f_ = handler->f_;
   }

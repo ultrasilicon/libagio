@@ -17,15 +17,17 @@ namespace BufferTestHelper
 TEST(CallbackAsync, Constructor)
 {
   Loop* loop = Loop::defaultLoop();
-  CallbackAsync<void(int)> cb([](int a){cout << "hello" << a << endl;}, loop);
-
-  Timer* timer = new Timer(1,300, loop);
-  on(&timer->onTimedOut, [&](Timer*){
-      static int i = 0;
-      cb(i);
+  CallbackAsync<void(int)> cb(loop);
+  cb.connect([&](int a){
+      if(a == 1000000) {
+          cb.close();
+          cout << a << '\n';
+          return;
+        }
+      cb(a + 1);
     });
+  cb(0);
 
-  timer->start();
   loop->run();
   EXPECT_EQ("", string());
 }

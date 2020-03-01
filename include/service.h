@@ -50,6 +50,11 @@ public:
     return loop_;
   }
 
+  //! TODO: Check for memory leak
+  void close() {
+    uv_close(reinterpret_cast<uv_handle_t*>(AgioObjectT::obj_), nullptr);
+  }
+
 protected:
   //! This class keeps a pointer to AgioObject<UvType, AType>::obj_->data.
   //! Because uv_loop might not free the data pointer when destructing objects.

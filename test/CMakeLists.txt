@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -g -DDEBUG")
 
 add_executable(
     unit_tests
+    test_callback_async.cpp
     test_host_address.cpp
     test_protocol_utils.cpp
     test_buffer.cpp
@@ -20,6 +21,7 @@ target_link_libraries(
     gtest
     gtest_main
     agio-d
+    uv
 )
 
 add_test(

@@ -2,6 +2,7 @@
 #define TIMER_H
 
 #include "service.h"
+#include "callback.h"
 
 A_NS_BEGIN
 

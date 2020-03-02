@@ -1,5 +1,5 @@
-#ifndef PFUNCTION_H
-#define PFUNCTION_H
+#ifndef AGIO_CALLBACK_H
+#define AGIO_CALLBACK_H
 
 #include <functional>
 #include <utility>
@@ -13,7 +13,6 @@ template<typename Ret, typename... Args>
 struct Callback;
 template<typename Ret, typename... Args>
 struct Callback<Ret(Args...)>;
-
 
 
 
@@ -83,6 +82,17 @@ struct Callback<Ret(Args...)> {
     return Ret();
   }
 
+  void operator=(const Callback<Ret, Args...>& handler) noexcept
+  {
+    f_ = handler->f_;
+  }
+
+  template<typename Lambda>
+  void operator=(Lambda&& handler) noexcept
+  {
+    f_ = handler;
+  }
+
   //! Member funtion
   template<class T>
   void connect(T *obj , Ret (T::*func)(Args...))
@@ -97,7 +107,7 @@ struct Callback<Ret(Args...)> {
   }
 
   //! Callback<>
-  void connect(Callback<Ret, Args...> *handler)
+  void connect(const Callback<Ret, Args...>& handler)
   {
     f_ = handler->f_;
   }
@@ -142,4 +152,4 @@ void on(Callback<Ret(Args...)> *handler, Lambda&& lambda)
 
 }
 
-#endif // PFUNCTION_H
+#endif // AGIO_CALLBACK_H

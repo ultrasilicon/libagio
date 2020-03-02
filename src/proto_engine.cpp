@@ -24,6 +24,24 @@ void StreamProtoEngine::message(Packet* packet)
   write(packet);
 }
 
+void StreamProtoEngine::initStates(const ProtoEngine::MsgSizeT& len) {
+  read_len_ = 0;
+  msg_len_ = len;
+  if(wbuf_)
+    delete wbuf_;
+  wbuf_ = new Buffer(msg_len_);
+  wptr_ = &(*wbuf_)[0];
+}
+
+void StreamProtoEngine::readBuf(const char* src, const ProtoEngine::MsgSizeT& size) {
+  memcpy(wptr_, src, size);
+  read_len_ += size;
+}
+
+ProtoEngine::MsgSizeT StreamProtoEngine::totalLength() const {
+  return msg_len_ + sizeof(MsgSizeT);
+}
+
 void StreamProtoEngine::decode(AsyncEvent* ev)
 {
   switch (state_) {

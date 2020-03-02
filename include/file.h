@@ -5,6 +5,7 @@
 
 #include "service.h"
 #include "buffer.h"
+#include "callback.h"
 
 A_NS_BEGIN
 

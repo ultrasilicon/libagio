@@ -3,6 +3,7 @@
 
 #include "service.h"
 #include "callback.h"
+#include "promise.h"
 #include <tuple>
 #include <functional>
 
@@ -10,32 +11,53 @@
 A_NS_BEGIN
 
 template<typename Ret, typename... Args>
+struct CallbackAsyncData;
+template<typename Ret, typename... Args>
+struct CallbackAsyncData<Ret(Args...)>;
+template<typename Ret, typename... Args>
 class CallbackAsync;
 template<typename Ret, typename... Args>
 class CallbackAsync<Ret(Args...)>;
 
 
+
+/*! @note The template parameters should be explicit,
+ *  which means it should not be just the agio
+ * type. Because ServiceData uses the template
+ * parameters of the agio class type
+ */
+template<typename Ret, typename... Args>
+struct CallbackAsyncData<Ret(Args...)>
+    : ServiceData<CallbackAsync<Ret(Args...)>>
+{
+  using AgioT = CallbackAsync<Ret(Args...)>;
+  using ArgsTupleT = std::tuple<Args...>;
+
+  ArgsTupleT* args_tuple_;
+  Promise<Ret>* promise_;
+};
+
+
 template<typename Ret, typename... Args>
 class CallbackAsync<Ret(Args...)>
-  : public AgioService<uv_async_t, CallbackAsync<Ret(Args...)>>
+  : public AgioService<uv_async_t, CallbackAsync<Ret(Args...)>, CallbackAsyncData<Ret(Args...)>>
   , public Callback<Ret(Args...)>
 {
-  using AgioServiceT = AgioService<uv_async_t, CallbackAsync<Ret(Args...)>>;
+  using AgioServiceT = AgioService<uv_async_t, CallbackAsync<Ret(Args...)>, CallbackAsyncData<Ret(Args...)>>;
   using CallbackT = Callback<Ret(Args...)>;
   using ArgsTupleT = std::tuple<Args...>;
 
   static void executeCb(uv_async_t* handle)
   {
     CallbackAsync* ev = AgioServiceT::getAgioService(handle);
-    std::apply(ev->f_, *static_cast<ArgsTupleT*>(ev->serviceData()->data));
+    std::apply(ev->f_, *static_cast<ArgsTupleT*>(ev->serviceData()->data_));
   }
 
 public:
   CallbackAsync(Loop* l)
     : AgioServiceT(l, this)
   {
-    static_assert (std::is_same<Ret, void>::value, "CallbackAsync<Ret(Args...)> currently only supports void return type.");
-    uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
+    init();
   }
 
   template<class T>
@@ -43,24 +65,21 @@ public:
     : AgioServiceT(l, this)
     , CallbackT(Functor<T, Ret, Args...>(obj, func))
   {
-    static_assert (std::is_same<Ret, void>::value, "CallbackAsync<Ret(Args...)> currently only supports void return type.");
-    uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
+    init();
   }
 
   CallbackAsync(Function<Ret(Args...)>& func, Loop* l)
     : AgioServiceT(l, this)
     , CallbackT(func)
   {
-    static_assert (std::is_same<Ret, void>::value, "CallbackAsync<Ret(Args...)> currently only supports void return type.");
-    uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
+    init();
   }
 
   CallbackAsync(Callback<Ret, Args...>* cb, Loop* l)
     : AgioServiceT(l, this)
     , CallbackT(cb)
   {
-    static_assert (std::is_same<Ret, void>::value, "CallbackAsync<Ret(Args...)> currently only supports void return type.");
-    uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
+    init();
   }
 
   template<class Lambda>
@@ -68,19 +87,19 @@ public:
     : AgioServiceT(l, this)
     , CallbackT(lambda)
   {
-    static_assert (std::is_same<Ret, void>::value, "CallbackAsync<Ret(Args...)> currently only supports void return type.");
-    uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
+    init();
   }
 
-  Ret operator()(Args... args) noexcept
+  Promise<Ret>* operator()(Args... args) noexcept
   {
     if(!getArgsTuple() || *getArgsTuple() != ArgsTupleT(args...)) {
         if(getArgsTuple())
           delete getArgsTuple();
         ArgsTupleT* argsTuple = new ArgsTupleT(args...);
-        AgioServiceT::serviceData()->data = argsTuple;
+        AgioServiceT::serviceData()->data_ = argsTuple;
       }
     uv_async_send(AgioServiceT::obj_);
+    return new Promise<Ret>();
   }
 
 //! TODO: not working
@@ -93,8 +112,13 @@ public:
 //    }
 
 private:
+  inline void init() {
+    static_assert (std::is_same<Ret, void>::value, "CallbackAsync<Ret(Args...)> currently only supports void return type.");
+    uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
+  }
+
   constexpr ArgsTupleT* getArgsTuple() {
-    return static_cast<ArgsTupleT*>(AgioServiceT::serviceData()->data);
+    return AgioServiceT::serviceData()->args_tuple_;
   }
 
 

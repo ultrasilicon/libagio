@@ -6,22 +6,12 @@
 
 A_NS_BEGIN
 
-template <typename Fun, typename ResolveFun>
+template <typename Ret>
+struct Promise;
+
+
+template <typename Ret>
 struct Promise {
-  Fun fun_;
-  AsyncEvent* event_;
-
-  Promise(Fun& fun)
-    : fun_(fun)
-    , event_(new AsyncEvent(Loop::defaultLoop()))
-  {
-    on(event_->onCalled, this, &Promise::exec);
-  }
-
-  void exec()
-  {
-    fun_();
-  }
 
 };
 

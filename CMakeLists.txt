@@ -43,9 +43,8 @@ set(SRC
 	${PROJECT_SOURCE_DIR}/src/buffer.cpp
 	${PROJECT_SOURCE_DIR}/src/check.cpp
 	${PROJECT_SOURCE_DIR}/src/file.cpp
-    ${PROJECT_SOURCE_DIR}/src/function.cpp
-    ${PROJECT_SOURCE_DIR}/src/lib.cpp
-    ${PROJECT_SOURCE_DIR}/src/loop.cpp
+	${PROJECT_SOURCE_DIR}/src/lib.cpp
+	${PROJECT_SOURCE_DIR}/src/loop.cpp
 	${PROJECT_SOURCE_DIR}/src/promise.cpp
 	${PROJECT_SOURCE_DIR}/src/proto_engine.cpp
 	${PROJECT_SOURCE_DIR}/src/service.cpp

@@ -5,30 +5,29 @@
 
 A_NS_BEGIN
 
-template <typename AType>
-struct AgioServiceData
+template <typename AgioT>
+struct ServiceData
 {
-  AType* agioObj;
-  void* data;
+  AgioT* agio_obj_;
+  void* data_;
   // ...
 };
 
-template <typename UvType, typename AType>
+template <typename UvT, typename AgioT, typename ServiceDataT = ServiceData<AgioT>>
 class AgioService
-    : public AgioObject<UvType, AType>
+    : public AgioObject<UvT, AgioT>
 {
 public:
-  using AgioObjectT = AgioObject<UvType, AType>;
-  using AgioServiceDataT = AgioServiceData<AType>;
+  using AgioObjectT = AgioObject<UvT, AgioT>;
 
-  static AType* getAgioService(UvType* handle)
+  static AgioT* getAgioService(UvT* handle)
   {
-    return static_cast<AgioServiceDataT*>(handle->data)->agioObj;
+    return static_cast<ServiceDataT*>(handle->data)->agio_obj_;
   }
 
-  AgioService(Loop* loop, AType* agioObj)
+  AgioService(Loop* loop, AgioT* agioObj)
     : AgioObjectT()
-    , service_data_(new AgioServiceDataT{agioObj})
+    , service_data_(new ServiceDataT{agioObj})
     , loop_(loop)
   {
     this->obj_->data = service_data_;
@@ -40,9 +39,9 @@ public:
       delete service_data_;
   }
 
-  AgioServiceDataT* serviceData()
+  ServiceDataT* serviceData()
   {
-    return static_cast<AgioServiceDataT*>(AgioObjectT::obj_->data);
+    return static_cast<ServiceDataT*>(AgioObjectT::obj_->data);
   }
 
   Loop* loop()
@@ -59,7 +58,7 @@ protected:
   //! This class keeps a pointer to AgioObject<UvType, AType>::obj_->data.
   //! Because uv_loop might not free the data pointer when destructing objects.
   //! Above is not proved, if crash on destruct happens, try removing the delete in ~AgioService().
-  AgioServiceDataT* service_data_;
+  ServiceDataT* service_data_;
   Loop* loop_;
 };
 

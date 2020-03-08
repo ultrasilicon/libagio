@@ -17,7 +17,7 @@ void send_cb(Timer*)
 
 void receive_cb(string& data, HostAddress& ip)
 {
-  cout << ip.toIpString() << ": " << data << endl;
+  cout << ip << ": " << data << endl;
 }
 
 int main()

@@ -4,8 +4,8 @@
 #include "service.h"
 #include "callback.h"
 #include "promise.h"
+
 #include <tuple>
-#include <functional>
 
 
 A_NS_BEGIN
@@ -50,7 +50,8 @@ class CallbackAsync<Ret(Args...)>
   static void executeCb(uv_async_t* handle)
   {
     CallbackAsync* ev = AgioServiceT::getAgioService(handle);
-    std::apply(ev->f_, *static_cast<ArgsTupleT*>(ev->serviceData()->data_));
+    std::apply(ev->f_, *ev->serviceData()->args_tuple_);
+
   }
 
 public:
@@ -92,14 +93,20 @@ public:
 
   Promise<Ret>* operator()(Args... args) noexcept
   {
-    if(!getArgsTuple() || *getArgsTuple() != ArgsTupleT(args...)) {
-        if(getArgsTuple())
-          delete getArgsTuple();
-        ArgsTupleT* argsTuple = new ArgsTupleT(args...);
-        AgioServiceT::serviceData()->data_ = argsTuple;
+    ArgsTupleT*& argsTuple = AgioServiceT::serviceData()->args_tuple_;
+    if(!argsTuple || *argsTuple != ArgsTupleT(args...)) {
+        if(argsTuple)
+          delete argsTuple;
+        argsTuple = new ArgsTupleT(args...);
       }
+
+    Promise<Ret>*& promise = AgioServiceT::serviceData()->promise_;
+    if(promise)
+      delete promise;
+    promise = new Promise<Ret>();
+
     uv_async_send(AgioServiceT::obj_);
-    return new Promise<Ret>();
+    return promise;
   }
 
 //! TODO: not working
@@ -116,12 +123,6 @@ private:
     static_assert (std::is_same<Ret, void>::value, "CallbackAsync<Ret(Args...)> currently only supports void return type.");
     uv_async_init(AgioServiceT::loop_->cObject(), AgioServiceT::obj_, executeCb);
   }
-
-  constexpr ArgsTupleT* getArgsTuple() {
-    return AgioServiceT::serviceData()->args_tuple_;
-  }
-
-
 };
 
 

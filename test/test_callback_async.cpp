@@ -17,15 +17,17 @@ namespace BufferTestHelper
 TEST(CallbackAsync, Constructor)
 {
   Loop* loop = Loop::defaultLoop();
+
   CallbackAsync<void(int)> cb(loop);
-  cb.connect([&](int a){
-      if(a == 1000000) {
-          cb.close();
+  cb = ([&](int a){
+      if(a == 100000) {
           cout << a << '\n';
+          cb.close();
           return;
         }
       cb(a + 1);
     });
+
   cb(0);
 
   loop->run();

@@ -49,17 +49,25 @@ class CallbackAsync<Ret(Args...)>
 
   static void executeCb(uv_async_t* handle)
   {
-    CallbackAsync* ev = AgioServiceT::getAgioService(handle);
-    std::apply(ev->f_, *ev->serviceData()->args_tuple_);
-
+    CallbackAsync* cb = AgioServiceT::getAgioService(handle);
+    std::apply(cb->f_, *cb->serviceData()->args_tuple_);
+//    cb->close();
   }
 
 public:
+  CallbackAsync() = delete;
+
   CallbackAsync(Loop* l)
     : AgioServiceT(l, this)
   {
     init();
   }
+
+//! TODO: finish destructor
+//  ~CallbackAsync()
+//  {
+//    if(AgioServiceT::serviceData())
+//  }
 
   template<class T>
   CallbackAsync(T *obj , Ret (T::*func)(Args...), Loop* l)
@@ -91,7 +99,7 @@ public:
     init();
   }
 
-  Promise<Ret>* operator()(Args... args) noexcept
+  Promise<Ret>& operator()(Args... args) noexcept
   {
     ArgsTupleT*& argsTuple = AgioServiceT::serviceData()->args_tuple_;
     if(!argsTuple || *argsTuple != ArgsTupleT(args...)) {
@@ -106,17 +114,15 @@ public:
     promise = new Promise<Ret>();
 
     uv_async_send(AgioServiceT::obj_);
-    return promise;
+    return *promise;
   }
 
-//! TODO: not working
-//  template<class Lambda>
-//  CallbackAsync<Ret(Args...)>& operator=(Lambda&& lambda) noexcept
-//    {
-//      if(getArgsTuple())
-//          delete getArgsTuple();
-//      this->f_ = lambda;
-//    }
+  template<class Lambda>
+  CallbackAsync<Ret(Args...)>& operator=(Lambda&& lambda) noexcept
+    {
+      this->f_ = lambda;
+      return *this;
+    }
 
 private:
   inline void init() {

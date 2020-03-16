@@ -23,7 +23,7 @@ struct function_ptr<Ret(Args...)> {
   using type = void (*)(void *, Args... args);
 };
 template<typename T>
-using Function =  typename function_ptr<T>::type;
+using Function = typename function_ptr<T>::type;
 
 
 template<class T, typename Ret, typename... Args>
@@ -71,8 +71,8 @@ struct Callback<Ret(Args...)> {
   {}
 
   template<class Lambda>
-  Callback(Lambda&& handler)
-    : f_(handler)
+  Callback(Lambda&& lambda)
+    : f_(lambda)
   {}
 
   Ret operator()(Args... args) const noexcept
@@ -114,9 +114,9 @@ struct Callback<Ret(Args...)> {
 
   //! Lambda
   template<typename Lambda>
-  void connect(Lambda&& handler)
+  void connect(Lambda&& lambda)
   {
-    f_ = handler;
+    f_ = lambda;
   }
 };
 

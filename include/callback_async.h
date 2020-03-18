@@ -10,6 +10,8 @@
 
 A_NS_BEGIN
 
+template<typename... Ts>
+class Promise;
 template<typename Ret, typename... Args>
 struct CallbackAsyncData;
 template<typename Ret, typename... Args>
@@ -21,10 +23,90 @@ class CallbackAsync<Ret(Args...)>;
 
 
 
+
+template<typename... Ts>
+class Promise {
+public:
+  using T = typename std::tuple_element<0, std::tuple<Ts...> >::type;
+  template<typename U>
+  using IsVoid = typename std::enable_if<std::is_void<U>::value, void>::type;
+  template<typename U>
+  using IsNotVoid = typename std::enable_if<!std::is_void<U>::value, void>::type;
+
+  template<typename T>
+  struct CallbackSelector {
+    typedef CallbackAsync<void(T)> type;
+  };
+  template<>
+  struct CallbackSelector<void> {
+    typedef CallbackAsync<void()> type;
+  };
+
+  using CallbackT = typename CallbackSelector<T>::type;
+
+  Promise(Loop* l)
+    : cb_(l)
+    , loop_(l)
+  { }
+
+  Promise(CallbackT& cb, Loop* l)
+    : cb_(cb)
+    , loop_(l)
+  { }
+
+  Promise(CallbackT&& cb, Loop* l)
+    : cb_(cb)
+    , loop_(l)
+  { }
+
+  ~Promise() {
+    if(next_promise_)
+      delete next_promise_;
+  }
+
+  template<typename U = T, IsVoid<U> = 0>
+  void resolve(U& t) {
+
+  }
+
+  template<typename U = T, IsNotVoid<U> = 0>
+  void resolve() {
+
+  }
+
+  template<typename Callable>
+  Promise<T>& then(Callable&& cb) {
+    if(next_promise_)
+      delete next_promise_;
+    next_promise_ = new Promise<T>(std::move(CallbackT(cb, loop_)), loop_);
+  }
+
+  template<class Lambda>
+  Promise<T>& finally(Lambda&& lambda) {
+
+  }
+
+  template<class Lambda>
+  Promise<T>& err(Lambda&& lambda) {
+
+  }
+
+private:
+  Loop* loop_;
+  Promise<T>* next_promise_;
+  CallbackT cb_;
+  CallbackT final_cb_;
+  CallbackT error_cb_;
+//  Callback<void(T)> callback_;
+
+};
+
+
+
 /*! @note The template parameters should be explicit,
  *  which means it should not be just the agio
- * type. Because ServiceData uses the template
- * parameters of the agio class type
+ *  type. Because ServiceData uses the template
+ *  parameters of the agio class type
  */
 template<typename Ret, typename... Args>
 struct CallbackAsyncData<Ret(Args...)>
@@ -35,6 +117,13 @@ struct CallbackAsyncData<Ret(Args...)>
 
   ArgsTupleT* args_tuple_;
   Promise<Ret>* promise_;
+
+  ~CallbackAsyncData(){
+    if(args_tuple_)
+      delete args_tuple_;
+    if(promise_)
+      delete promise_;
+  }
 };
 
 
@@ -62,12 +151,6 @@ public:
   {
     init();
   }
-
-//! TODO: finish destructor
-//  ~CallbackAsync()
-//  {
-//    if(AgioServiceT::serviceData())
-//  }
 
   template<class T>
   CallbackAsync(T *obj , Ret (T::*func)(Args...), Loop* l)
@@ -111,7 +194,7 @@ public:
     Promise<Ret>*& promise = AgioServiceT::serviceData()->promise_;
     if(promise)
       delete promise;
-    promise = new Promise<Ret>();
+    promise = new Promise<Ret>(this->loop_);
 
     uv_async_send(AgioServiceT::obj_);
     return *promise;

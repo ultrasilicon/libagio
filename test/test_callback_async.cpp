@@ -28,7 +28,15 @@ TEST(CallbackAsync, Constructor)
       cb(a + 1);
     });
 
-  cb(0);
+  cb(0).then([](){
+      printf("1\n");
+    }).then([](){
+      printf("2\n");
+    }).finally([](){
+      printf("3\n");
+    }).err([](){
+      printf("error\n");
+    });
 
   loop->run();
   EXPECT_EQ("", string());

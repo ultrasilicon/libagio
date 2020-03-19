@@ -1,5 +1,6 @@
 #include "file.h"
-#include <iostream> //! TODO: remove
+
+#include <uv.h>
 #include <vector>
 
 using namespace Agio;
@@ -139,22 +140,6 @@ void File::fileCb(uv_fs_t* r)
             break;
           }
         case UV_FS_LCHOWN:
-          {
-            break;
-          }
-        case UV_FS_OPENDIR:
-          {
-            break;
-          }
-        case UV_FS_READDIR:
-          {
-            break;
-          }
-        case UV_FS_CLOSEDIR:
-          {
-            break;
-          }
-        case UV_FS_STATFS:
           {
             break;
           }

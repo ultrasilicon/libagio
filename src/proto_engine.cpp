@@ -1,5 +1,7 @@
 #include "proto_engine.h"
 
+#include <cassert>
+
 using namespace Agio;
 
 ProtoEngine::ProtoEngine(TcpSocket* socket, Loop* l)

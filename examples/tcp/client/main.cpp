@@ -15,7 +15,7 @@ int main()
       cout << "connected." << endl;
     });
 
-  Timer *timer = new Timer(2000, 500, &loop);
+  Timer *timer = new Timer(500, &loop);
   on(&timer->onTimedOut, [&](Timer*){
       if(client->write("hello") == 0)
         cout << "written" << endl;
@@ -27,3 +27,6 @@ int main()
 
   return loop.run();
 }
+
+
+

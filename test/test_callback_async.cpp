@@ -19,24 +19,24 @@ TEST(CallbackAsync, Constructor)
   Loop* loop = Loop::defaultLoop();
 
   CallbackAsync<void(int)> cb(loop);
-  cb = ([&](int a){
-      if(a == 100000) {
-          cout << a << '\n';
+  cb = [&](int a){
+      if(a == 3) {
+          cout << a << " recursive rounds passed" << endl;
           cb.close();
           return;
         }
       cb(a + 1);
-    });
+    };
 
-  cb(0).then([](){
-      printf("1\n");
+  cb(0)/*.then([](){
+      printf("then 1\n");
     }).then([](){
-      printf("2\n");
+      printf("then 2\n");
     }).finally([](){
-      printf("3\n");
+      printf("finally 3\n");
     }).err([](){
       printf("error\n");
-    });
+    })*/;
 
   loop->run();
   EXPECT_EQ("", string());

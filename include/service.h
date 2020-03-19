@@ -33,11 +33,12 @@ public:
     this->obj_->data = service_data_;
   }
 
-  ~AgioService()
-  {
-    if(service_data_)
-      delete service_data_;
-  }
+//  ~AgioService()
+//  {
+//    if(service_data_)
+//        delete service_data_;
+//    service_data_ = nullptr;
+//  }
 
   ServiceDataT* serviceData()
   {

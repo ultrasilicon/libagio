@@ -10,6 +10,7 @@
 #include <variant>
 #include <unordered_map>
 #include <cstdarg>
+#include <cassert>
 
 A_NS_BEGIN
 

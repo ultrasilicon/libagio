@@ -23,6 +23,15 @@ class CallbackAsync<Ret(Args...)>;
 
 
 
+template<typename T>
+struct CallbackSelector {
+  typedef CallbackAsync<void(T)> type;
+};
+template<>
+struct CallbackSelector<void> {
+  typedef CallbackAsync<void()> type;
+};
+
 
 template<typename... Ts>
 class Promise {
@@ -32,15 +41,6 @@ public:
   using IsVoid = typename std::enable_if<std::is_void<U>::value, void>::type;
   template<typename U>
   using IsNotVoid = typename std::enable_if<!std::is_void<U>::value, void>::type;
-
-  template<typename T>
-  struct CallbackSelector {
-    typedef CallbackAsync<void(T)> type;
-  };
-  template<>
-  struct CallbackSelector<void> {
-    typedef CallbackAsync<void()> type;
-  };
 
   using CallbackT = typename CallbackSelector<T>::type;
 

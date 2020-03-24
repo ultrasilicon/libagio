@@ -25,27 +25,27 @@ namespace ProtoUtils {
 #pragma pack()
 
   template <typename Header>
-  Header scopeLen(const char* stream)
+  constexpr Header scopeLen(const char* stream)
   {
     return (reinterpret_cast<SizedMask<Header>*>(const_cast<char*>(stream)))->header;
   }
 
   template <typename Header>
-  char* scopeBegin(char* stream)
+  constexpr char* scopeBegin(char* stream)
   {
     return stream + sizeof(Header);
   }
 
   template <typename Header>
-  char* scopeEnd(char* stream)
+  constexpr char* scopeEnd(char* stream)
   {
     return scopeBegin<Header>(stream) + scopeLen<Header>(stream);
   }
 
   template <typename Header>
-  std::pair<char*, char*> getScope(char *stream)
+  constexpr std::pair<char*, char*> getScope(const char *stream)
   {
-    return std::make_pair(scopeBegin<Header>(stream), scopeEnd<Header>(stream));
+    return {scopeBegin<Header>(stream), scopeEnd<Header>(stream)};
   }
 
   template <typename T>
@@ -58,17 +58,6 @@ namespace ProtoUtils {
     stream += sizeof(T);
     return r;
   }
-
-  //template <typename _HeaderT, typename _ValT>
-  //_ValT redeemStr(char* &stream, const char* end)
-  //{
-  //  if(stream == end)
-  //    return "";
-  //  _ValT r = (_ValT)constructStr(stream + sizeof(_HeaderT),
-  //                                 scopeLen<_HeaderT>(stream));
-  //  stream += sizeof(_HeaderT) + scopeLen<_HeaderT>(stream);
-  //  return r;
-  //}
 
   template <typename Header>
   std::string redeemStr(char*& stream, const char* end)
@@ -83,20 +72,15 @@ namespace ProtoUtils {
   }
 
   template <typename T>
-  void insertVal(std::vector<char>& stream, size_t& pos, const T& v)
+  void appendVal(std::vector<char>& stream, size_t& pos, const T& v)
   {
     stream.resize(stream.size() + sizeof(T));
     std::memcpy(&((SizedMask<T>*) &stream[pos])->header, &v, sizeof(T));
     pos += sizeof(T);
   }
 
-  /*!
-   * \brief: If this funciton is not a template, it will have compile errors, because it's not in any class.
-   * Put it here for now as in the future it all these parsing functions will be moved to a pre-compile module.
-   * \arg _std_string must be std::string.
-   */
-  template <typename _std_string>
-  void insertStr(std::vector<char>& stream, size_t& pos, const _std_string& s)
+  template <>
+  void appendVal<std::string>(std::vector<char>& stream, size_t& pos, const std::string& s)
   {
     stream.resize(stream.size() + sizeof(pe_str_len_t) + s.length());
     auto len = s.length();
@@ -138,79 +122,84 @@ namespace ProtoUtils {
     return std::tuple_size<std::tuple<Ts...>>::value;
   }
 
-//  template <typename Scheme, typename... Schema>
-//  struct Parser {
-//    std::unordered_map<int, std::variant<Scheme, Schema...>> schema_;
 
-//    Parser(Scheme& h, Schema&... t) {
-//      constructHelper(h, t...);
-//    }
 
-//    template<typename H>
-//    void constructHelper(H& h) {
-//      schema_.insert({h.msg_type_, h});
-//    }
 
-//    template<typename H, typename... T>
-//    void constructHelper(H& h, T&... t) {
-//      schema_.insert({h.msg_type_, std::variant<Scheme, Schema...>(h)});
-//      constructHelper(t...);
-//    }
 
-//    Packet* decode(char* stream) {
-//      A_USED(stream);
-//      return nullptr;
-//    }
 
-//    template<typename H>
-//    H& messageSchemeHelper(const int& index, std::tuple<H>&)
-//    {
-//      //! Fail if msgType is larger than given number of schema
-//      assert(index == 0);
-//      return std::tuple<H>();
-//    }
+  template <typename Scheme, typename... Schema>
+  struct Parser {
+    std::unordered_map<int, std::variant<Scheme, Schema...>> schema_;
 
-//    template<typename R, typename H, typename... T>
-//    R& messageSchemeHelper(const int& index, std::tuple<H, T...>&)
-//    {
-//      if(index == 0)
-//        return std::tuple<H>();
-//      return messageSchemeHelper(index - 1, std::tuple<T...>());
-//    }
+    Parser(Scheme& h, Schema&... t) {
+      constructHelper(h, t...);
+    }
 
-//    template<typename R>
-//    R& messageScheme(const int& msgType)
-//    {
-//      return messageSchemeHelper(msgType + 1, std::tuple<Scheme, Schema...>());
-//    }
+    template<typename H>
+    void constructHelper(H& h) {
+      schema_.insert({h.msg_type_, h});
+    }
 
-//    template<typename H>
-//    std::vector<char>& encode_helper(
-//          const MessageScheme<H>&,
-//          Packet* packet,
-//          std::vector<char>& stream,
-//          int& pos,
-//          const int& index)
-//    {
-//      //! could be moved to compile-time with sfinae.
-//      if(std::is_same<H, std::string>::value)
-//          insertStr(stream, pos, std::get<H>(packet->data[index]));
-//      else
-//          insertVal(stream, pos, std::get<H>(packet->data[index]));
-//      return stream;
-//    }
+    template<typename H, typename... T>
+    void constructHelper(H& h, T&... t) {
+//      schema_.insert({h.msg_type_,  std::variant<Scheme, Schema...>{h}});
+      constructHelper(t...);
+    }
 
-//    template<typename H, typename... T>
-//    std::vector<char>& encode_helper(
-//          const MessageScheme<H, T...>&,
-//          Packet* packet,
-//          std::vector<char>& stream,
-//          int& pos,
-//          const int& index)
-//    {
-//      encode_helper(stream, pos, MessageScheme<H>{}, packet, index + 1);
-//      return encode_helper(stream, pos, MessageScheme<T...>{}, packet, index + 1);
-//    }
+    Packet* decode(char* stream) {
+      A_USED(stream);
+      return nullptr;
+    }
+
+    template<typename H>
+    H& messageSchemeHelper(const int& index, std::tuple<H>&)
+    {
+      //! Fail if msgType is larger than given number of schema
+      assert(index == 0);
+      return std::tuple<H>();
+    }
+
+    template<typename R, typename H, typename... T>
+    R& messageSchemeHelper(const int& index, std::tuple<H, T...>&)
+    {
+      if(index == 0)
+        return std::tuple<H>();
+      return messageSchemeHelper(index - 1, std::tuple<T...>());
+    }
+
+    template<typename R>
+    R& messageScheme(const int& msgType)
+    {
+      return messageSchemeHelper(msgType + 1, std::tuple<Scheme, Schema...>());
+    }
+
+    template<typename H>
+    std::vector<char>& encode_helper(
+          const MessageScheme<H>&,
+          Packet* packet,
+          std::vector<char>& stream,
+          int& pos,
+          const int& index)
+    {
+      //! could be moved to compile-time with sfinae.
+      if(std::is_same<H, std::string>::value)
+          appendVal(stream, pos, std::get<H>(packet->data[index]));
+      else
+          appendVal(stream, pos, std::get<H>(packet->data[index]));
+      return stream;
+    }
+
+    template<typename H, typename... T>
+    std::vector<char>& encode_helper(
+          const MessageScheme<H, T...>&,
+          Packet* packet,
+          std::vector<char>& stream,
+          int& pos,
+          const int& index)
+    {
+      encode_helper(stream, pos, MessageScheme<H>{}, packet, index + 1);
+      return encode_helper(stream, pos, MessageScheme<T...>{}, packet, index + 1);
+    }
 
 //    template<typename... Ts>
 //    std::vector<char>& encode(Packet* packet) {
@@ -225,13 +214,49 @@ namespace ProtoUtils {
 
 //      return encode_helper(scheme, pos, scheme, packet, 0);
 //    }
-//  };
+  };
 
-//  template <typename Scheme, typename... Schema>
-//  Parser<Scheme, Schema...>* make_parser(Scheme scheme, Schema... schema) {
-//    return new Parser<Scheme, Schema...>(scheme, schema...);
-//  }
+  template <typename Scheme, typename... Schema>
+  Parser<Scheme, Schema...>* make_parser(Scheme scheme, Schema... schema) {
+    return new Parser<Scheme, Schema...>(scheme, schema...);
+  }
 }
+
+
+template<typename T, typename... Ts>
+struct MsgTypeTagger
+    : tagger<T>
+    , MsgTypeTagger<Ts...>
+{
+    MsgTypeTagger() : tagger<T>(sizeof...(Ts)) {}
+};
+
+template<typename T>
+struct MsgTypeTagger<T>
+    : tagger<T>
+{
+    MsgTypeTagger(const int& label) : tagger<T>(label) {}
+};
+
+
+template<typename... Ts>
+class Parser2 {
+  Parser2(const int& msgType)
+    : msg_type_(msgType)
+  {
+
+  }
+
+  template<typename H>
+  Parser2<H, Ts...> reg(const H&, const int& label)
+  {
+    return Parser2<H, Ts...>();
+  }
+
+private:
+  int msg_type_;
+  tag_of_type<Ts...> tagger_;
+};
 
 
 

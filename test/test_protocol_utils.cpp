@@ -141,11 +141,11 @@ namespace Helper
     *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4 + 1; // set main header
     pos += sizeof(uint32_t); // skip main header
 
-    insertVal(stream, pos, pk.msgType);
-    insertStr(stream, pos, pk.data[0].get<std::string>());
-    insertStr(stream, pos, pk.data[1].get<std::string>());
-    insertStr(stream, pos, pk.data[2].get<std::string>());
-    insertVal(stream, pos, pk.data[3].get<uint32_t>());
+    appendVal(stream, pos, pk.msgType);
+    appendVal(stream, pos, pk.data[0].get<std::string>());
+    appendVal(stream, pos, pk.data[1].get<std::string>());
+    appendVal(stream, pos, pk.data[2].get<std::string>());
+    appendVal(stream, pos, pk.data[3].get<uint32_t>());
     return stream;
   }
 }
@@ -230,50 +230,60 @@ TEST(InsertVal, SingleLayer)
 }
 
 
-//TEST(MessageParser, Experiment)
-//{
-//  MessageScheme<
-//      int32_t
-//      > schemeHeartbeat{0};
+TEST(MessageParser, Experiment)
+{
+  MessageScheme<
+      int32_t
+      > schemeHeartbeat{0};
 
-//  MessageScheme<
-//      std::string
-//      > schemeAuthReq{1};
+  MessageScheme<
+      std::string
+      > schemeAuthReq{1};
 
-//  MessageScheme<
-//      std::string
-//      > schemeAuthRes{2};
+  MessageScheme<
+      std::string
+      > schemeAuthRes{2};
 
-//  MessageScheme<
-//      std::string
-//      > schemeLoginReq{3};
+  MessageScheme<
+      std::string
+      > schemeLoginReq{3};
 
-//  MessageScheme<
-//      bool,
-//      std::string
-//      > schemeLoginRes{4};
+  MessageScheme<
+      bool,
+      std::string
+      > schemeLoginRes{4};
 
-//  MessageScheme<
+  MessageScheme<
+      std::string,
+      int32_t,
+      std::string
+      > schemeMsgTxt{5};
+
+//  Parser* p = new Parser();
+//  p->encode()
+
+//  variant<MessageScheme<
 //      std::string,
 //      int32_t,
 //      std::string
-//      > schemeMsgTxt{5};
+//      >,
+//      MessageScheme<
+//          bool,
+//          std::string
+//      >> v;
+//  v = schemeMsgTxt;
 
-//   *p = new Parser();
-//  p->encode()
+  auto* parser = make_parser(schemeHeartbeat,
+                        schemeAuthReq,
+                        schemeAuthRes,
+                        schemeLoginReq,
+                        schemeLoginRes,
+                        schemeMsgTxt);
+  Packet* p = new Packet{ {std::string{"hello?"}, int32_t{54}, std::string{"msg"}}, 5};
+//  std::vector<char> buffer = parser->encode(p);
 
 
-////  auto* parser = make_parser(schemeHeartbeat,
-////                        schemeAuthReq,
-////                        schemeAuthRes,
-////                        schemeLoginReq,
-////                        schemeLoginRes,
-////                        schemeMsgTxt);
-////  Packet* p = new Packet{ {std::string{"hello?"}, int32_t{54}, std::string{"msg"}}, 5};
-////  std::vector<char> buffer = parser->encode(p);
-
-
-//}
+}
 
 //TEST(Encode, MultiLayerMultiCellPacket)
 //{

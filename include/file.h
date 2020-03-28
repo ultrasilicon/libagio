@@ -41,11 +41,10 @@ public:
   std::vector<char> readAll();
   int write(Buffer* buf, const Mode& m); // TODO: not finished
   int write(const std::string& data, const Mode& m);
-  FileInfo stat(const std::string& dir, const Mode& m);
   int truncate(const int& size, const Mode& m);
+  static FileInfo stat(const std::string& dir,  Loop* l, const Mode& m);
   static int mkdir(const std::string& dir, const int& perm, Loop* l, const Mode& m);
   static int remove(const std::string& file, Loop* l);
-  Buffer* getBuffer();
 
 private:
   int fd_ = -1;

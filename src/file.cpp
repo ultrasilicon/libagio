@@ -235,8 +235,12 @@ std::vector<char> File::readAll()
   if(fd_ == -1)
     this->open(O_RDONLY, 0755, Sync);
 
-  //! Implementation borrowed from Node.js source code
+  uint64_t size = stat(this->path_, loop_, Sync).size();
+  if(size == 0)
+      return {};
+
   std::vector<char> data;
+  data.reserve(size);
   Buffer* buf = new Buffer(ASIO_FILE_READ_BUF_SIZE);
 
   while(true)
@@ -254,7 +258,7 @@ std::vector<char> File::readAll()
         break;
       data.insert(data.end(), buf->front(), buf->back());
     }
-  return data.size() == 0 ? std::vector<char>{'\0'} : data;
+  return data;
 }
 
 int File::read(Buffer* buf, const Mode& m)
@@ -292,10 +296,10 @@ int File::write(const std::string& data, const Mode& m)
                      , m == Mode::Async ? writtenCb : nullptr);
 }
 
-FileInfo File::stat(const std::string& dir, const Mode& m)
+FileInfo File::stat(const std::string& dir, Loop* l, const Mode& m)
 {
   uv_fs_t* req = new uv_fs_t();
-  uv_fs_stat(loop_->cObject()
+  uv_fs_stat(l->cObject()
                     , req
                     , dir.c_str()
                     , m == Mode::Async ? fileCb : nullptr);

@@ -252,7 +252,7 @@ std::vector<char> File::readAll()
       uv_fs_req_cleanup(obj_);
       if (r <= 0)
         break;
-      data.insert(data.begin(), buf->front(), buf->back());
+      data.insert(data.end(), buf->front(), buf->back());
     }
   return data.size() == 0 ? std::vector<char>{'\0'} : data;
 }

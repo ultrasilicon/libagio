@@ -44,12 +44,22 @@ namespace FileTestHelper
       return str;
   }
 
+  template <typename SizeT>
+  static pair<bool, SizeT> smemcmp (const void *s1, const void *s2, SizeT size)
+  {
+      for(SizeT i = 0; i < size; ++ i)
+          if(((char*)s1)[i] != ((char*)s2)[i])
+              return {false, i};
+      return {true, -1};
+  }
+
   class TestFile
   {
   public:
     TestFile(const string& name, const size_t& size)
       : size_(size)
       , name_(name + '_' + randomName(TEST_FILE_RAND_POSTFIX_SIZE))
+      , dir_(filesystem::temp_directory_path().string() + '/')
     {
       ofstream file;
       file.open(getDir());
@@ -89,7 +99,7 @@ namespace FileTestHelper
   private:
     size_t size_;
     string name_;
-    const string dir_ = filesystem::temp_directory_path();
+    string dir_;
   };
 }
 
@@ -103,8 +113,8 @@ TEST(FileSync, ReadAll)
   srand(time(nullptr));
 
 
-//  for(size_t i : { 0ul, 3ul, 32ul, 33ul, 128ul, 1023ul, 65536ul, 100000000ul })
-  for(size_t i : { 1023ul })
+  for(size_t i : { 0ul, 3ul, 32ul, 33ul, 128ul, 4096ul, 4097ul, 65536ul, 10000000ul })
+//  for(size_t i : { 1023ul })
     {
       TestFile* stlFile = new TestFile(testName(), i);
       cout << stlFile->getDir() << "  " << i << endl;
@@ -115,8 +125,10 @@ TEST(FileSync, ReadAll)
       agioFile->close(Mode::Sync);
 
 
-      int r = memcmp(stlData, agioData, i);
-      EXPECT_EQ(0, r);
+      auto [result, index] = smemcmp(stlData, agioData, i);
+      if(!result)
+              cout << "diff at:" << index << endl;
+      EXPECT_EQ(true, result);
     }
 }
 

@@ -45,7 +45,7 @@ namespace FileTestHelper
   }
 
   template <typename SizeT>
-  static pair<bool, SizeT> smemcmp (const void *s1, const void *s2, SizeT size)
+  static pair<bool, SizeT> smemcmp (const char *s1, const char *s2, SizeT size)
   {
       for(SizeT i = 0; i < size; ++ i)
       {
@@ -117,19 +117,15 @@ TEST(FileSync, ReadAll)
 
   const size_t bufferSize = ASIO_FILE_READ_BUF_SIZE;
   for(size_t i : { bufferSize, bufferSize + 1, 0ul, 3ul, 33ul, 61440ul, 61441ul, 65536ul, 66344ul, 66345ul, 10000000ul })
-//  for(size_t i : { 1023ul })
     {
       TestFile* stlFile = new TestFile(testName(), i);
       cout << stlFile->getDir() << "  " << i << endl;
       char* stlData = stlFile->readAll();
 
       File* agioFile = new File(stlFile->getDir(), Loop::defaultLoop());
-      char* agioData = agioFile->readAll().data();
+      char* agioData = agioFile->readAll();
       agioFile->close(Mode::Sync);
 
-
-      if(i ==10000000ul)
-          asm("nop");
       auto [result, index] = smemcmp(stlData, agioData, i);
       if(!result)
               cout << "diff at:" << index << endl;

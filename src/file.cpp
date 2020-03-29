@@ -2,6 +2,7 @@
 
 #include <uv.h>
 #include <vector>
+#include <cstring>
 
 using namespace Agio;
 
@@ -230,7 +231,7 @@ int File::close(const Mode& m)
   return r;
 }
 
-std::vector<char> File::readAll()
+char* File::readAll()
 {
   if(fd_ == -1)
     this->open(O_RDONLY, 0755, Sync);
@@ -239,26 +240,27 @@ std::vector<char> File::readAll()
   if(size == 0)
       return {};
 
-  std::vector<char> data;
-  data.reserve(size);
+  char* r = new char[size]();
+  char* pos = r;
   Buffer* buf = new Buffer(ASIO_FILE_READ_BUF_SIZE);
 
   while(true)
     {
-      int r = uv_fs_read(loop_->cObject()
+      int bytesRead = uv_fs_read(loop_->cObject()
                      , obj_
                      , fd_
                      , buf->cObject()
                      , 1
-                     , static_cast<int64_t>(data.size())  // offset
+                     , static_cast<int64_t>(pos-r)  // offset
                      , nullptr);
 
       uv_fs_req_cleanup(obj_);
-      if (r <= 0)
+      if (bytesRead <= 0)
         break;
-      data.insert(data.end(), buf->front(), buf->front() + r);
+      memcpy(pos, buf->front(), bytesRead);
+      pos += bytesRead;
     }
-  return data;
+  return r;
 }
 
 int File::read(Buffer* buf, const Mode& m)

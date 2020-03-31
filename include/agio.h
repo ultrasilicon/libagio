@@ -27,19 +27,28 @@ template <typename CType, typename AType>
 class AgioObject
 {
 public:
-  AgioObject()
+  enum GCRule {
+    Uv = 0,
+    Agio
+  };
+
+  AgioObject(const GCRule& rule = Agio)
     : obj_(new CType())
+    , gc_rule_(rule)
   { }
 
-  AgioObject(CType* obj)
+  AgioObject(CType* obj, const GCRule& rule = Agio)
     : obj_(obj)
+    , gc_rule_(rule)
   { }
 
   ~AgioObject()
   {
-    // TODO: find out which handles libuv frees
-//    if(obj_)
-//      delete obj_;
+    if(gc_rule_ == Uv)
+      return;
+    if(obj_)
+      delete obj_;
+    obj_ = nullptr;
   }
 
   constexpr CType* cObject() const
@@ -49,6 +58,7 @@ public:
 
 protected:
   CType* obj_;
+  GCRule gc_rule_;
 };
 
 

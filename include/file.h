@@ -38,7 +38,7 @@ public:
   int open(char* getPath, const int& flags, const int& perm, const Mode& m);
   int close(const Mode& m);
   int read(Buffer* buf, const Mode& m);
-  char* readAll();
+  Buffer* readAll();
   int write(Buffer* buf, const Mode& m); // TODO: not finished
   int write(const std::string& data, const Mode& m);
   int truncate(const int& size, const Mode& m);

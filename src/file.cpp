@@ -231,17 +231,17 @@ int File::close(const Mode& m)
   return r;
 }
 
-char* File::readAll()
+Buffer* File::readAll()
 {
   if(fd_ == -1)
     this->open(O_RDONLY, 0755, Sync);
 
   uint64_t size = stat(this->path_, loop_, Sync).size();
   if(size == 0)
-      return {};
+    return nullptr;
 
-  char* r = new char[size]();
-  char* pos = r;
+  Buffer* r = new Buffer(size);
+  char* pos = r->front();
   Buffer* buf = new Buffer(ASIO_FILE_READ_BUF_SIZE);
 
   while(true)
@@ -251,7 +251,7 @@ char* File::readAll()
                      , fd_
                      , buf->cObject()
                      , 1
-                     , static_cast<int64_t>(pos-r)  // offset
+                     , static_cast<int64_t>(pos - r->front())  // offset
                      , nullptr);
 
       uv_fs_req_cleanup(obj_);

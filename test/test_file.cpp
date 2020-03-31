@@ -116,17 +116,17 @@ TEST(FileSync, ReadAll)
   srand(time(nullptr));
 
   const size_t bufferSize = ASIO_FILE_READ_BUF_SIZE;
-  for(size_t i : { bufferSize, bufferSize + 1, 0ul, 3ul, 33ul, 61440ul, 61441ul, 65536ul, 66344ul, 66345ul, 10000000ul })
+  for(size_t i : { bufferSize, bufferSize + 1, 3ul, 33ul, 61440ul, 61441ul, 65536ul, 66344ul, 66345ul, 10000000ul })
     {
       TestFile* stlFile = new TestFile(testName(), i);
       cout << stlFile->getDir() << "  " << i << endl;
       char* stlData = stlFile->readAll();
 
       File* agioFile = new File(stlFile->getDir(), Loop::defaultLoop());
-      char* agioData = agioFile->readAll();
+      Buffer* agioData = agioFile->readAll();
       agioFile->close(Mode::Sync);
 
-      auto [result, index] = smemcmp(stlData, agioData, i);
+      auto [result, index] = smemcmp(stlData, agioData->data(), i);
       if(!result)
               cout << "diff at:" << index << endl;
       EXPECT_EQ(true, result);

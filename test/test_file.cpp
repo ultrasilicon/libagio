@@ -65,7 +65,7 @@ namespace FileTestHelper
       , dir_(filesystem::temp_directory_path().string() + '/')
     {
       ofstream file;
-      file.open(getDir());
+      file.open(getPath());
       string s;
       for(size_t i = size_ / TEST_FILE_BUFFER_SIZE; i > 0; -- i)
         file << randomStr(TEST_FILE_BUFFER_SIZE);
@@ -76,9 +76,9 @@ namespace FileTestHelper
     char* readAll()
     {
       FILE *f;
-      f = fopen(getDir().data(), "r");
+      f = fopen(getPath().data(), "r");
       if(f == nullptr)
-        throw ios_base::failure("failed to open file " + getDir() + " for read");
+        throw ios_base::failure("failed to open file " + getPath() + " for read");
 
       fseek(f, 0L, SEEK_END);
       long fileSize = ftell(f);
@@ -94,9 +94,14 @@ namespace FileTestHelper
       return buffer;
     }
 
-    string getDir() const
+    string getPath() const
     {
       return dir_ + name_;
+    }
+
+    void rm()
+    {
+      remove(getPath().c_str());
     }
 
   private:
@@ -119,17 +124,23 @@ TEST(FileSync, ReadAll)
   for(size_t i : { bufferSize, bufferSize + 1, 3ul, 33ul, 61440ul, 61441ul, 65536ul, 66344ul, 66345ul, 10000000ul })
     {
       TestFile* stlFile = new TestFile(testName(), i);
-      cout << stlFile->getDir() << "  " << i << endl;
+      cout << "Test file: " << stlFile->getPath() << ", size: " << i << "b" << endl;
       char* stlData = stlFile->readAll();
 
-      File* agioFile = new File(stlFile->getDir(), Loop::defaultLoop());
+      File* agioFile = new File(stlFile->getPath(), Loop::defaultLoop());
       Buffer* agioData = agioFile->readAll();
-      agioFile->close(Mode::Sync);
+      agioFile->close(Sync);
 
       auto [result, index] = smemcmp(stlData, agioData->data(), i);
       if(!result)
               cout << "diff at:" << index << endl;
       EXPECT_EQ(true, result);
+
+      stlFile->rm();
+      delete stlFile;
+      free(stlData);
+      delete agioFile;
+      delete agioData;
     }
 }
 

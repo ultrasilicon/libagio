@@ -107,12 +107,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 ##### Install ####################################################################
 configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc @ONLY)
 if(UNIX)
+        install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc
+                DESTINATION /usr/lib/pkgconfig)
+        message("--   pkg-config directory: /usr/lib/pkgconfig/" ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc})
+endif()
+if(APPLE)
 	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc
 		DESTINATION lib/pkgconfig)
-endif()
-if(LINUX)
-	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc
-        DESTINATION /usr/lib/pkgconfig)
+        message("--   pkg-config directory: /user/local/lib/pkgconfig/" ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}${CMAKE_DEBUG_POSTFIX}.pc})
 endif()
 
 install(TARGETS ${PROJECT_NAME}

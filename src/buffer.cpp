@@ -5,31 +5,34 @@ using namespace Agio;
 
 
 
-Buffer::Buffer(const std::string& data)
-  : Buffer((char*)data.c_str(), data.size())
+Buffer::Buffer(const unsigned int& len)
+  : Buffer(new char[len], len)
 {
 }
 
-Buffer::Buffer(const unsigned int& len)
-  : Buffer(CXX_MALLOC_CSTR(len), len)
+Buffer::Buffer(const std::string& str)
+  : AgioObject(Uv)
 {
+  *obj_ = uv_buf_init(new char[str.size()], str.size());
+  strcpy(obj_->base, str.c_str());
 }
 
 Buffer::Buffer(uv_buf_t* buf)
-  : AgioObject(buf)
+  : AgioObject(buf, Uv)
 {
 }
 
 Buffer::Buffer(char* data, const unsigned int& len)
-  : AgioObject()
+  : AgioObject(Uv)
 {
   *obj_ = uv_buf_init(data, len);
 }
 
 Buffer::~Buffer()
 {
-  if(obj_->base)
-    free(obj_->base);
+  if(obj_ && obj_->base)
+    delete[](obj_->base);
+  obj_->base = nullptr;
 }
 
 char& Buffer::operator[](const std::size_t &idx)

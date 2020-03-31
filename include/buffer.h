@@ -17,12 +17,14 @@ class Buffer
     : public AgioObject<uv_buf_t, Buffer>
 {
 public:
-  Buffer(const std::string& data);
   Buffer(const unsigned int& len);
+  Buffer(const std::string& str);
   Buffer(uv_buf_t* buf);
   Buffer(char* data, const unsigned int& len);
   ~Buffer();
 
+  friend std::ostream& operator<<(std::ostream& out, const Buffer& addr);
+  friend std::ostream& operator<<(std::ostream& out, const Buffer* addr);
   char& operator[](const std::size_t &idx);
   const char& operator[](const std::size_t &idx) const;
   char* front() const;
@@ -39,6 +41,16 @@ public:
   //!\brief copy  Copy first len bytes from fromPos.
   void copy(char* dest, char* fromPos, const unsigned int& len) const ;
 };
+
+inline std::ostream& operator<<(std::ostream &out, const Buffer &addr)
+{
+  return out << addr.toString();
+}
+
+inline std::ostream& operator<<(std::ostream &out, const Buffer *addr)
+{
+  return out << addr->toString();
+}
 
 
 

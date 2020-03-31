@@ -12,19 +12,30 @@ namespace BufferTestHelper
 {
 }
 
-TEST(BufferCopy, FromBeginToLen)
+//TEST(BufferCopy, FromBeginToLen)
+//{
+//  EXPECT_EQ("", string());
+//}
+
+//TEST(BufferCopy, FromPosToPos)
+//{
+//  EXPECT_EQ("", string());
+//}
+
+TEST(BufferCopy, OStreamRef)
 {
-  EXPECT_EQ("", string());
+  stringstream ss;
+  Buffer buf("\0B\nU\tG\\");
+  ss << buf;
+  EXPECT_EQ(buf.toString(), ss.str());
 }
 
-TEST(BufferCopy, FromPosToPos)
+TEST(BufferCopy, OStreamPtr)
 {
-  EXPECT_EQ("", string());
-}
-
-TEST(BufferCopy, FromPosToLen)
-{
-  EXPECT_EQ("", string());
+  stringstream ss;
+  Buffer buf("\0B\nU\tG\\");
+  ss << &buf;
+  EXPECT_EQ(buf.toString(), ss.str());
 }
 
 

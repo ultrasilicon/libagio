@@ -28,7 +28,7 @@ namespace ProtoUtils {
   template <typename Header>
   constexpr Header scopeLen(const char* stream)
   {
-    return (reinterpret_cast<SizedMask<Header>*>(const_cast<char*>(stream)))->header;
+    return (reinterpret_cast<const SizedMask<Header>*>(stream))->header;
   }
 
   template <typename Header>
@@ -55,9 +55,8 @@ namespace ProtoUtils {
     if(stream == end)
       return T();
     SizedMask<T>* p = (reinterpret_cast<SizedMask<T>*>(stream));
-    T r = p->header;
     stream += sizeof(T);
-    return r;
+    return p->header;
   }
 
   template <typename Header>
@@ -67,9 +66,8 @@ namespace ProtoUtils {
       return "";
     auto ptr = stream + sizeof(Header);
     auto size = scopeLen<Header>(stream);
-    std::string r(ptr, size);
     stream += sizeof(Header) + scopeLen<Header>(stream);
-    return r;
+    return std::string(ptr, size);
   }
 
   template <typename T>

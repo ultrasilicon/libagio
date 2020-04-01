@@ -11,19 +11,19 @@ Buffer::Buffer(const unsigned int& len)
 }
 
 Buffer::Buffer(const std::string& str)
-  : AgioObject(Uv)
+  : AgioObject()
 {
   *obj_ = uv_buf_init(new char[str.size()], str.size());
   strcpy(obj_->base, str.c_str());
 }
 
 Buffer::Buffer(uv_buf_t* buf)
-  : AgioObject(buf, Uv)
+  : AgioObject(buf)
 {
 }
 
 Buffer::Buffer(char* data, const unsigned int& len)
-  : AgioObject(Uv)
+  : AgioObject()
 {
   *obj_ = uv_buf_init(data, len);
 }

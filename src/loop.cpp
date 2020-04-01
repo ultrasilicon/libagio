@@ -12,13 +12,13 @@ Loop* Loop::defaultLoop()
 }
 
 Loop::Loop()
-  : AgioObject(GCRule::Uv)
+  : AgioObject()
 {
   uv_loop_init(obj_);
 }
 
 Loop::Loop(uv_loop_t* l)
-  : AgioObject(l, GCRule::Uv)
+  : AgioObject(l)
 {
 }
 

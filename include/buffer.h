@@ -14,7 +14,7 @@ class Buffer;
  * \note Ending character '\0' is regarded as regular character
  */
 class Buffer
-    : public AgioObject<uv_buf_t, Buffer>
+    : public AgioObject<uv_buf_t, Buffer, GCRule::Manual>
 {
 public:
   Buffer(const unsigned int& len);

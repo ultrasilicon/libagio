@@ -11,7 +11,7 @@ enum Mode {
 };
 
 class Loop
-    : public AgioObject<uv_loop_t, Loop>
+    : public AgioObject<uv_loop_t, Loop, GCRule::Manual>
 {
 public:
   static Loop* defaultLoop();

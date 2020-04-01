@@ -16,39 +16,48 @@
 
 A_NS_BEGIN
 
-template <typename CType, typename AType>
+/*!
+ * \enum GCRule
+ * \abstract Garbage collection rules
+ */
+enum GCRule {
+  Manual = 0,
+  Agio
+};
+
+template <typename CType, typename AType, GCRule>
 class AgioObject;
+
 
 /*!
  * \arg CType: type of the c obj
  * \arg AType: type of the agio obj
  */
-template <typename CType, typename AType>
+template <typename CType, typename AType, GCRule gc_rule = Agio>
 class AgioObject
 {
 public:
-  enum GCRule {
-    Uv = 0,
-    Agio
-  };
-
   AgioObject(const GCRule& rule = Agio)
     : obj_(new CType())
-    , gc_rule_(rule)
   { }
 
   AgioObject(CType* obj, const GCRule& rule = Agio)
     : obj_(obj)
-    , gc_rule_(rule)
   { }
 
   ~AgioObject()
   {
-    if(gc_rule_ == Uv)
+    if constexpr (gc_rule == Manual)
+    {
       return;
-    if(obj_)
-      delete obj_;
-    obj_ = nullptr;
+    }
+
+    if constexpr (gc_rule == Agio)
+    {
+      if(obj_)
+        delete obj_;
+      obj_ = nullptr;
+    }
   }
 
   constexpr CType* cObject() const
@@ -58,7 +67,6 @@ public:
 
 protected:
   CType* obj_;
-  GCRule gc_rule_;
 };
 
 

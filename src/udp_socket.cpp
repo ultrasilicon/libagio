@@ -47,7 +47,7 @@ UdpSocket::UdpSocket(const char* ip, const int& port, Loop* l)
 
   bind(ip, port);
   start();
-  setBroadcatEnabled(true);
+  setBroadcastEnabled(true);
 }
 
 void UdpSocket::bind(const char* ip, const int& port)
@@ -82,7 +82,7 @@ void UdpSocket::write(const char* ip, const int& port, const std::string& data)
   uv_udp_send(req, obj_,& buf, 1, reinterpret_cast<sockaddr*>(&addr), writtenCb);
 }
 
-void UdpSocket::setBroadcatEnabled(const bool& enabled)
+void UdpSocket::setBroadcastEnabled(const bool& enabled)
 {
   uv_udp_set_broadcast(obj_, enabled ? 1 : 0);
 }

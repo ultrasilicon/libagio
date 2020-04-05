@@ -27,7 +27,7 @@ public:
   void stop();
   void close();
   void write(const char* ip, const int& port, const std::string& data);
-  void setBroadcatEnabled(const bool& enabled = true);
+  void setBroadcastEnabled(const bool& enabled = true);
 
 private:
 };

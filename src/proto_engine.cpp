@@ -26,7 +26,7 @@ void StreamProtoEngine::message(Packet* packet)
   write(packet);
 }
 
-void StreamProtoEngine::initStates(const ProtoEngine::MsgSizeT& len) {
+void StreamProtoEngine::resetWriteBuf(const ProtoEngine::MsgSizeT& len) {
   read_len_ = 0;
   msg_len_ = len;
   if(wbuf_)
@@ -40,7 +40,7 @@ void StreamProtoEngine::readBuf(const char* src, const ProtoEngine::MsgSizeT& si
   read_len_ += size;
 }
 
-ProtoEngine::MsgSizeT StreamProtoEngine::totalLength() const {
+ProtoEngine::MsgSizeT StreamProtoEngine::packetLen() const {
   return msg_len_ + sizeof(MsgSizeT);
 }
 
@@ -48,77 +48,86 @@ void StreamProtoEngine::decode(AsyncEvent* ev)
 {
   switch (state_) {
     case ParsingState::Start:
+    {
+      if(buffers_.size() == 0)
+        return;
+      if(buffers_.front()->length() < sizeof(MsgSizeT)) // header incomplete
+        return;
+
+      resetWriteBuf(scopeLen<MsgSizeT>(buffers_.front()->data()));
+      Buffer* rbuf = buffers_.front();
+      if(rbuf->length() < packetLen())
       {
-        if(buffers_.size() == 0)
-          return;
-        if(buffers_.front()->length() < sizeof(MsgSizeT)) // header incomplete
-          return;
+        //! read the whole first buffer and destroy
+        MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
+        readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
+        buffers_.pop();
 
-        initStates(scopeLen<MsgSizeT>(buffers_.front()->data()));
-        Buffer* rbuf = buffers_.front();
-        if(rbuf->length() < totalLength())
-          {
-            //! read the whole first buffer and destroy
-            MsgSizeT readLen = rbuf->length() - sizeof(MsgSizeT);
-            readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
-            buffers_.pop();
+        rptr_ = buffers_.front()->data();
+        state_ = ParsingState::ReadingHeader;
+      }
+      else
+      {
+        //! read part of the buffer
+        readBuf(scopeBegin<MsgSizeT>(rbuf->data()), msg_len_ - read_len_);
 
-            rptr_ = buffers_.front()->data();
-            state_ = ParsingState::ReadingHeader;
-          }
-        else
-          {
-            //! read part of the buffer
-            readBuf(scopeBegin<MsgSizeT>(rbuf->data()), msg_len_ - read_len_);
-
-            rptr_ = scopeEnd<MsgSizeT>(rbuf->data());
-            state_ = ParsingState::ReadingBody;
-          }
-
+        rptr_ = scopeEnd<MsgSizeT>(rbuf->data());
         state_ = ParsingState::ReadingBody;
-
-
-        decode(ev);
-        return;
       }
+
+      decode(ev);
+      return;
+    }
     case ParsingState::ReadingHeader:
-      {
-
+    {
+      if(buffers_.size() == 0)
         return;
-      }
-    case ParsingState::ReadingBody:
-      {
-        if(buffers_.size() == 0 || !rptr_ || !wptr_)
-          return;
-        while (read_len_ != msg_len_ && buffers_.size() != 0) {
-            //! REMOVE: Debug only
-            assert(read_len_ <= msg_len_);
 
-            Buffer* rbuf = buffers_.front();
-            MsgSizeT distance = rbuf->back() - rptr_;
-            if(read_len_ + distance < msg_len_) // Should switch clauses for better performance
-              {
-                //! The rest of this buf is a part of the message, read the whole buffer
-                MsgSizeT readLen = rbuf->length();
-                readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
-                buffers_.pop();
+      //! REMOVE: Debug only
+      if(!rptr_ || !wptr_)
+        assert(false);
 
-                rptr_ = buffers_.front()->data();
-                state_ = ParsingState::ReadingHeader;
-              }
-            else
-              {
-                //! Part of this buf is a part of the message, read part of the buffer
-                readBuf(scopeBegin<MsgSizeT>(rbuf->data()), msg_len_ - read_len_);
-
-                rptr_ = scopeEnd<MsgSizeT>(rbuf->data());
-                state_ = ParsingState::ReadingHeader; // ok
-              }
-          }
-        return;
-      }
 
     }
+    case ParsingState::ReadingBody:
+    {
+      if(buffers_.size() == 0)
+        return;
+
+      //! REMOVE: Debug only
+      if(!rptr_ || !wptr_)
+        assert(false);
+
+      while(read_len_ != msg_len_ && buffers_.size() != 0)
+      {
+        //! REMOVE: Debug only
+        assert(read_len_ <= msg_len_);
+
+        Buffer* rbuf = buffers_.front();
+        MsgSizeT distance = rbuf->back() - rptr_;
+        if(read_len_ + distance < msg_len_) // Should switch clauses for better performance
+        {
+          //! The rest of this buf is a part of the message, read the whole buffer
+          MsgSizeT readLen = rbuf->length();
+          readBuf(scopeBegin<MsgSizeT>(rbuf->data()), readLen);
+          buffers_.pop();
+
+          rptr_ = buffers_.front()->data();
+          state_ = ParsingState::ReadingHeader;
+        }
+        else
+        {
+          //! Part of this buf is a part of the message, read part of the buffer
+          readBuf(scopeBegin<MsgSizeT>(rbuf->data()), msg_len_ - read_len_);
+
+          rptr_ = scopeEnd<MsgSizeT>(rbuf->data());
+          state_ = ParsingState::ReadingHeader; // ok
+        }
+      }
+      return;
+    }
+
+  }
 }
 
 

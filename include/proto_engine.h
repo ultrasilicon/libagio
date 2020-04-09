@@ -66,10 +66,9 @@ private:
   MsgSizeT read_len_ = 0; //! read message length
   ParsingState state_ = Start;  //! state name identifier
 
-  void initStates(const MsgSizeT& len);
-  void readBuf(const char* src, const MsgSizeT& size);
-  MsgSizeT totalLength() const;
-  const ParsingState& getId() const;
+  inline void resetWriteBuf(const MsgSizeT& len);
+  inline void readBuf(const char* src, const MsgSizeT& size);
+  inline MsgSizeT packetLen() const;
 
   void read(Buffer* stream, TcpSocket* sock);
   void write(Packet* pkt);

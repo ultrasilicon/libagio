@@ -131,7 +131,8 @@ namespace ProtoUtils {
   template<typename Key>
   struct PacketMap
   {
-    PacketMap(const Packet* p, std::initializer_list<Key> ks)
+    PacketMap(Packet* p, std::initializer_list<Key> ks)
+      : packet(p)
     {
       int i = 0;
       for(const auto& k : ks)

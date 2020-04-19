@@ -14,7 +14,7 @@ Buffer::Buffer(const std::string& str)
   : AgioObject()
 {
   *obj_ = uv_buf_init(new char[str.size()], str.size());
-  strcpy(obj_->base, str.c_str());
+  memcpy(obj_->base, str.c_str(), str.size());
 }
 
 Buffer::Buffer(uv_buf_t* buf)

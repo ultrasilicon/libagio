@@ -1,10 +1,7 @@
 #include "file.h"
+#include "test_utils.h"
 
 #include <gtest/gtest.h>
-#include <string>
-#include <vector>
-#include <climits>
-#include <cstdlib>
 #include <fstream>
 #include <filesystem>
 #include <stdio.h>
@@ -24,35 +21,14 @@ namespace FileTestHelper
     return testing::UnitTest::GetInstance()->current_test_info()->name();
   }
 
-  static string randomStr(const size_t& length)
-  {
-      string str(length,0);
-      generate_n(str.begin(), length,  []() {
-          const char charset[] = " 0123456789abcdefghijklmnopqrstuvwxyz\0\n\t";
-          return charset[ static_cast<unsigned long>(rand()) % (sizeof(charset) - 1) ];
-      });
-      return str;
-  }
 
-  static string randomName(const size_t& length)
-  {
-      string str(length,0);
-      generate_n(str.begin(), length,  []() {
-          const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-          return charset[ static_cast<unsigned long>(rand()) % (sizeof(charset) - 1) ];
-      });
-      return str;
-  }
 
   template <typename SizeT>
   static pair<bool, SizeT> smemcmp (const char *s1, const char *s2, SizeT size)
   {
       for(SizeT i = 0; i < size; ++ i)
-      {
           if(((char*)s1)[i] != ((char*)s2)[i])
               return {false, i};
-      }
-
       return {true, -1};
   }
 
@@ -61,15 +37,15 @@ namespace FileTestHelper
   public:
     TestFile(const string& name, const size_t& size)
       : size_(size)
-      , name_(name + '_' + randomName(TEST_FILE_RAND_POSTFIX_SIZE))
+      , name_(name + '_' + TestUtils::Random::randomName(TEST_FILE_RAND_POSTFIX_SIZE))
       , dir_(filesystem::temp_directory_path().string() + '/')
     {
       ofstream file;
       file.open(getPath());
       string s;
       for(size_t i = size_ / TEST_FILE_BUFFER_SIZE; i > 0; -- i)
-        file << randomStr(TEST_FILE_BUFFER_SIZE);
-      file << randomStr(size_ % TEST_FILE_BUFFER_SIZE);
+        file << TestUtils::Random::randomStr(TEST_FILE_BUFFER_SIZE);
+      file << TestUtils::Random::randomStr(size_ % TEST_FILE_BUFFER_SIZE);
       file.close();
     }
 

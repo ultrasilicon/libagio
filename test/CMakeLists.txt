@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -g -DDEBUG")
 
+set(INCLUDE
+    test_utils.h
+)
+
 add_executable(
     unit_tests
     test_callback_async.cpp

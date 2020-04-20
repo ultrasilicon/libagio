@@ -124,9 +124,81 @@ namespace ProtoUtils {
         , std::string
         > VariantT;
 
-    std::vector<VariantT> data;
+    std::vector<VariantT> data_;
     uint8_t msg_type_;
   };
+
+
+  template <typename T>
+  constexpr size_t field_size(const T&) {
+    return sizeof(T);
+  }
+
+  template <>
+  size_t field_size<std::string>(const std::string& str) {
+    return str.size();
+  }
+
+  template <>
+  size_t field_size<Buffer>(const Buffer& buf) {
+    return buf.size();
+  }
+
+  template <typename T>
+  constexpr size_t field_size(const T*) {
+    return sizeof(T);
+  }
+
+  template <>
+  size_t field_size<char>(const char* str) {
+    return strlen(str);
+  }
+
+  template <typename... Ts>
+  class Message
+  {
+
+  public:
+    Message(Ts... fields)
+      : data_(fields...)
+    {
+      (*this << ... << fields);
+    }
+
+    size_t size() const {return size_;}
+
+  private:
+    template <typename T>
+    Message<Ts...>& operator<<(const T& t)
+    {
+      size_ += field_size(t);
+      return *this;
+    }
+
+    std::tuple<Ts ...> data_;
+    size_t size_ = 0;
+  };
+
+
+  class PacketComposer
+  {
+  public:
+    PacketComposer(Buffer* buf)
+      : buf_(buf)
+    {}
+
+    template<typename... Ts>
+    void compose(const Message<Ts...>& message) {
+
+    }
+
+
+
+  private:
+    Buffer* buf_;
+  };
+
+
 
   template<typename Key>
   struct PacketMap
@@ -140,11 +212,11 @@ namespace ProtoUtils {
     }
 
     constexpr Packet::VariantT& operator[](const Key &idx) {
-      return packet->data[map[idx]];
+      return packet->data_[map[idx]];
     }
 
     constexpr const Packet::VariantT& operator[](const std::size_t &idx) const {
-      return packet->data[map[idx]];
+      return packet->data_[map[idx]];
     }
 
     std::unordered_map<Key, int> map;
@@ -219,9 +291,9 @@ namespace ProtoUtils {
     {
       //! could be moved to compile-time with sfinae.
       if(std::is_same<H, std::string>::value)
-        appendVal(stream, pos, std::get<H>(packet->data[index]));
+        appendVal(stream, pos, std::get<H>(packet->data_[index]));
       else
-        appendVal(stream, pos, std::get<H>(packet->data[index]));
+        appendVal(stream, pos, std::get<H>(packet->data_[index]));
       return stream;
     }
 

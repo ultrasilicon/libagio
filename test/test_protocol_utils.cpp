@@ -1,37 +1,15 @@
 #include "proto_utils.h"
 #include "variant.h"
 #include "agio.h"
+#include "test_utils.h"
 
 #include <gtest/gtest.h>
-#include <string>
-#include <vector>
-#include <climits>
 
 using namespace std;
 using namespace Agio::ProtoUtils;
 
 namespace Helper
 {
-  using variant_t = Agio::Variant<
-      bool
-      , int8_t
-      , int16_t
-      , int32_t
-      , int64_t
-      , uint8_t
-      , uint16_t
-      , uint32_t
-      , uint64_t
-      , std::string
-  >;
-
-  struct Packet
-  {
-    std::vector<variant_t> data;
-    uint8_t msgType;
-  };
-
-
   char* getScopedString()
   {
     //! [6:hello?]
@@ -141,11 +119,11 @@ namespace Helper
     *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4 + 1; // set main header
     pos += sizeof(uint32_t); // skip main header
 
-    appendVal(stream, pos, pk.msgType);
-    appendVal(stream, pos, pk.data[0].get<std::string>());
-    appendVal(stream, pos, pk.data[1].get<std::string>());
-    appendVal(stream, pos, pk.data[2].get<std::string>());
-    appendVal(stream, pos, pk.data[3].get<uint32_t>());
+    appendVal(stream, pos, pk.msg_type_);
+    appendVal(stream, pos, pk.data_[0].get<std::string>());
+    appendVal(stream, pos, pk.data_[1].get<std::string>());
+    appendVal(stream, pos, pk.data_[2].get<std::string>());
+    appendVal(stream, pos, pk.data_[3].get<uint32_t>());
     return stream;
   }
 }
@@ -229,9 +207,23 @@ TEST(InsertVal, SingleLayer)
 
 }
 
+TEST(Message, FieldSize)
+{
+  for(size_t i = 0; i < 10000; ++ i)
+  {
+    string s = TestUtils::Random::randomStr(i);
+    EXPECT_EQ(i, field_size(s));
+  }
+}
+
+TEST(Message, Size)
+{
+  EXPECT_EQ(sizeof (int) + sizeof (char) + sizeof (double), Message(1, "s", 3.1415926).size());
+}
 
 TEST(MessageParser, Experiment)
 {
+  auto msg = Message(1, "s", 3.1415926);
 
   MessageScheme<
       int32_t

@@ -208,8 +208,15 @@ TEST(InsertVal, SingleLayer)
 }
 
 TEST(Message, FieldSize)
-{
-  for(size_t i = 0; i < 10000; ++ i)
+{  
+  EXPECT_EQ(sizeof (int), field_size(int{0}));
+  EXPECT_EQ(sizeof (char), field_size(char{0}));
+  EXPECT_EQ(sizeof (float), field_size(float{10.0}));
+  EXPECT_EQ(0, field_size(""));
+  EXPECT_EQ(0, field_size("\0"));
+  EXPECT_EQ(5, field_size("12345"));
+
+  for(size_t i = 0; i < 1000; ++ i)
   {
     string s = TestUtils::Random::randomStr(i);
     EXPECT_EQ(i, field_size(s));
@@ -218,7 +225,11 @@ TEST(Message, FieldSize)
 
 TEST(Message, Size)
 {
+  EXPECT_EQ(sizeof (int), Message(1).size());
   EXPECT_EQ(sizeof (int) + sizeof (char) + sizeof (double), Message(1, "s", 3.1415926).size());
+  EXPECT_EQ(sizeof (int) + sizeof (char) * 5 + sizeof (double), Message(1, "12345", 3.14).size());
+  EXPECT_EQ(sizeof (int) + sizeof (char) + sizeof (double), Message(1, string("s"), 3.1415926).size());
+  EXPECT_EQ(sizeof (int) + sizeof (char) * 5 + sizeof (double), Message(1, string("12345"), 3.1415926).size());
 }
 
 TEST(MessageParser, Experiment)

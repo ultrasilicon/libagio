@@ -1,5 +1,5 @@
 # libagio
-[![license](https://img.shields.io/github/license/ultrasilicon/libParsley.svg)](https://github.com/ultrasilicon/libParsley/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/ultrasilicon/libagio.svg)](https://github.com/ultrasilicon/libagio/blob/master/LICENSE)
 [![platform](https://img.shields.io/badge/Platform-desktop%20%7C%20mobile-ff69b4.svg?style=flat)](http://doc.qt.io/qt-5/supported-platforms.html)
 
 ### A cross-platform async I/O library for C++ agile development

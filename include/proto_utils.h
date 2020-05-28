@@ -89,6 +89,17 @@ namespace ProtoUtils {
     pos += s.length();
   }
 
+  template <>
+  void appendVal<Buffer>(std::vector<char>& stream, size_t& pos, const Buffer& buf)
+  {
+    stream.resize(stream.size() + sizeof(pe_str_len_t) + buf.length());
+    auto len = buf.length();
+    std::memcpy(&((SizedMask<std::string>*) &stream[pos])->header, &len, sizeof(pe_str_len_t));
+    pos += sizeof(pe_str_len_t);
+    std::memcpy(&stream[pos], buf.data(), buf.length());
+    pos += buf.length();
+  }
+
 
 
 //  using variant_t = Agio::Variant<
@@ -189,7 +200,7 @@ namespace ProtoUtils {
 
     template<typename... Ts>
     void compose(const Message<Ts...>& message) {
-
+      buf_ = new Buffer(message.size());
     }
 
 

@@ -6,7 +6,6 @@
 #include <climits>
 #include <cstdlib>
 #include <fstream>
-#include <filesystem>
 #include <stdio.h>
 #include <exception>
 
@@ -62,7 +61,7 @@ namespace FileTestHelper
     TestFile(const string& name, const size_t& size)
       : size_(size)
       , name_(name + '_' + randomName(TEST_FILE_RAND_POSTFIX_SIZE))
-      , dir_(filesystem::temp_directory_path().string() + '/')
+      , dir_("/tmp/")
     {
       ofstream file;
       file.open(getPath());
@@ -121,7 +120,7 @@ TEST(FileSync, ReadAll)
   srand(time(nullptr));
 
   const size_t bufferSize = ASIO_FILE_READ_BUF_SIZE;
-  for(size_t i : { bufferSize, bufferSize + 1, 3ul, 33ul, 61440ul, 61441ul, 65536ul, 66344ul, 66345ul, 10000000ul })
+  for(size_t i : { (unsigned long)bufferSize, (unsigned long)bufferSize + 1, 3ul, 33ul, 61440ul, 61441ul, 65536ul, 66344ul, 66345ul, 10000000ul })
     {
       TestFile* stlFile = new TestFile(testName(), i);
       cout << "Test file: " << stlFile->getPath() << ", size: " << i << "b" << endl;
